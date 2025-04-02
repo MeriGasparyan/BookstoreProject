@@ -9,7 +9,7 @@ import org.example.bookstoreproject.enums.Language;
 import java.text.DateFormat;
 
 @Entity
-@Table(name = "character")
+@Table(name = "book")
 @Setter
 @Getter
 public class Book {
