@@ -40,4 +40,12 @@ public class Book {
 
     @Column(name = "First publish date", nullable = false)
     private DateFormat firstPublishDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publisher_id")
+    private Publisher publisher;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "series_id")
+    private Series series;
 }
