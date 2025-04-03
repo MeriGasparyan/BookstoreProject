@@ -1,4 +1,4 @@
-package org.example.bookstoreproject;
+package org.example.bookstoreproject.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
