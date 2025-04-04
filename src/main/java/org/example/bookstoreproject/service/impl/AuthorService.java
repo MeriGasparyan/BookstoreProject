@@ -21,11 +21,13 @@ public class AuthorService implements ServiceInterface, Service {
 
     public void process(List<Map<String, String>> data) {
         for (Map<String, String> row : data) {
-            AuthorDTO authorDTO = new AuthorDTO(row.get("author"));
-            System.out.println(authorDTO.getName());
+            if (!row.get("series").isEmpty()) {
+                AuthorDTO authorDTO = new AuthorDTO(row.get("author").trim());
+                //System.out.println(authorDTO.getName());
 
-            Author author = authorMapper.mapDtoToEntity(authorDTO);
-            authorRepository.save(author);
+                Author author = authorMapper.mapDtoToEntity(authorDTO);
+                authorRepository.save(author);
+            }
         }
     }
 

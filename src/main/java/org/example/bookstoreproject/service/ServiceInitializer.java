@@ -25,12 +25,10 @@ public class ServiceInitializer {
             return;
         }
         System.out.println("Number of services: " + services.size());
-        for (Service service : services) {
-            System.out.println("Service: " + service.getClass().getSimpleName());
-        }
 
         for (Service service : services) {
             if (service instanceof ServiceInterface) {
+                System.out.println("Service: " + service.getClass().getSimpleName());
                 ((ServiceInterface) service).process(csvData);
             }
         }
