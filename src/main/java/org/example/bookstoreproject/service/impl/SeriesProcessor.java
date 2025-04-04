@@ -1,6 +1,7 @@
 package org.example.bookstoreproject.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.example.bookstoreproject.persistance.entry.Genre;
 import org.example.bookstoreproject.persistance.entry.Series;
 import org.example.bookstoreproject.persistance.repository.SeriesRepository;
 import org.example.bookstoreproject.service.dto.SeriesDTO;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -23,9 +25,11 @@ public class SeriesProcessor implements CSVColumnProcessor, Service{
         for (Map<String, String> row : data) {
             if(!row.get("series").isEmpty()){
                 SeriesDTO seriesDto = new SeriesDTO(row.get("series").trim());
-                System.out.println(seriesDto.getTitle());
-                Series series = seriesMapper.mapDtoToEntity(seriesDto);
-                seriesRepository.save(series);
+                Optional<Series> existing = seriesRepository.findByTitle(seriesDto.getTitle());
+                if (existing.isEmpty()) {
+                    Series series = seriesMapper.mapDtoToEntity(seriesDto);
+                    seriesRepository.save(series);
+                }
             }
         }
 

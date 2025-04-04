@@ -1,6 +1,7 @@
 package org.example.bookstoreproject.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.example.bookstoreproject.persistance.entry.Character;
 import org.example.bookstoreproject.persistance.entry.Genre;
 import org.example.bookstoreproject.persistance.repository.GenreRepository;
 import org.example.bookstoreproject.service.dto.GenreDTO;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -27,9 +29,11 @@ public class GenreProcessor implements CSVColumnProcessor, Service {
                 continue;
             for (String genre : genresArr) {
                 GenreDTO genreDTO = new GenreDTO(genre);
-                System.out.println(genreDTO.getName());
-                Genre genreEntity = genreMapper.mapDtoToEntity(genreDTO);
-                genreRepository.save(genreEntity);
+                Optional<Genre> existing = genreRepository.findByName(genreDTO.getName());
+                if (existing.isEmpty()) {
+                    Genre genreEntity = genreMapper.mapDtoToEntity(genreDTO);
+                    genreRepository.save(genreEntity);
+                }
             }
 
         }

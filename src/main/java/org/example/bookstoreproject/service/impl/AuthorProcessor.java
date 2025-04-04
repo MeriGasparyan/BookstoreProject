@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -23,10 +24,12 @@ public class AuthorProcessor implements CSVColumnProcessor, Service {
         for (Map<String, String> row : data) {
             if (!row.get("author").isEmpty()) {
                 AuthorDTO authorDTO = new AuthorDTO(row.get("author").trim());
-                //System.out.println(authorDTO.getName());
 
-                Author author = authorMapper.mapDtoToEntity(authorDTO);
-                authorRepository.save(author);
+                Optional<Author> existing = authorRepository.findByName(authorDTO.getName());
+                if (existing.isEmpty()) {
+                    Author author = authorMapper.mapDtoToEntity(authorDTO);
+                    authorRepository.save(author);
+                }
             }
         }
     }

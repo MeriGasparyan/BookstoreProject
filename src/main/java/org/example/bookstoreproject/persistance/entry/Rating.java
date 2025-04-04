@@ -16,27 +16,6 @@ public class Rating {
     @Column(nullable = false)
     private Float rating;
 
-    @Column(nullable = false, name = "Total num of ratings")
-    private Long numRatings;
-
-    @Column(nullable = false, name = "Percentage of liked")
-    private Float likedPercent;
-
-    @Column(nullable = false)
-    private Long numRating5;
-
-    @Column(nullable = false)
-    private Long numRating4;
-
-    @Column(nullable = false)
-    private Long numRating3;
-
-    @Column(nullable = false)
-    private Long numRating2;
-
-    @Column(nullable = false)
-    private Long numRating1;
-
     @Column
     private Integer bbeScore;
 
