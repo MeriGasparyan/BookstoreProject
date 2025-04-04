@@ -5,6 +5,7 @@ import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.repository.AuthorRepository;
 import org.example.bookstoreproject.service.dto.AuthorDTO;
 import org.example.bookstoreproject.service.mapper.AuthorMapper;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Annotation;
@@ -12,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Service
+@Component
 @AllArgsConstructor
-public class AuthorProcessor implements CSVColumnProcessor, Service {
+public class AuthorProcessor implements CSVColumnProcessor{
 
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
@@ -34,14 +35,5 @@ public class AuthorProcessor implements CSVColumnProcessor, Service {
         }
     }
 
-    @Override
-    public String value() {
-        return "";
-    }
-
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        return null;
-    }
 }
 

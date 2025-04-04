@@ -7,6 +7,7 @@ import org.example.bookstoreproject.persistance.repository.GenreRepository;
 import org.example.bookstoreproject.service.dto.GenreDTO;
 import org.example.bookstoreproject.service.mapper.GenreMapper;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Annotation;
@@ -14,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Service
+@Component
 @AllArgsConstructor
-public class GenreProcessor implements CSVColumnProcessor, Service {
+public class GenreProcessor implements CSVColumnProcessor {
     private final GenreRepository genreRepository;
     private final GenreMapper genreMapper;
 
@@ -37,15 +38,5 @@ public class GenreProcessor implements CSVColumnProcessor, Service {
             }
 
         }
-    }
-
-    @Override
-    public String value() {
-        return "";
-    }
-
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        return null;
     }
 }

@@ -6,6 +6,7 @@ import org.example.bookstoreproject.persistance.entry.Series;
 import org.example.bookstoreproject.persistance.repository.SeriesRepository;
 import org.example.bookstoreproject.service.dto.SeriesDTO;
 import org.example.bookstoreproject.service.mapper.SeriesMapper;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Annotation;
@@ -13,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Service
+@Component
 @AllArgsConstructor
-public class SeriesProcessor implements CSVColumnProcessor, Service{
+public class SeriesProcessor implements CSVColumnProcessor{
 
     private final SeriesRepository seriesRepository;
     private final SeriesMapper seriesMapper;
@@ -34,14 +35,4 @@ public class SeriesProcessor implements CSVColumnProcessor, Service{
         }
 
         }
-
-    @Override
-    public String value() {
-        return "";
-    }
-
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        return null;
-    }
 }

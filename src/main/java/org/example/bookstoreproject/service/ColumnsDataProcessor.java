@@ -3,18 +3,17 @@ package org.example.bookstoreproject.service;
 import org.example.bookstoreproject.service.impl.CSVColumnProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
 @Component
-public class ServiceProccessor {
+public class ColumnsDataProcessor {
 
-    private final List<Service> services;
+    private final List<CSVColumnProcessor> services;
 
     @Autowired
-    public ServiceProccessor(List<Service> services) {
+    public ColumnsDataProcessor(List<CSVColumnProcessor> services) {
         this.services = services;
     }
 
@@ -25,11 +24,9 @@ public class ServiceProccessor {
         }
         System.out.println("Number of services: " + services.size());
 
-        for (Service service : services) {
-            if (service instanceof CSVColumnProcessor) {
-                System.out.println("Service: " + service.getClass().getSimpleName());
-                ((CSVColumnProcessor) service).process(csvData);
-            }
+        for (CSVColumnProcessor service : services) {
+            System.out.println("Service: " + service.getClass().getSimpleName());
+            service.process(csvData);
         }
 
         System.out.println("Services initialized and data passed successfully!");
