@@ -46,23 +46,3 @@ public class SeriesService implements ServiceInterface, Service{
         return null;
     }
 }
-
-
-
-
-//Use this logic for genre
-//public void process(List<Map<String, String>> data) {
-//    System.out.println("Series processing started!"+ seriesRepository);
-//    for (Map<String, String> row : data) {
-//        System.out.println(row.get("series"));
-//        String[] seriesArr = ArrayStringProcessor.getArrElements(row.get("series"));
-//        if(seriesArr == null)
-//            continue;
-//        for (String series : seriesArr) {
-//            SeriesDTO seriesDTO = new SeriesDTO(series);
-//            System.out.println(seriesDTO.getTitle());
-//            Series seriesEntity = seriesMapper.mapDtoToEntity(seriesDTO);
-//            seriesRepository.save(seriesEntity);
-//        }
-//
-//    }

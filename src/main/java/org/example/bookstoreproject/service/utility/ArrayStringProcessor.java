@@ -13,7 +13,7 @@ public class ArrayStringProcessor {
 
         if (arr.length > 1) {
             for (int i = 0; i < arr.length; i++) {
-                arr[i] = arr[i].trim(); // Trim spaces
+                arr[i] = arr[i].trim();
 
                 if (arr[i].startsWith("'") && arr[i].endsWith("'")) {
                     arr[i] = arr[i].substring(1, arr[i].length() - 1);
