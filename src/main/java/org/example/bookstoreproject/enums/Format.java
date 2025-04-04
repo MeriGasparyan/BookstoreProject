@@ -1,4 +1,33 @@
 package org.example.bookstoreproject.enums;
 
 public enum Format {
+    HARDCOVER,
+    PAPERBACK,
+    MASS_MARKET_PAPERBACK,
+    TRADE_PAPERBACK,
+    SPIRAL_BOUND,
+    LIBRARY_BINDING,
+    BOARD_BOOK,
+    AUDIOBOOK_CD,
+    AUDIOBOOK_CASSETTE,
+    AUDIOBOOK_MP3,
+    AUDIOBOOK_DOWNLOAD,
+    EBOOK,
+    PDF,
+    EPUB,
+    MOBI,
+    KINDLE,
+    NOOK,
+    ONLINE,
+    BOX_SET,
+    COMIC,
+    GRAPHIC_NOVEL,
+    JOURNAL,
+    MAGAZINE,
+    NEWSPAPER,
+    POSTER,
+    MAP,
+    CALENDAR,
+    FLASHCARDS,
+    WORKBOOK
 }
