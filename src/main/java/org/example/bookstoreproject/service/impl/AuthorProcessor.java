@@ -3,6 +3,7 @@ package org.example.bookstoreproject.service.impl;
 import lombok.AllArgsConstructor;
 import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.repository.AuthorRepository;
+import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.dto.AuthorDTO;
 import org.example.bookstoreproject.service.mapper.AuthorMapper;
 import org.springframework.stereotype.Component;
@@ -21,10 +22,10 @@ public class AuthorProcessor implements CSVColumnProcessor{
     private final AuthorMapper authorMapper;
 
 
-    public void process(List<Map<String, String>> data) {
-        for (Map<String, String> row : data) {
-            if (!row.get("author").isEmpty()) {
-                AuthorDTO authorDTO = new AuthorDTO(row.get("author").trim());
+    public void process(List<CSVRow> data) {
+        for (CSVRow row : data) {
+            if (!row.getAuthor().isEmpty()) {
+                AuthorDTO authorDTO = new AuthorDTO(row.getAuthor().trim());
 
                 Optional<Author> existing = authorRepository.findByName(authorDTO.getName());
                 if (existing.isEmpty()) {

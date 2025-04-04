@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class ColumnsDataProcessor {
+public class CSVColumnDataProcessor {
 
     private final List<CSVColumnProcessor> services;
 
     @Autowired
-    public ColumnsDataProcessor(List<CSVColumnProcessor> services) {
+    public CSVColumnDataProcessor(List<CSVColumnProcessor> services) {
         this.services = services;
     }
 
-    public void initializeServices(List<Map<String, String>> csvData) {
-        if (csvData == null || csvData.isEmpty()) {
+    public void initializeServices(List<CSVRow> data) {
+        if (data == null || data.isEmpty()) {
             System.err.println("CSV data is empty. Skipping service initialization.");
             return;
         }
@@ -26,7 +26,7 @@ public class ColumnsDataProcessor {
 
         for (CSVColumnProcessor service : services) {
             System.out.println("Service: " + service.getClass().getSimpleName());
-            service.process(csvData);
+            service.process(data);
         }
 
         System.out.println("Services initialized and data passed successfully!");

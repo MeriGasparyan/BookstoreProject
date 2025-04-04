@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.entry.Character;
 import org.example.bookstoreproject.persistance.repository.CharacterRepository;
+import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.dto.CharacterDTO;
 import org.example.bookstoreproject.service.mapper.CharacterMapper;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;
@@ -21,10 +22,10 @@ public class CharacterProcessor implements CSVColumnProcessor{
     private final CharacterRepository characterRepository;
     private final CharacterMapper characterMapper;
     @Override
-    public void process(List<Map<String, String>> data) {
-        for (Map<String, String> row : data) {
-            System.out.println(row.get("characters"));
-            String[] charactersArr = ArrayStringParser.getArrElements(row.get("characters"));
+    public void process(List<CSVRow> data) {
+        for (CSVRow row : data) {
+            System.out.println(row.getCharacters());
+            String[] charactersArr = ArrayStringParser.getArrElements(row.getCharacters());
             if (charactersArr == null)
                 continue;
             for (String character : charactersArr) {
