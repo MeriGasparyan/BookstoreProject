@@ -1,8 +1,7 @@
 package org.example.bookstoreproject.service;
 
-import org.example.bookstoreproject.service.impl.ServiceInterface;
+import org.example.bookstoreproject.service.impl.CSVColumnProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -10,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class ServiceInitializer {
+public class ServiceProccessor {
 
     private final List<Service> services;
 
     @Autowired
-    public ServiceInitializer(List<Service> services) {
+    public ServiceProccessor(List<Service> services) {
         this.services = services;
     }
 
@@ -27,9 +26,9 @@ public class ServiceInitializer {
         System.out.println("Number of services: " + services.size());
 
         for (Service service : services) {
-            if (service instanceof ServiceInterface) {
+            if (service instanceof CSVColumnProcessor) {
                 System.out.println("Service: " + service.getClass().getSimpleName());
-                ((ServiceInterface) service).process(csvData);
+                ((CSVColumnProcessor) service).process(csvData);
             }
         }
 

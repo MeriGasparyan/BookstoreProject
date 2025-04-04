@@ -1,6 +1,6 @@
 package org.example.bookstoreproject.controller;
 
-import org.example.bookstoreproject.service.ServiceInitializer;
+import org.example.bookstoreproject.service.ServiceProccessor;
 import org.example.bookstoreproject.service.utility.CSVParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class CSVController {
     private CSVParser csvParser;
 
     @Autowired
-    private ServiceInitializer serviceInitializer;  // Autowired for automatic injection
+    private ServiceProccessor serviceInitializer;  // Autowired for automatic injection
 
     @PostMapping("/csv")
     public ResponseEntity<String> uploadCsv(@RequestParam("books") MultipartFile file) {
@@ -29,8 +29,8 @@ public class CSVController {
             System.out.println("File uploaded: " + file.getOriginalFilename());
 
 
-            csvParser.init();
-            System.out.println("CSV Parser initialized");
+            //csvParser.init();
+            //System.out.println("CSV Parser initialized");
 
 
             csvParser.parseCSV(file);

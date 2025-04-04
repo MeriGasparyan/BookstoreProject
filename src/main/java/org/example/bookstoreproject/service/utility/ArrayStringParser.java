@@ -1,6 +1,6 @@
 package org.example.bookstoreproject.service.utility;
 
-public class ArrayStringProcessor {
+public class ArrayStringParser {
 
     public static String[] getArrElements(String input) {
 

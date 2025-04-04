@@ -1,15 +1,10 @@
 package org.example.bookstoreproject.service.impl;
 
 import lombok.AllArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.entry.Series;
-import org.example.bookstoreproject.persistance.repository.AuthorRepository;
 import org.example.bookstoreproject.persistance.repository.SeriesRepository;
-import org.example.bookstoreproject.service.dto.AuthorDTO;
 import org.example.bookstoreproject.service.dto.SeriesDTO;
-import org.example.bookstoreproject.service.mapper.AuthorMapper;
 import org.example.bookstoreproject.service.mapper.SeriesMapper;
-import org.example.bookstoreproject.service.utility.ArrayStringProcessor;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Annotation;
@@ -18,7 +13,7 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
-public class SeriesService implements ServiceInterface, Service{
+public class SeriesProcessor implements CSVColumnProcessor, Service{
 
     private final SeriesRepository seriesRepository;
     private final SeriesMapper seriesMapper;

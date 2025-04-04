@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
-public class AuthorService implements ServiceInterface, Service {
+public class AuthorProcessor implements CSVColumnProcessor, Service {
 
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
