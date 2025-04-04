@@ -21,7 +21,7 @@ public class AuthorService implements ServiceInterface, Service {
 
     public void process(List<Map<String, String>> data) {
         for (Map<String, String> row : data) {
-            if (!row.get("series").isEmpty()) {
+            if (!row.get("author").isEmpty()) {
                 AuthorDTO authorDTO = new AuthorDTO(row.get("author").trim());
                 //System.out.println(authorDTO.getName());
 
