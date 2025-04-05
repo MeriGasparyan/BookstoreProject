@@ -17,4 +17,8 @@ public class Award {
 
     @Column(nullable = false, unique = true)
     private String title;
+
+    public Award(String title) {
+        this.title = title;
+    }
 }
