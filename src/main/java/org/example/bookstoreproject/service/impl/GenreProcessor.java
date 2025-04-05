@@ -21,7 +21,6 @@ public class GenreProcessor implements CSVColumnProcessor {
     @Override
     public void process(List<CSVRow> data) {
         for (CSVRow row : data) {
-            System.out.println(row.getGenres());
             String[] genresArr = ArrayStringParser.getArrElements(row.getGenres());
             if (genresArr == null)
                 continue;

@@ -19,7 +19,6 @@ public class SeriesProcessor implements CSVColumnProcessor{
     private final SeriesMapper seriesMapper;
 
     public void process(List<CSVRow> data) {
-        System.out.println("Series processing started!"+ seriesRepository);
         for (CSVRow row : data) {
             if(!row.getSeries().isEmpty()){
                 SeriesDTO seriesDto = new SeriesDTO(row.getSeries().trim());

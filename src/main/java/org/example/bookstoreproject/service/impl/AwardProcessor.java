@@ -22,7 +22,6 @@ public class AwardProcessor implements CSVColumnProcessor {
     @Override
     public void process(List<CSVRow> data) {
         for (CSVRow row : data) {
-            System.out.println(row.getGenres());
             String[] awardArr = ArrayStringParser.getArrElements(row.getAwards());
             if (awardArr == null)
                 continue;

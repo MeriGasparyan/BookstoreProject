@@ -20,7 +20,6 @@ public class CharacterProcessor implements CSVColumnProcessor{
     @Override
     public void process(List<CSVRow> data) {
         for (CSVRow row : data) {
-            System.out.println(row.getCharacters());
             String[] charactersArr = ArrayStringParser.getArrElements(row.getCharacters());
             if (charactersArr == null)
                 continue;
