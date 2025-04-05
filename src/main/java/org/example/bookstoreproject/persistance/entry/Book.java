@@ -2,6 +2,7 @@ package org.example.bookstoreproject.persistance.entry;
 import jakarta.persistence.*;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.bookstoreproject.enums.Format;
 import org.example.bookstoreproject.enums.Language;
@@ -12,6 +13,7 @@ import java.text.DateFormat;
 @Table(name = "book")
 @Setter
 @Getter
+@NoArgsConstructor
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

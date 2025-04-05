@@ -3,6 +3,7 @@ package org.example.bookstoreproject.persistance.entry;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -14,6 +15,7 @@ import lombok.Setter;
 )
 @Setter
 @Getter
+@NoArgsConstructor
 public class RatingStar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

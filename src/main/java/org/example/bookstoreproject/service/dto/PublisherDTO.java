@@ -1,5 +1,4 @@
 package org.example.bookstoreproject.service.dto;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AuthorDTO {
+public class PublisherDTO {
     private String name;
-    //private String role;
 }

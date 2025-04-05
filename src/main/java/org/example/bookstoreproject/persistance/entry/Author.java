@@ -19,6 +19,14 @@ public class Author {
     @Column(nullable = false, unique = true)
     private String name;
 
+//    @Column(nullable = false)
+//    private String role;
+
+//    public Author(String name, String role) {
+//        this.name = name;
+//        this.role = role;
+//    }
+
     public Author(String name) {
         this.name = name;
     }
