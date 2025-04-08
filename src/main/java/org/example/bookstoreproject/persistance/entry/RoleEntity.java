@@ -1,28 +1,24 @@
 package org.example.bookstoreproject.persistance.entry;
+
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
-@Table(name = "author")
+@Table(name = "role")
 @Setter
 @Getter
 @NoArgsConstructor
-public class Author {
-
+public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name;
+    private String roleName;
 
-    public Author(String name) {
-        this.name = name;
+    public RoleEntity(String roleName) {
+        this.roleName = roleName;
     }
-
 }

@@ -7,14 +7,19 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "star")
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 public class Star {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private Integer star;
+    @Column(name = "level", nullable = false, unique = true)
+    private String level;
+
+    public Star(String level) {
+        this.level = level;
+    }
 }

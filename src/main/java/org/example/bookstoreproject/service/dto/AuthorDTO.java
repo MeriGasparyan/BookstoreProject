@@ -9,5 +9,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AuthorDTO {
     private String name;
-    //private String role;
 }
