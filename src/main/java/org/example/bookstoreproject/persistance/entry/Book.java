@@ -50,4 +50,15 @@ public class Book {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "series_id")
     private Series series;
+
+    public Book(String title, Language language, String isbn, Format format, Integer pages, Float price, Publisher publisher) {
+        this.title = title;
+        this.language = language;
+        this.isbn = isbn;
+        this.format = format;
+        this.pages = pages;
+        this.price = price;
+        this.publisher = publisher;
+
+    }
 }

@@ -30,6 +30,10 @@ public class Rating {
     @Column
     private Integer bbeVotes;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
+    private Book book;
+
     public Rating(Float rating, String bookID, Integer bbeScore, Integer bbeVotes) {
         this.rating = rating;
         this.bookID = bookID;
