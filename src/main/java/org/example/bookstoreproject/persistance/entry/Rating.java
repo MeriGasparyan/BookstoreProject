@@ -8,7 +8,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "rating",
         uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"rating", "bookID"})}
+        @UniqueConstraint(columnNames = {"rating", "book_id"})}
 )
 @Setter
 @Getter
@@ -21,9 +21,6 @@ public class Rating {
     @Column(nullable = false)
     private Float rating;
 
-    @Column(nullable = false)
-    private String bookID;
-
     @Column
     private Integer bbeScore;
 
@@ -34,9 +31,8 @@ public class Rating {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    public Rating(Float rating, String bookID, Integer bbeScore, Integer bbeVotes) {
+    public Rating(Float rating, Integer bbeScore, Integer bbeVotes) {
         this.rating = rating;
-        this.bookID = bookID;
         this.bbeScore = bbeScore;
         this.bbeVotes = bbeVotes;
     }
