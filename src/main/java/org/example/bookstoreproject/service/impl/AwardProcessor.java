@@ -16,7 +16,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AwardProcessor implements CSVColumnProcessor {
     private final AwardRepository awardRepository;
-    private final AwardMapper awardMapper;
 
 
     @Override
@@ -26,10 +25,9 @@ public class AwardProcessor implements CSVColumnProcessor {
             if (awardArr == null)
                 continue;
             for (String award : awardArr) {
-                AwardDTO awardDTO = new AwardDTO(award);
-                Optional<Award> existing = awardRepository.findByTitle(awardDTO.getTitle());
+                Optional<Award> existing = awardRepository.findByTitle(award);
                 if (existing.isEmpty()) {
-                    Award awardEntity = awardMapper.mapDtoToEntity(awardDTO);
+                    Award awardEntity = new Award(award);
                     awardRepository.save(awardEntity);
                 }
             }

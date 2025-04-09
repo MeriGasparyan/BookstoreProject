@@ -16,7 +16,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class GenreProcessor implements CSVColumnProcessor {
     private final GenreRepository genreRepository;
-    private final GenreMapper genreMapper;
 
     @Override
     public void process(List<CSVRow> data) {
@@ -25,10 +24,9 @@ public class GenreProcessor implements CSVColumnProcessor {
             if (genresArr == null)
                 continue;
             for (String genre : genresArr) {
-                GenreDTO genreDTO = new GenreDTO(genre);
-                Optional<Genre> existing = genreRepository.findByName(genreDTO.getName());
+                Optional<Genre> existing = genreRepository.findByName(genre);
                 if (existing.isEmpty()) {
-                    Genre genreEntity = genreMapper.mapDtoToEntity(genreDTO);
+                    Genre genreEntity = new Genre(genre);
                     genreRepository.save(genreEntity);
                 }
             }

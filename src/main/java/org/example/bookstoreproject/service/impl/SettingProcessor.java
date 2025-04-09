@@ -16,7 +16,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SettingProcessor implements CSVColumnProcessor{
     private final SettingRepository settingRepository;
-    private final SettingMapper settingMapper;
 
     @Override
     public void process(List<CSVRow> data) {
@@ -25,10 +24,9 @@ public class SettingProcessor implements CSVColumnProcessor{
             if (settingArr == null)
                 continue;
             for (String setting : settingArr) {
-                SettingDTO settingDTO = new SettingDTO(setting);
-                Optional<Setting> existing = settingRepository.findByName(settingDTO.getName());
+                Optional<Setting> existing = settingRepository.findByName(setting);
                 if (existing.isEmpty()) {
-                    Setting settingEntity = settingMapper.mapDtoToEntity(settingDTO);
+                    Setting settingEntity = new Setting(setting);
                     settingRepository.save(settingEntity);
                 }
             }

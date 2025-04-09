@@ -16,7 +16,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CharacterProcessor implements CSVColumnProcessor{
     private final CharacterRepository characterRepository;
-    private final CharacterMapper characterMapper;
     @Override
     public void process(List<CSVRow> data) {
         for (CSVRow row : data) {
@@ -24,10 +23,9 @@ public class CharacterProcessor implements CSVColumnProcessor{
             if (charactersArr == null)
                 continue;
             for (String character : charactersArr) {
-                CharacterDTO characterDTO = new CharacterDTO(character);
-                Optional<Character> existing = characterRepository.findByName(characterDTO.getName());
+                Optional<Character> existing = characterRepository.findByName(character);
                 if (existing.isEmpty()) {
-                    Character characterEntity = characterMapper.mapDtoToEntity(characterDTO);
+                    Character characterEntity = new Character(character);
                     characterRepository.save(characterEntity);
                 }
             }

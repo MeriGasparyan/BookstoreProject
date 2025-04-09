@@ -15,16 +15,15 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PublisherProcessor implements CSVColumnProcessor {
     private final PublisherRepository publisherRepository;
-    private final PublisherMapper publisherMapper;
     @Override
     public void process(List<CSVRow> data) {
         for (CSVRow row : data) {
             if (!row.getPublisher().isEmpty()) {
-                PublisherDTO publisherDTO = new PublisherDTO(row.getPublisher().trim());
-                Optional<Publisher> existing = publisherRepository.findByName(publisherDTO.getName());
+                String publisher = row.getPublisher().trim();
+                Optional<Publisher> existing = publisherRepository.findByName(publisher);
                 if (existing.isEmpty()) {
-                    Publisher publisher = publisherMapper.mapDtoToEntity(publisherDTO);
-                    publisherRepository.save(publisher);
+                    Publisher publisherEntity = new Publisher(publisher);
+                    publisherRepository.save(publisherEntity);
                 }
             }
         }

@@ -16,16 +16,15 @@ import java.util.Optional;
 public class SeriesProcessor implements CSVColumnProcessor{
 
     private final SeriesRepository seriesRepository;
-    private final SeriesMapper seriesMapper;
 
     public void process(List<CSVRow> data) {
         for (CSVRow row : data) {
             if(!row.getSeries().isEmpty()){
-                SeriesDTO seriesDto = new SeriesDTO(row.getSeries().trim());
-                Optional<Series> existing = seriesRepository.findByTitle(seriesDto.getTitle());
+                String series = row.getSeries().trim();
+                Optional<Series> existing = seriesRepository.findByTitle(series);
                 if (existing.isEmpty()) {
-                    Series series = seriesMapper.mapDtoToEntity(seriesDto);
-                    seriesRepository.save(series);
+                    Series seriesEntity = new Series(series);
+                    seriesRepository.save(seriesEntity);
                 }
             }
         }
