@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Entity
 @Table(
-        name = "star_rating",
+        name = "rating_star",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"rating", "star"})
         }
@@ -29,6 +29,12 @@ public class RatingStar {
     @JoinColumn(name = "star")
     private Star star;
 
-    @Column(nullable = false)
+    @Column
     private Long numRating;
+
+    public RatingStar(Rating rating, Star star, Long numRating) {
+        this.rating = rating;
+        this.star = star;
+        this.numRating = numRating;
+    }
 }
