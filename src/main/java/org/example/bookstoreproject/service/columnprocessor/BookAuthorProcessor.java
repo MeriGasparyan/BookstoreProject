@@ -31,6 +31,9 @@ public class BookAuthorProcessor implements CSVColumnProcessor {
                     bookRepository.findByBookID(entry.getKey().trim());
             if(book.isPresent()){
                 for(Author author : authors){
+                    if(bookAuthorRepository.existsByBookAndAuthor(book.get(), author)){
+                        continue;
+                    }
                     BookAuthor bookAuthor = new BookAuthor(book.get(), author);
                     bookAuthorRepository.save(bookAuthor);
                 }

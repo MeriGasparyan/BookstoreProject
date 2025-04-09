@@ -27,6 +27,9 @@ public class BookAwardProcessor implements CSVColumnProcessor{
                     bookRepository.findByBookID(entry.getKey().trim());
             if(book.isPresent()){
                 for(Award award : awards){
+                    if(bookAwardRepository.existsByBookAndAward(book.get(), award)){
+                        continue;
+                    }
                     BookAward bookAward = new BookAward(book.get(), award);
                     bookAwardRepository.save(bookAward);
                 }

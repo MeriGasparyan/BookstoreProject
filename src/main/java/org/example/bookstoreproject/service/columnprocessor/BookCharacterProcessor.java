@@ -30,6 +30,9 @@ public class BookCharacterProcessor implements CSVColumnProcessor{
                     bookRepository.findByBookID(entry.getKey().trim());
             if(book.isPresent()){
                 for(Character character : characters){
+                    if(bookCharacterRepository.existsByBookAndCharacter(book.get(), character)){
+                        continue;
+                    }
                     BookCharacter bookCharacter = new BookCharacter(book.get(), character);
                     bookCharacterRepository.save(bookCharacter);
                 }
