@@ -44,7 +44,8 @@ public class RatingProcessor implements CSVColumnProcessor {
                             + row.getBookID().trim() + ", Rating = " + row.getRating().trim());
                 }
                 else {
-                    Rating newRating = new Rating(rating,bbeScore,bbeVotes);
+                    Book book = existingBook.get();
+                    Rating newRating = new Rating(rating,bbeScore,bbeVotes,book);
                     ratingRepository.save(newRating);
 
                 }

@@ -31,9 +31,10 @@ public class Rating {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    public Rating(Float rating, Integer bbeScore, Integer bbeVotes) {
+    public Rating(Float rating, Integer bbeScore, Integer bbeVotes, Book book) {
         this.rating = rating;
         this.bbeScore = bbeScore;
         this.bbeVotes = bbeVotes;
+        this.book = book;
     }
 }
