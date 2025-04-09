@@ -1,4 +1,4 @@
-package org.example.bookstoreproject.service.impl;
+package org.example.bookstoreproject.service.columnprocessor;
 
 import org.example.bookstoreproject.service.CSVRow;
 import org.springframework.stereotype.Component;

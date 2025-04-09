@@ -1,11 +1,9 @@
-package org.example.bookstoreproject.service.impl;
+package org.example.bookstoreproject.service.columnprocessor;
 
 import lombok.AllArgsConstructor;
 import org.example.bookstoreproject.persistance.entry.Genre;
 import org.example.bookstoreproject.persistance.repository.GenreRepository;
 import org.example.bookstoreproject.service.CSVRow;
-import org.example.bookstoreproject.service.dto.GenreDTO;
-import org.example.bookstoreproject.service.mapper.GenreMapper;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
