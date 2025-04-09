@@ -23,4 +23,9 @@ public class BookCharacter {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "character_id")
     private Character character;
+
+    public BookCharacter(Book book, Character character) {
+        this.book = book;
+        this.character = character;
+    }
 }

@@ -22,4 +22,9 @@ public class BookAward {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "award_id")
     private Award award;
+
+    public BookAward(Book book, Award award) {
+        this.book = book;
+        this.award = award;
+    }
 }

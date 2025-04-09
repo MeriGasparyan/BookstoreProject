@@ -22,4 +22,9 @@ public class BookGenre {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genre_id")
     private Genre genre;
+
+    public BookGenre(Book book, Genre genre) {
+        this.book = book;
+        this.genre = genre;
+    }
 }

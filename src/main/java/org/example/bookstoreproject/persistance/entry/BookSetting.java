@@ -22,4 +22,9 @@ public class BookSetting {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "setting_id")
     private Setting setting;
+
+    public BookSetting(Book book, Setting setting) {
+        this.book = book;
+        this.setting = setting;
+    }
 }
