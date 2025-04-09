@@ -47,10 +47,10 @@ public class Book {
     @Column
     private Float price;
 
-    @Column(name = "Publish date", nullable = false)
+    @Column(name = "Publish date")
     private Date publishDate;
 
-    @Column(name = "First publish date", nullable = false)
+    @Column(name = "First publish date")
     private Date firstPublishDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
