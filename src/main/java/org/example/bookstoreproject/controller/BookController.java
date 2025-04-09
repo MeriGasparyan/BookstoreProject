@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/book")
 public class BookController {
@@ -27,6 +29,15 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         return ResponseEntity.ok(bookDTO);
+    }
+
+    @GetMapping("/author/name/{authorName}")
+    public ResponseEntity<List<BookDTO>> getBooksByAuthorName(@PathVariable String authorName) {
+        List<BookDTO> books = bookService.getBooksByAuthorName(authorName);
+        if (books.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(books);
     }
 
 
