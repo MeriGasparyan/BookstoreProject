@@ -12,7 +12,7 @@ import java.util.Date;
 @Table(
         name = "book",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"isbn", "title"})
+                @UniqueConstraint(columnNames = {"bookID", "title"})
         }
 )
 @Setter
@@ -26,6 +26,9 @@ public class Book {
 
     @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
+    private String bookID;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language")
@@ -58,8 +61,9 @@ public class Book {
     @JoinColumn(name = "series_id")
     private Series series;
 
-    public Book(String title, LanguageEntity language, String isbn, FormatEntity format, Integer pages, Float price, Date publishDate, Date firstPublishDate, Publisher publisher, Series series) {
+    public Book(String title, String bookID, LanguageEntity language, String isbn, FormatEntity format, Integer pages, Float price, Date publishDate, Date firstPublishDate, Publisher publisher, Series series) {
         this.title = title;
+        this.bookID = bookID;
         this.language = language;
         this.isbn = isbn;
         this.format = format;

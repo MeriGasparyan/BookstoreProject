@@ -9,8 +9,8 @@ import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.format.DateFormatter;
 import org.example.bookstoreproject.service.format.FormatFormatter;
 import org.example.bookstoreproject.service.format.LanguageFormatter;
-import org.example.bookstoreproject.service.format.PagesFormatter;
-import org.example.bookstoreproject.service.format.PriceFormatter;
+import org.example.bookstoreproject.service.format.IntegerFormatter;
+import org.example.bookstoreproject.service.format.FloatFormatter;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +29,8 @@ public class BookProcessor implements CSVColumnProcessor {
     private final FormatRepository formatRepository;
 
     private final DateFormatter dateFormatter;
-    private final PagesFormatter pagesFormatter;
-    private final PriceFormatter priceFormatter;
+    private final IntegerFormatter pagesFormatter;
+    private final FloatFormatter priceFormatter;
     private final LanguageFormatter languageFormatter;
     private final FormatFormatter formatFormatter;
 
@@ -39,7 +39,7 @@ public class BookProcessor implements CSVColumnProcessor {
         for (CSVRow row : data) {
             try {
                 Optional<Book> existingBook =
-                        bookRepository.findByIsbnAndTitle(row.getIsbn().trim(), row.getTitle().trim());
+                        bookRepository.findByBookID(row.getBookID().trim());
                 if (existingBook.isPresent()) {
                     System.out.println("Book already exists: ISBN = "
                             + row.getIsbn().trim() + ", Title = " + row.getTitle().trim());
@@ -50,8 +50,8 @@ public class BookProcessor implements CSVColumnProcessor {
                 Format format = formatFormatter.formatFormat(row.getFormat());
                 Optional<FormatEntity> existingFormat = formatRepository.findByFormat(format.name());
 
-                Integer pages = pagesFormatter.getPagesNumber(row.getPages());
-                Float price = priceFormatter.getPrice(row.getPrice());
+                Integer pages = pagesFormatter.getInt(row.getPages());
+                Float price = priceFormatter.getFloat(row.getPrice());
                 Date publishDate = dateFormatter.getDate(row.getPublishDate());
                 Date firstPublishDate = dateFormatter.getDate(row.getFirstPublishDate());
 
@@ -70,6 +70,7 @@ public class BookProcessor implements CSVColumnProcessor {
 
                 Book book = new Book(
                         row.getTitle(),
+                        row.getBookID().trim(),
                         existingLanguage.get(),
                         row.getIsbn(),
                         existingFormat.get(),

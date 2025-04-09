@@ -3,8 +3,8 @@ package org.example.bookstoreproject.service.format;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PagesFormatter {
-    public Integer getPagesNumber(String pagesString) {
+public class IntegerFormatter {
+    public Integer getInt(String pagesString) {
         if (pagesString == null || pagesString.isEmpty()) {
             return null;
         }

@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CSVRow {
     private String title;
+    private String bookID;
     private String series;
     private String author;
     private String rating;
@@ -34,6 +35,7 @@ public class CSVRow {
     private String price;
 
     public CSVRow(String[] values) {
+        this.bookID = values[0];
         this.title = values[1];
         this.series = values[2];
         this.author = values[3];
