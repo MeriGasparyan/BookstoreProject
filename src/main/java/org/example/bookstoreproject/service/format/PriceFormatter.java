@@ -1,7 +1,10 @@
 package org.example.bookstoreproject.service.format;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class PriceFormatter {
-    public static Float getPrice(String priceString) {
+    public Float getPrice(String priceString) {
         if (priceString == null || priceString.isEmpty()) {
             return null;
         }

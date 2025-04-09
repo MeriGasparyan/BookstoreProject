@@ -1,7 +1,10 @@
 package org.example.bookstoreproject.service.format;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class PagesFormatter {
-    public static Integer getPagesNumber(String pagesString) {
+    public Integer getPagesNumber(String pagesString) {
         if (pagesString == null || pagesString.isEmpty()) {
             return null;
         }

@@ -29,6 +29,10 @@ public class BookProcessor implements CSVColumnProcessor {
     private final FormatRepository formatRepository;
 
     private final DateFormatter dateFormatter;
+    private final PagesFormatter pagesFormatter;
+    private final PriceFormatter priceFormatter;
+    private final LanguageFormatter languageFormatter;
+    private final FormatFormatter formatFormatter;
 
     @Override
     public void process(List<CSVRow> data) {
@@ -41,13 +45,13 @@ public class BookProcessor implements CSVColumnProcessor {
                             + row.getIsbn().trim() + ", Title = " + row.getTitle().trim());
                 }
 
-                Language language = LanguageFormatter.formatLanguage(row.getLanguage());
+                Language language = languageFormatter.formatLanguage(row.getLanguage());
                 Optional<LanguageEntity> existingLanguage = languageRepository.findByLanguage(language.name());
-                Format format = FormatFormatter.formatFormat(row.getFormat());
+                Format format = formatFormatter.formatFormat(row.getFormat());
                 Optional<FormatEntity> existingFormat = formatRepository.findByFormat(format.name());
 
-                Integer pages = PagesFormatter.getPagesNumber(row.getPages());
-                Float price = PriceFormatter.getPrice(row.getPrice());
+                Integer pages = pagesFormatter.getPagesNumber(row.getPages());
+                Float price = priceFormatter.getPrice(row.getPrice());
                 Date publishDate = dateFormatter.getDate(row.getPublishDate());
                 Date firstPublishDate = dateFormatter.getDate(row.getFirstPublishDate());
 

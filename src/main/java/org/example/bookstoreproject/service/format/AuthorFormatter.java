@@ -1,15 +1,17 @@
 package org.example.bookstoreproject.service.format;
 
 import org.example.bookstoreproject.enums.Role;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class AuthorFormatter {
 
-    public static Map<String, List<Role>> formatAuthor(String authorString) {
+    public Map<String, List<Role>> formatAuthor(String authorString) {
         Map<String, List<Role>> authorRolesMap = new LinkedHashMap<>();
         String[] words = authorString.split(",");
         for (int i = 0; i < words.length; i++) {

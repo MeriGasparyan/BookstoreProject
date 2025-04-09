@@ -25,12 +25,13 @@ public class AuthorProcessor implements CSVColumnProcessor {
     private final AuthorRepository authorRepository;
     private final RoleRepository roleRepository;
     private final AuthorRoleRepository authorRoleRepository;
+    private final AuthorFormatter authorFormatter;
 
     @Override
     public void process(List<CSVRow> data) {
         for (CSVRow row : data) {
             if (!row.getAuthor().isEmpty()) {
-                Map<String, List<Role>> formattedAuthors = AuthorFormatter.formatAuthor(row.getAuthor().trim());
+                Map<String, List<Role>> formattedAuthors = authorFormatter.formatAuthor(row.getAuthor().trim());
 
                 for (Map.Entry<String, List<Role>> entry : formattedAuthors.entrySet()) {
                     String name = entry.getKey();
