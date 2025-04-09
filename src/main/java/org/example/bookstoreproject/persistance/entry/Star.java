@@ -13,10 +13,7 @@ import lombok.Setter;
 public class Star {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "level", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String level;
 
     public Star(String level) {
