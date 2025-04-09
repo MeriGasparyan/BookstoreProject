@@ -28,4 +28,9 @@ public class AuthorRole {
     @JoinColumn(name = "role")
     private RoleEntity role;
 
+    public AuthorRole(Author author, RoleEntity role) {
+        this.author = author;
+        this.role = role;
+    }
+
 }

@@ -28,6 +28,8 @@ public class RatingProcessor implements CSVColumnProcessor {
         for (CSVRow row : data) {
             try {
                 Float rating = floatFormatter.getFloat(row.getRating());
+                Integer bbeScore = integerFormatter.getInt(row.getBbeScore());
+                Integer bbeVotes = integerFormatter.getInt(row.getBbeVotes());
                 Optional<Book> existingBook =
                         bookRepository.findByBookID(row.getBookID().trim());
                 if(existingBook.isEmpty()) {
@@ -38,15 +40,17 @@ public class RatingProcessor implements CSVColumnProcessor {
                         .existsByRatingAndBook_Id(rating, existingBook.get().getId());
 
                 if (alreadyExists) {
-                    System.out.println("Book already exists: ISBN = "
-                            + row.getIsbn().trim() + ", Title = " + row.getTitle().trim());
+                    System.out.println("Book  rating already exists: BookID = "
+                            + row.getBookID().trim() + ", Rating = " + row.getRating().trim());
                 }
                 else {
-                    Rating newRating = new Rating();
+                    Rating newRating = new Rating(rating,bbeScore,bbeVotes);
+                    ratingRepository.save(newRating);
+
                 }
             }
             catch (Exception e) {
-                System.err.println("Error processing row with ISBN: " + row.getIsbn() + ". Error: " + e.getMessage());
+                System.err.println("Error processing row with bookID: " + row.getBookID() + ". Error: " + e.getMessage());
 
             }
     }

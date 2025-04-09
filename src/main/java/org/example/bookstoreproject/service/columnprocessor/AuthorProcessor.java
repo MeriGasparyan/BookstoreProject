@@ -49,9 +49,7 @@ public class AuthorProcessor implements CSVColumnProcessor {
                                     .existsByAuthorAndRole(author, roleEntity);
 
                             if (!alreadyExists) {
-                                AuthorRole authorRole = new AuthorRole();
-                                authorRole.setAuthor(author);
-                                authorRole.setRole(roleEntity);
+                                AuthorRole authorRole = new AuthorRole(author, roleEntity);
                                 authorRoleRepository.save(authorRole);
                             }
                         }
