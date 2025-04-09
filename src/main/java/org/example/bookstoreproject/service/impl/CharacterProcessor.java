@@ -7,6 +7,7 @@ import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.dto.CharacterDTO;
 import org.example.bookstoreproject.service.mapper.CharacterMapper;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
+@Order(3)
 public class CharacterProcessor implements CSVColumnProcessor{
     private final CharacterRepository characterRepository;
     @Override

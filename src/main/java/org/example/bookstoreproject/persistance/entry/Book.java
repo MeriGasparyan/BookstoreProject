@@ -1,19 +1,24 @@
 package org.example.bookstoreproject.persistance.entry;
 import jakarta.persistence.*;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.bookstoreproject.enums.Format;
-import org.example.bookstoreproject.enums.Language;
 
-import java.text.DateFormat;
+import java.util.Date;
 
 @Entity
-@Table(name = "book")
+@Table(
+        name = "book",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"isbn", "title"})
+        }
+)
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,14 +27,16 @@ public class Book {
     @Column(nullable = false)
     private String title;
 
-    @Column
-    private Language language;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "language")
+    private LanguageEntity language;
 
     @Column(nullable = false)
     private String isbn;
 
-    @Column
-    private Format format;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "format")
+    private FormatEntity format;
 
     @Column
     private Integer pages;
@@ -38,10 +45,10 @@ public class Book {
     private Float price;
 
     @Column(name = "Publish date", nullable = false)
-    private DateFormat publishDate;
+    private Date publishDate;
 
     @Column(name = "First publish date", nullable = false)
-    private DateFormat firstPublishDate;
+    private Date firstPublishDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id")
@@ -51,14 +58,18 @@ public class Book {
     @JoinColumn(name = "series_id")
     private Series series;
 
-    public Book(String title, Language language, String isbn, Format format, Integer pages, Float price, Publisher publisher) {
+    public Book(String title, LanguageEntity language, String isbn, FormatEntity format, Integer pages, Float price, Date publishDate, Date firstPublishDate, Publisher publisher, Series series) {
         this.title = title;
         this.language = language;
         this.isbn = isbn;
         this.format = format;
         this.pages = pages;
         this.price = price;
+        this.publishDate = publishDate;
+        this.firstPublishDate = firstPublishDate;
         this.publisher = publisher;
+        this.series = series;
+
 
     }
 }

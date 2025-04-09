@@ -6,6 +6,7 @@ import org.example.bookstoreproject.persistance.repository.SeriesRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.dto.SeriesDTO;
 import org.example.bookstoreproject.service.mapper.SeriesMapper;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
+@Order(6)
 public class SeriesProcessor implements CSVColumnProcessor{
 
     private final SeriesRepository seriesRepository;

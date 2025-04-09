@@ -7,6 +7,7 @@ import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.dto.GenreDTO;
 import org.example.bookstoreproject.service.mapper.GenreMapper;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
+@Order(4)
 public class GenreProcessor implements CSVColumnProcessor {
     private final GenreRepository genreRepository;
 

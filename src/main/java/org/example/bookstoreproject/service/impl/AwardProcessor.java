@@ -7,6 +7,7 @@ import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.dto.AwardDTO;
 import org.example.bookstoreproject.service.mapper.AwardMapper;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
+@Order(2)
 public class AwardProcessor implements CSVColumnProcessor {
     private final AwardRepository awardRepository;
 

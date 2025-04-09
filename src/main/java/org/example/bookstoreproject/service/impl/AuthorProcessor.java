@@ -10,6 +10,7 @@ import org.example.bookstoreproject.persistance.repository.AuthorRoleRepository;
 import org.example.bookstoreproject.persistance.repository.RoleRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.format.AuthorFormatter;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
+@Order(1)
 public class AuthorProcessor implements CSVColumnProcessor {
 
     private final AuthorRepository authorRepository;
