@@ -24,8 +24,8 @@ public class RatingService {
     private final StarRepository starRepository;
 
     @Transactional
-    public void rateBook(String bookId, Integer starValue) {
-        Book book = bookRepository.findByBookID(bookId)
+    public void rateBook(Long bookId, Integer starValue) {
+        Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("Book with ID " + bookId + " not found."));
 
         String starLevel;

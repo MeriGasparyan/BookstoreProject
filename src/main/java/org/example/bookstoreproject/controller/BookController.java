@@ -58,7 +58,7 @@ public class BookController {
     }
 
     @PostMapping("/rate/{bookId}/{star}")
-    public ResponseEntity<String> rateBook(@PathVariable String bookId, @PathVariable Integer star) {
+    public ResponseEntity<String> rateBook(@PathVariable Long bookId, @PathVariable Integer star) {
         if (star < 1 || star > 5) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Rating star must be between 1 and 5.");
         }
