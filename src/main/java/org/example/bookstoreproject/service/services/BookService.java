@@ -1,6 +1,8 @@
 package org.example.bookstoreproject.service.services;
 
 import lombok.AllArgsConstructor;
+import org.example.bookstoreproject.enums.Format;
+import org.example.bookstoreproject.enums.Language;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.repository.*;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
@@ -68,8 +70,8 @@ public class BookService {
             throw new IllegalArgumentException("Book with ID " + createRequest.getBookID() + " already exists.");
         }
 
-        LanguageEntity language = languageRepository.findByLanguage(createRequest.getLanguage()).orElse(null);
-        FormatEntity format = formatRepository.findByFormat(createRequest.getFormat()).orElse(null);
+        LanguageEntity language = languageRepository.findByLanguage(Language.fromString(createRequest.getLanguage()).name()).orElse(null);
+        FormatEntity format = formatRepository.findByFormat(Format.fromString(createRequest.getFormat()).name()).orElse(null);
         Publisher publisher = publisherRepository.findByName(createRequest.getPublisherName()).orElseGet(() -> publisherRepository.save(new Publisher(createRequest.getPublisherName())));
         Series series = seriesRepository.findByTitle(createRequest.getSeriesTitle()).orElseGet(() -> seriesRepository.save(new Series(createRequest.getSeriesTitle())));
 
