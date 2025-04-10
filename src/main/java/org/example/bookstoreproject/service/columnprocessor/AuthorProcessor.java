@@ -1,6 +1,5 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.bookstoreproject.enums.Role;
 import org.example.bookstoreproject.persistance.entry.Author;
