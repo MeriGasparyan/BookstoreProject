@@ -13,6 +13,8 @@ import org.example.bookstoreproject.service.format.AuthorFormatter;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.*;
 
 @Component
@@ -37,38 +39,77 @@ public class AuthorProcessor implements CSVColumnProcessor {
 
     @Override
     public void process(List<CSVRow> data) {
+        Map<String, Author> existingAuthorMap = new HashMap<>();
+        Map<String, RoleEntity> existingRoleMap = new HashMap<>();
+
+        List<Author> authorList = authorRepository.findAll();
+        List<AuthorRole> authorRoleList = authorRoleRepository.findAll();
+        List<RoleEntity> roleList = roleRepository.findAll();
+
+        for (Author author : authorList) {
+            existingAuthorMap.put(author.getName(), author);
+        }
+        for (RoleEntity role : roleList) {
+            existingRoleMap.put(role.getRoleName(), role);
+        }
+
+        Set<Pair<Long, Long>> existingAuthorRoleSet = new HashSet<>();
+        for (AuthorRole authorRole : authorRoleList) {
+            Long authorId = authorRole.getAuthor().getId();
+            Long roleId = authorRole.getRole().getId();
+            existingAuthorRoleSet.add(Pair.of(authorId, roleId));
+        }
+
+        List<Author> newAuthorsToSave = new ArrayList<>();
+        List<AuthorRole> newAuthorRolesToSave = new ArrayList<>();
+
         for (CSVRow row : data) {
             if (!row.getAuthor().isEmpty()) {
                 List<Author> authors = new ArrayList<>();
+                Map<String, Author> newAuthors = new HashMap<>();
                 Map<String, List<Role>> formattedAuthors = authorFormatter.formatAuthor(row.getAuthor().trim());
 
                 for (Map.Entry<String, List<Role>> entry : formattedAuthors.entrySet()) {
                     String name = entry.getKey();
-
                     List<Role> roles = entry.getValue();
-                    Author author = authorRepository.findByName(name)
-                            .orElseGet(() -> authorRepository.save(new Author(name)));
-                    authors.add(author);
 
+                    Author existingAuthor = existingAuthorMap.get(name);
+                    if (existingAuthor != null || newAuthors.containsKey(name)) {
+                        continue;
+                    }
+
+                    Author author = new Author(name);
+                    newAuthors.put(name, author);
+                    authors.add(author);
+                    newAuthorsToSave.add(author);
 
                     for (Role roleEnum : roles) {
-                        Optional<RoleEntity> roleEntityOpt = roleRepository.findByRoleName(roleEnum.name());
+                        RoleEntity roleEntity = existingRoleMap.get(roleEnum.name());
+                        if (roleEntity == null) continue;
 
-                        if (roleEntityOpt.isPresent()) {
-                            RoleEntity roleEntity = roleEntityOpt.get();
+                        Long authorId = author.getId();
+                        Long roleId = roleEntity.getId();
 
-                            boolean alreadyExists = authorRoleRepository
-                                    .existsByAuthorAndRole(author, roleEntity);
-
-                            if (!alreadyExists) {
-                                AuthorRole authorRole = new AuthorRole(author, roleEntity);
-                                authorRoleRepository.save(authorRole);
-                            }
+                        Pair<Long, Long> pair = Pair.of(authorId, roleId);
+                        if (!existingAuthorRoleSet.contains(pair)) {
+                            AuthorRole authorRole = new AuthorRole(author, roleEntity);
+                            newAuthorRolesToSave.add(authorRole);
+                            existingAuthorRoleSet.add(pair);
                         }
                     }
                 }
+
                 authorBookMap.put(row.getBookID().trim(), authors);
             }
         }
+
+        if (!newAuthorsToSave.isEmpty()) {
+            authorRepository.saveAll(newAuthorsToSave);
+        }
+
+        if (!newAuthorRolesToSave.isEmpty()) {
+            authorRoleRepository.saveAll(newAuthorRolesToSave);
+        }
     }
+
 }
