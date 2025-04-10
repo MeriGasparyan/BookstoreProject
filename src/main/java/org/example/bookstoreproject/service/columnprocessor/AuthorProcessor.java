@@ -64,7 +64,6 @@ public class AuthorProcessor implements CSVColumnProcessor {
         for (CSVRow row : data) {
             if (!row.getAuthor().isEmpty()) {
                 List<Author> authors = new ArrayList<>();
-                Map<String, Author> newAuthors = new HashMap<>();
                 Map<String, List<Role>> formattedAuthors = authorFormatter.formatAuthor(row.getAuthor().trim());
 
                 for (Map.Entry<String, List<Role>> entry : formattedAuthors.entrySet()) {
@@ -72,12 +71,12 @@ public class AuthorProcessor implements CSVColumnProcessor {
                     List<Role> roles = entry.getValue();
 
                     Author existingAuthor = existingAuthorMap.get(name);
-                    if (existingAuthor != null || newAuthors.containsKey(name)) {
+                    if (existingAuthor != null || existingAuthorMap.containsKey(name)) {
                         continue;
                     }
 
                     Author author = new Author(name);
-                    newAuthors.put(name, author);
+                    existingAuthorMap.put(name, author);
                     authors.add(author);
                     newAuthorsToSave.add(author);
 
@@ -97,7 +96,6 @@ public class AuthorProcessor implements CSVColumnProcessor {
                     }
                 }
 
-                authorBookMap.put(row.getBookID().trim(), authors);
             }
         }
 
