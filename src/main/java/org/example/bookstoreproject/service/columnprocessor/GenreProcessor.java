@@ -1,8 +1,6 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.example.bookstoreproject.persistance.entry.Award;
 import org.example.bookstoreproject.persistance.entry.Genre;
 import org.example.bookstoreproject.persistance.repository.GenreRepository;
 import org.example.bookstoreproject.service.CSVRow;
@@ -27,20 +25,33 @@ public class GenreProcessor implements CSVColumnProcessor {
 
     @Override
     public void process(List<CSVRow> data) {
+        Map<String, Genre> existingGenreMap = new HashMap<>();
+        List<Genre> genreList = genreRepository.findAll();
+        for (Genre genre : genreList) {
+            existingGenreMap.put(genre.getName(), genre);
+        }
+
+        List<Genre> newGenresToSave = new ArrayList<>();
         for (CSVRow row : data) {
-            List<Genre> genres = new ArrayList<>();
             String[] genresArr = ArrayStringParser.getArrElements(row.getGenres());
-            if (genresArr == null)
-                continue;
-            for (String genre : genresArr) {
-                Optional<Genre> existing = genreRepository.findByName(genre);
-                if (existing.isEmpty()) {
-                    Genre genreEntity = new Genre(genre);
-                    genres.add(genreEntity);
-                    genreRepository.save(genreEntity);
+            if (genresArr == null) continue;
+
+            List<Genre> genresForBook = new ArrayList<>();
+
+            for (String genreName : genresArr) {
+                Genre genre = existingGenreMap.get(genreName);
+                if (genre == null) {
+                    genre = new Genre(genreName);
+                    existingGenreMap.put(genreName, genre);
+                    newGenresToSave.add(genre);
                 }
+                genresForBook.add(genre);
             }
-            genreBookMap.put(row.getBookID().trim(), genres);
+            if (!newGenresToSave.isEmpty()) {
+                genreRepository.saveAll(newGenresToSave);
+                newGenresToSave.clear();
+            }
+            genreBookMap.put(row.getBookID().trim(), genresForBook);
         }
     }
 }

@@ -7,25 +7,36 @@ import org.example.bookstoreproject.service.CSVRow;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @AllArgsConstructor
 @Order(6)
 public class PublisherProcessor implements CSVColumnProcessor {
     private final PublisherRepository publisherRepository;
+
     @Override
     public void process(List<CSVRow> data) {
+        Map<String, Publisher> existingPublisherMap = new HashMap<>();
+        List<Publisher> publisherList = publisherRepository.findAll();
+        for (Publisher publisher : publisherList) {
+            existingPublisherMap.put(publisher.getName(), publisher);
+        }
+
+        List<Publisher> newPublishersToSave = new ArrayList<>();
         for (CSVRow row : data) {
             if (!row.getPublisher().isEmpty()) {
-                String publisher = row.getPublisher().trim();
-                Optional<Publisher> existing = publisherRepository.findByName(publisher);
-                if (existing.isEmpty()) {
-                    Publisher publisherEntity = new Publisher(publisher);
-                    publisherRepository.save(publisherEntity);
+                String publisherName = row.getPublisher().trim();
+                Publisher publisher = existingPublisherMap.get(publisherName);
+                if (publisher == null) {
+                    publisher = new Publisher(publisherName);
+                    existingPublisherMap.put(publisherName, publisher);
+                    newPublishersToSave.add(publisher);
                 }
             }
+        }
+        if (!newPublishersToSave.isEmpty()) {
+            publisherRepository.saveAll(newPublishersToSave);
         }
     }
 }

@@ -39,7 +39,6 @@ public class AuthorRoleProcessor implements CSVColumnProcessor {
         Map<String, RoleEntity> existingRoleMap = new HashMap<>();
         Set<Pair<Long, Long>> existingAuthorRoleSet = new HashSet<>();
 
-        // Populate maps for quick lookup
         for (Author author : authorList) {
             existingAuthorMap.put(author.getName(), author);
         }

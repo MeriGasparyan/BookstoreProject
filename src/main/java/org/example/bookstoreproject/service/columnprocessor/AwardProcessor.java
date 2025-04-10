@@ -1,8 +1,6 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.entry.Award;
 import org.example.bookstoreproject.persistance.repository.AwardRepository;
 import org.example.bookstoreproject.service.CSVRow;
@@ -26,20 +24,34 @@ public class AwardProcessor implements CSVColumnProcessor {
 
     @Override
     public void process(List<CSVRow> data) {
+        Map<String, Award> existingAwardsMap = new HashMap<>();
+        List<Award> awardList = awardRepository.findAll();
+        for (Award award : awardList) {
+            existingAwardsMap.put(award.getTitle(), award);
+        }
+
+        List<Award> newAwardsToSave = new ArrayList<>();
         for (CSVRow row : data) {
-            List<Award> awards = new ArrayList<>();
+            List<Award> awardsForBook = new ArrayList<>();
             String[] awardArr = ArrayStringParser.getArrElements(row.getAwards());
-            if (awardArr == null)
-                continue;
-            for (String award : awardArr) {
-                Optional<Award> existing = awardRepository.findByTitle(award);
-                if (existing.isEmpty()) {
-                    Award awardEntity = new Award(award);
-                    awards.add(awardEntity);
-                    awardRepository.save(awardEntity);
+            if (awardArr == null) continue;
+
+            for (String awardTitle : awardArr) {
+                Award award = existingAwardsMap.get(awardTitle);
+                if (award == null) {
+                    award = new Award(awardTitle);
+                    newAwardsToSave.add(award);
+                    existingAwardsMap.put(awardTitle, award);
                 }
+                awardsForBook.add(award);
             }
-            awardBookMap.put(row.getBookID().trim(), awards);
+
+            if (!newAwardsToSave.isEmpty()) {
+                awardRepository.saveAll(newAwardsToSave);
+                newAwardsToSave.clear();
+            }
+
+            awardBookMap.put(row.getBookID().trim(), awardsForBook);
         }
     }
 }

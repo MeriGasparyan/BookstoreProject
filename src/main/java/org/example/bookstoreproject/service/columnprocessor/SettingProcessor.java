@@ -1,8 +1,6 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.entry.Setting;
 import org.example.bookstoreproject.persistance.repository.SettingRepository;
 import org.example.bookstoreproject.service.CSVRow;
@@ -14,9 +12,10 @@ import java.util.*;
 
 @Component
 @Order(8)
-public class SettingProcessor implements CSVColumnProcessor{
+@Getter
+public class SettingProcessor implements CSVColumnProcessor {
+
     private final SettingRepository settingRepository;
-    @Getter
     private final Map<String, List<Setting>> settingBookMap;
 
     public SettingProcessor(SettingRepository settingRepository) {
@@ -26,20 +25,32 @@ public class SettingProcessor implements CSVColumnProcessor{
 
     @Override
     public void process(List<CSVRow> data) {
+        Map<String, Setting> existingSettingMap = new HashMap<>();
+        List<Setting> settingList = settingRepository.findAll();
+        for (Setting setting : settingList) {
+            existingSettingMap.put(setting.getName(), setting);
+        }
+
+        List<Setting> newSettingsToSave = new ArrayList<>();
         for (CSVRow row : data) {
             String[] settingArr = ArrayStringParser.getArrElements(row.getSettings());
             if (settingArr == null)
                 continue;
+
             List<Setting> settings = new ArrayList<>();
-            for (String setting : settingArr) {
-                Optional<Setting> existing = settingRepository.findByName(setting);
-                if (existing.isEmpty()) {
-                    Setting settingEntity = new Setting(setting);
-                    settings.add(settingEntity);
-                    settingRepository.save(settingEntity);
+            for (String settingName : settingArr) {
+                Setting setting = existingSettingMap.get(settingName);
+                if (setting == null) {
+                    setting = new Setting(settingName);
+                    existingSettingMap.put(settingName, setting);
+                    newSettingsToSave.add(setting);
                 }
+                settings.add(setting);
             }
             settingBookMap.put(row.getBookID().trim(), settings);
+        }
+        if (!newSettingsToSave.isEmpty()) {
+            settingRepository.saveAll(newSettingsToSave);
         }
     }
 }

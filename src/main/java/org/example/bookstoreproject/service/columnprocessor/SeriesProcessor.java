@@ -7,27 +7,37 @@ import org.example.bookstoreproject.service.CSVRow;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @AllArgsConstructor
 @Order(7)
-public class SeriesProcessor implements CSVColumnProcessor{
+public class SeriesProcessor implements CSVColumnProcessor {
 
     private final SeriesRepository seriesRepository;
 
+    @Override
     public void process(List<CSVRow> data) {
+        Map<String, Series> existingSeriesMap = new HashMap<>();
+        List<Series> seriesList = seriesRepository.findAll();
+        for (Series series : seriesList) {
+            existingSeriesMap.put(series.getTitle(), series);
+        }
+
+        List<Series> newSeriesToSave = new ArrayList<>();
         for (CSVRow row : data) {
-            if(!row.getSeries().isEmpty()){
-                String series = row.getSeries().trim();
-                Optional<Series> existing = seriesRepository.findByTitle(series);
-                if (existing.isEmpty()) {
-                    Series seriesEntity = new Series(series);
-                    seriesRepository.save(seriesEntity);
+            if (!row.getSeries().isEmpty()) {
+                String seriesTitle = row.getSeries().trim();
+                Series series = existingSeriesMap.get(seriesTitle);
+                if (series == null) {
+                    series = new Series(seriesTitle);
+                    existingSeriesMap.put(seriesTitle, series);
+                    newSeriesToSave.add(series);
                 }
             }
         }
-
+        if (!newSeriesToSave.isEmpty()) {
+            seriesRepository.saveAll(newSeriesToSave);
         }
+    }
 }
