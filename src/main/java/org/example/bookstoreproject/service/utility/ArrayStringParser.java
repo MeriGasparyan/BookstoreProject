@@ -22,7 +22,6 @@ public class ArrayStringParser {
                         arr[i] = arr[i].substring(0, arr[i].length() - 1);
                     }
                 }
-            System.out.println("Array length: " + arr.length);
             return arr;
             }
         return null;
