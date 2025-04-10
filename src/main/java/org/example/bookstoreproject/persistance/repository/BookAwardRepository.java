@@ -12,4 +12,5 @@ import java.util.List;
 public interface BookAwardRepository extends JpaRepository<BookAward, Long> {
 boolean existsByBookAndAward(Book book, Award award);
 List<BookAward> findByBook(Book book);
+List<BookAward> findAll();
 }

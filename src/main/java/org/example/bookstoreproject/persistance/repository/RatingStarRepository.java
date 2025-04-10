@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface RatingStarRepository extends JpaRepository<RatingStar, Long> {
     Optional<RatingStar> findByRatingAndStar(Rating rating, Star star);
-
-    // You might also need this for recalculating the average rating
     List<RatingStar> findByRating(Rating rating);
+    List<RatingStar> findAll();
 }

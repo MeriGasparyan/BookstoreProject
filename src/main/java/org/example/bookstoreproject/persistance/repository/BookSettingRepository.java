@@ -1,5 +1,6 @@
 package org.example.bookstoreproject.persistance.repository;
 
+import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.entry.Book;
 import org.example.bookstoreproject.persistance.entry.BookSetting;
 import org.example.bookstoreproject.persistance.entry.Setting;
@@ -12,4 +13,5 @@ import java.util.List;
 public interface BookSettingRepository extends JpaRepository<BookSetting, Long> {
 boolean existsByBookAndSetting(Book book, Setting setting);
 List<BookSetting> findByBook(Book book);
+List<BookSetting> findAll();
 }
