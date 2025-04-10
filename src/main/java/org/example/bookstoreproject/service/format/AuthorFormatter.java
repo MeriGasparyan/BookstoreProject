@@ -30,8 +30,7 @@ public class AuthorFormatter {
 
                     else{
                         String role;
-                        role = component.trim().substring(0, component.length()-1).trim();
-                        System.out.println(role);
+                        role = component.trim().substring(0, component.length()-1).replace(")","").trim();
                         roles.add(Role.fromString(role));
                     }
                 }
