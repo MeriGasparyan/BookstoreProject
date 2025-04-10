@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
-@Order(9)
+@Order(10)
 public class RatingProcessor implements CSVColumnProcessor {
     private final RatingRepository ratingRepository;
     private final RatingStarRepository ratingStarRepository;

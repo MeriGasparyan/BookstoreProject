@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
-@Order(5)
+@Order(6)
 public class PublisherProcessor implements CSVColumnProcessor {
     private final PublisherRepository publisherRepository;
     @Override

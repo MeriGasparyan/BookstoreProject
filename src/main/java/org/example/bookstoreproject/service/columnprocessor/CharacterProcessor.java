@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-@Order(3)
+@Order(4)
 public class CharacterProcessor implements CSVColumnProcessor{
     @Getter
     private final Map<String, List<Character>> characterBookMap;

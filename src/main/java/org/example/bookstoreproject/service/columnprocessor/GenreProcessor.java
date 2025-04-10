@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-@Order(4)
+@Order(5)
 public class GenreProcessor implements CSVColumnProcessor {
     private final GenreRepository genreRepository;
 

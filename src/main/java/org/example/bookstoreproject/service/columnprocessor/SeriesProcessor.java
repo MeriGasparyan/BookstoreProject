@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
-@Order(6)
+@Order(7)
 public class SeriesProcessor implements CSVColumnProcessor{
 
     private final SeriesRepository seriesRepository;

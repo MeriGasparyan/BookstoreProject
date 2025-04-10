@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
-@Order(8)
+@Order(9)
 public class BookProcessor implements CSVColumnProcessor {
     private final BookRepository bookRepository;
     private final PublisherRepository publisherRepository;
