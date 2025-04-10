@@ -1,5 +1,6 @@
 package org.example.bookstoreproject.service;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.bookstoreproject.service.utility.CSVParser;
@@ -13,11 +14,9 @@ import java.util.List;
 @Component
 @Getter
 @Setter
+@AllArgsConstructor
 public class CSVDataHandler {
-    @Autowired
     private CSVParser csvParser;
-
-    @Autowired
     private CSVColumnDataProcessor csvColumnDataProcessor;
 
     public void processCSVData(MultipartFile file) {

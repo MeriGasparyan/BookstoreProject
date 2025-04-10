@@ -1,4 +1,5 @@
 package org.example.bookstoreproject.persistance.entry;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private LanguageEntity language;
 
     @Column(nullable = false)
@@ -39,6 +41,7 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "format")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private FormatEntity format;
 
     @Column
@@ -55,10 +58,12 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Publisher publisher;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "series_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Series series;
 
     public Book(String title, String bookID, LanguageEntity language, String isbn, FormatEntity format, Integer pages, Float price, Date publishDate, Date firstPublishDate, Publisher publisher, Series series) {

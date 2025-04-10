@@ -5,7 +5,11 @@ import org.example.bookstoreproject.persistance.entry.Book;
 import org.example.bookstoreproject.persistance.entry.BookAward;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
 @Repository
 public interface BookAwardRepository extends JpaRepository<BookAward, Long> {
 boolean existsByBookAndAward(Book book, Award award);
+List<BookAward> findByBook(Book book);
 }
