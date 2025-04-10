@@ -82,13 +82,15 @@ public class AuthorProcessor implements CSVColumnProcessor {
 
                     for (Role roleEnum : roles) {
                         RoleEntity roleEntity = existingRoleMap.get(roleEnum.name());
+                        System.out.println(111);
                         if (roleEntity == null) continue;
-
+                        System.out.println(2222);
                         Long authorId = author.getId();
                         Long roleId = roleEntity.getId();
 
                         Pair<Long, Long> pair = Pair.of(authorId, roleId);
                         if (!existingAuthorRoleSet.contains(pair)) {
+                            System.out.println(author.getName() + " " + roleEnum.name() + " " + roleId);
                             AuthorRole authorRole = new AuthorRole(author, roleEntity);
                             newAuthorRolesToSave.add(authorRole);
                             existingAuthorRoleSet.add(pair);
