@@ -2,6 +2,7 @@ package org.example.bookstoreproject.service.columnprocessor;
 
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.utility.ImageUtility;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -14,12 +15,19 @@ public class ImageProcessor implements CSVColumnProcessor {
     private static final int THUMB_HEIGHT = 200;
     private final ImageUtility imageUtility;
 
+    @Value("${image.processing.enabled}")
+    private boolean imageProcessingEnabled;
+
     public ImageProcessor(ImageUtility imageUtility) {
         this.imageUtility = imageUtility;
     }
 
     @Override
     public void process(List<CSVRow> data) {
+        if (!imageProcessingEnabled) {
+            System.out.println("Image processing is disabled. Skipping image processing.");
+            return;
+        }
         for (CSVRow row : data) {
             String imageUrl = row.getImage();
             String title = row.getTitle();
