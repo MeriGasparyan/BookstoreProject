@@ -8,13 +8,24 @@ import lombok.Setter;
 public class BookCreateRequestDTO {
     private String title;
     private String bookID;
+    private String series;
+    private String author;
+    private String rating;
+    private String description;
     private String language;
     private String isbn;
+    private String genres;
+    private String characters;
     private String format;
-    private Integer pages;
-    private Float price;
+    private String edition;
+    private String pages;
+    private String publisher;
     private String publishDate;
     private String firstPublishDate;
-    private String publisherName;
-    private String seriesTitle;
+    private String awards;
+    private String ratingsByStar;
+    private String settings;
+    private String bbeScore;
+    private String bbeVotes;
+    private String price;
 }

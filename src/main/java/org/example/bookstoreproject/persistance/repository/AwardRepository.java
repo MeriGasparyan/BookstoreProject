@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface AwardRepository extends JpaRepository<Award, Long> {
     Optional<Award> findByTitle(String name);
     List<Award> findAll();
+
 }
