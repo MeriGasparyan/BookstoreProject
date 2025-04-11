@@ -37,7 +37,6 @@ public class BookService {
     private final LanguageRepository languageRepository;
     private final SeriesRepository seriesRepository;
     private final PublisherRepository publisherRepository;
-    private final RatingRepository ratingRepository;
     private final RatingStarRepository ratingStarRepository;
     private final StarRepository starRepository;
     private final CharacterRepository characterRepository;
@@ -106,32 +105,32 @@ public class BookService {
         }
         Integer pages = Integer.parseInt(createRequest.getPages());
         Float price = Float.parseFloat(createRequest.getPrice());
-        Book book = new Book(
-                createRequest.getTitle(),
-                createRequest.getBookID(),
-                language,
-                createRequest.getIsbn(),
-                format,
-                pages,
-                price,
-                publishDate,
-                firstPublishDate,
-                publisher,
-                series
-        );
-        bookRepository.save(book);
-
-        Float ratingValue = floatFormatter.getFloat(createRequest.getRating());
         Integer bbeScore = integerFormatter.getInt(createRequest.getBbeScore());
         Integer bbeVotes = integerFormatter.getInt(createRequest.getBbeVotes());
-        Rating rating = new Rating(ratingValue, bbeScore, bbeVotes, book);
-        ratingRepository.save(rating);
+        Book book = new Book();
+        book.setBookID(createRequest.getBookID());
+        book.setFormat(format);
+        book.setLanguage(language);
+        book.setPublisher(publisher);
+        book.setSeries(series);
+        book.setPrice(price);
+        book.setBbeScore(bbeScore);
+        book.setBbeVotes(bbeVotes);
+        book.setTitle(createRequest.getTitle());
+        book.setIsbn(createRequest.getIsbn());
+        book.setPages(pages);
+        book.setPublisher(publisher);
+        book.setSeries(series);
+        book.setPublishDate(publishDate);
+        book.setFirstPublishDate(firstPublishDate);
+        bookRepository.save(book);
+
 
         Map<RatingStarNumber, Long> starMap = ratingByStarFormatter.formatRatingsByStar(createRequest.getRatingsByStar());
         for (Map.Entry<RatingStarNumber, Long> entry : starMap.entrySet()) {
             Star star = starRepository.findByLevel(entry.getKey().name())
                     .orElseThrow(() -> new IllegalArgumentException("Star level not found: " + entry.getKey().name()));
-            ratingStarRepository.save(new RatingStar(rating, star, entry.getValue()));
+            ratingStarRepository.save(new BookRatingStar(book, star, entry.getValue()));
         }
 
         for (String authorName : createRequest.getAuthor().split(",")) {

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.enums.RatingStarNumber;
 import org.example.bookstoreproject.persistance.entry.*;
-import org.example.bookstoreproject.persistance.repository.RatingRepository;
+import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.example.bookstoreproject.persistance.repository.RatingStarRepository;
 import org.example.bookstoreproject.persistance.repository.StarRepository;
 import org.example.bookstoreproject.service.CSVRow;
@@ -16,28 +16,27 @@ import java.util.*;
 
 @Component
 @AllArgsConstructor
-@Order(11)
 public class RatingStarProcessor implements CSVColumnProcessor {
 
     private final RatingStarRepository ratingStarRepository;
     private final StarRepository starRepository;
     private final RatingByStarFormatter ratingByStarFormatter;
-    private final RatingRepository ratingRepository;
+    private final BookRepository bookRepository;
 
     @Override
     public void process(List<CSVRow> data) {
         Map<String, Star> starMap = new HashMap<>();
         Set<Pair<Long, String>> existingRatingStarPairs = new HashSet<>();
-        Map<String, Rating> existingRatingsMap = new HashMap<>();
-        List<Rating> existingRatings = ratingRepository.findAll();
-        List<RatingStar> ratingStarsToSave = new ArrayList<>();
-        List<RatingStar> existingRatingStars = ratingStarRepository.findAll();
+        Map<String, Book> existingBookMap = new HashMap<>();
+        List<Book> existingBook = bookRepository.findAll();
+        List<BookRatingStar> bookRatingStarsToSave = new ArrayList<>();
+        List<BookRatingStar> existingBookRatingStars = ratingStarRepository.findAll();
 
-        for (RatingStar rs : existingRatingStars) {
-            existingRatingStarPairs.add(Pair.of(rs.getRating().getId(), rs.getStar().getLevel()));
+        for (BookRatingStar rs : existingBookRatingStars) {
+            existingRatingStarPairs.add(Pair.of(rs.getBook().getId(), rs.getStar().getLevel()));
         }
-        for(Rating rating: existingRatings){
-            existingRatingsMap.put(rating.getBook().getBookID(), rating);
+        for(Book book: existingBook){
+            existingBookMap.put(book.getBookID(), book);
         }
         for (CSVRow row : data) {
             try {
@@ -55,12 +54,12 @@ public class RatingStarProcessor implements CSVColumnProcessor {
                         continue;
                     }
 
-                    Rating rating = existingRatingsMap.get(row.getBookID().trim());
-                    Pair<Long, String> ratingStarPair = Pair.of(rating.getId(), star.getLevel());
-                    if (!existingRatingStarPairs.contains(ratingStarPair)) {
-                        RatingStar ratingStar = new RatingStar(rating, star, entry.getValue());
-                        ratingStarsToSave.add(ratingStar);
-                        existingRatingStarPairs.add(ratingStarPair);
+                    Book book = existingBookMap.get(row.getBookID().trim());
+                    Pair<Long, String> bookStarPair = Pair.of(book.getId(), star.getLevel());
+                    if (!existingRatingStarPairs.contains(bookStarPair)) {
+                        BookRatingStar bookRatingStar = new BookRatingStar(book, star, entry.getValue());
+                        bookRatingStarsToSave.add(bookRatingStar);
+                        existingRatingStarPairs.add(bookStarPair);
                     }
                 }
             } catch (Exception e) {
@@ -68,8 +67,8 @@ public class RatingStarProcessor implements CSVColumnProcessor {
             }
         }
 
-        if (!ratingStarsToSave.isEmpty()) {
-            ratingStarRepository.saveAll(ratingStarsToSave);
+        if (!bookRatingStarsToSave.isEmpty()) {
+            ratingStarRepository.saveAll(bookRatingStarsToSave);
         }
     }
 }

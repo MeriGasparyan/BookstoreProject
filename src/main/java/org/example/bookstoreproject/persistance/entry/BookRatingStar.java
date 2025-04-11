@@ -16,14 +16,14 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class RatingStar {
+public class BookRatingStar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rating")
-    private Rating rating;
+    @JoinColumn(name = "book")
+    private Book book;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "star")
@@ -32,8 +32,8 @@ public class RatingStar {
     @Column
     private Long numRating;
 
-    public RatingStar(Rating rating, Star star, Long numRating) {
-        this.rating = rating;
+    public BookRatingStar(Book book, Star star, Long numRating) {
+        this.book = book;
         this.star = star;
         this.numRating = numRating;
     }

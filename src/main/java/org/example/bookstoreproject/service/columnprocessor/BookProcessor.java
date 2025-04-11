@@ -27,7 +27,7 @@ public class BookProcessor implements CSVColumnProcessor {
     private final FormatRepository formatRepository;
 
     private final DateFormatter dateFormatter;
-    private final IntegerFormatter pagesFormatter;
+    private final IntegerFormatter integerFormatter;
     private final FloatFormatter priceFormatter;
     private final LanguageFormatter languageFormatter;
     private final FormatFormatter formatFormatter;
@@ -66,11 +66,12 @@ public class BookProcessor implements CSVColumnProcessor {
 
                 FormatEntity formatEntity = formatMap.get(format.name());
 
-                Integer pages = pagesFormatter.getInt(row.getPages());
+                Integer pages = integerFormatter.getInt(row.getPages());
                 Float price = priceFormatter.getFloat(row.getPrice());
                 Date publishDate = dateFormatter.getDate(row.getPublishDate());
                 Date firstPublishDate = dateFormatter.getDate(row.getFirstPublishDate());
-
+                Integer bbeScore = integerFormatter.getInt(row.getBbeScore());
+                Integer bbeVotes = integerFormatter.getInt(row.getBbeVotes());
                 Publisher publisher = publisherMap.get(row.getPublisher().trim());
                 if(publisher == null) {
                     publisher = new Publisher(row.getPublisher().trim());
@@ -87,22 +88,25 @@ public class BookProcessor implements CSVColumnProcessor {
                     newSeriesToSave.add(series);
                 }
 
+                Book book = new Book();
+                book.setBookID(row.getBookID().trim());
+                book.setTitle(row.getTitle().trim());
+                book.setPublisher(publisher);
+                book.setSeries(series);
+                book.setPublishDate(publishDate);
+                book.setFirstPublishDate(firstPublishDate);
+                book.setPages(pages);
+                book.setPrice(price);
+                book.setTitle(row.getTitle().trim());
+                book.setBbeScore(bbeScore);
+                book.setBbeVotes(bbeVotes);
+                book.setLanguage(languageEntity);
+                book.setFormat(formatEntity);
+                book.setIsbn(row.getIsbn() != null ? row.getIsbn().trim() : null);
 
-                Book book = new Book(
-                        row.getTitle(),
-                        row.getBookID().trim(),
-                        languageEntity,
-                        row.getIsbn(),
-                        formatEntity,
-                        pages,
-                        price,
-                        publishDate,
-                        firstPublishDate,
-                        publisher,
-                        series
-                );
                 newBooksToSave.add(book);
                 bookMap.put(book.getBookID(), book);
+
 
             } catch (Exception e) {
                 System.err.println("Error processing row with ISBN: " + row.getIsbn() + ". Error: " + e.getMessage());

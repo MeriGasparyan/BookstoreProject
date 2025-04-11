@@ -36,7 +36,7 @@ public class Book {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private LanguageEntity language;
 
-    @Column(nullable = false)
+    @Column
     private String isbn;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -65,6 +65,13 @@ public class Book {
     @JoinColumn(name = "series_id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Series series;
+
+    @Column(name = "bbe_score")
+    private Integer bbeScore;
+
+    @Column(name = "bbe_votes")
+    private Integer bbeVotes;
+
 
     public Book(String title, String bookID, LanguageEntity language, String isbn, FormatEntity format, Integer pages, Float price, Date publishDate, Date firstPublishDate, Publisher publisher, Series series) {
         this.title = title;
