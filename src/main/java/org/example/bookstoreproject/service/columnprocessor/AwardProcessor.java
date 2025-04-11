@@ -1,6 +1,9 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
+import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.entry.Award;
 import org.example.bookstoreproject.persistance.repository.AwardRepository;
 import org.example.bookstoreproject.service.CSVRow;
@@ -11,19 +14,12 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-@Order(3)
-public class AwardProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class AwardProcessor{
     private final AwardRepository awardRepository;
-    @Getter
-    private final Map<String, List<Award>> awardBookMap;
 
-    public AwardProcessor(AwardRepository awardRepository) {
-        this.awardRepository = awardRepository;
-        this.awardBookMap = new HashMap<>();
-    }
-
-    @Override
-    public void process(List<CSVRow> data) {
+    public Pair<Map<String, Award>, Map<String, List<Award>>> process(List<CSVRow> data) {
+        Map<String, List<Award>> awardBookMap = new HashMap<>();
         Map<String, Award> existingAwardsMap = new HashMap<>();
         List<Award> awardList = awardRepository.findAll();
         for (Award award : awardList) {
@@ -51,5 +47,6 @@ public class AwardProcessor implements CSVColumnProcessor {
             awardRepository.saveAll(newAwardsToSave);
             newAwardsToSave.clear();
         }
+        return Pair.of(existingAwardsMap, awardBookMap);
     }
 }

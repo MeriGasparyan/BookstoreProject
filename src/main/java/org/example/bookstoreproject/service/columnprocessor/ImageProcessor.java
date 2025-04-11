@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.List;
 
 @Component
-public class ImageProcessor implements CSVColumnProcessor {
+public class ImageProcessor{
     private static final String BASE_FOLDER = "book_images";
     private static final int THUMB_WIDTH = 100;
     private static final int THUMB_HEIGHT = 200;
@@ -22,7 +22,6 @@ public class ImageProcessor implements CSVColumnProcessor {
         this.imageUtility = imageUtility;
     }
 
-    @Override
     public void process(List<CSVRow> data) {
         if (!imageProcessingEnabled) {
             System.out.println("Image processing is disabled. Skipping image processing.");

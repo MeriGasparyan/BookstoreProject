@@ -1,35 +1,22 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.repository.BookGenreRepository;
-import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.springframework.stereotype.Component;
-import org.example.bookstoreproject.service.CSVRow;
 
 import java.util.*;
 
 @Component
-@AllArgsConstructor
-public class BookGenreProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class BookGenreProcessor{
 
     private final BookGenreRepository bookGenreRepository;
-    private final GenreProcessor genreProcessor;
-    private final BookRepository bookRepository;
 
-    @Override
-    public void process(List<CSVRow> data) {
-        Map<String, List<Genre>> genreBookMap = genreProcessor.getGenreBookMap();
+    public void process(Map<String, Book> bookMap, Map<String, List<Genre>> genreBookMap) {
 
-        List<Book> allBooks = bookRepository.findAll();
         List<BookGenre> existingBookGenres = bookGenreRepository.findAll();
-
-        Map<String, Book> bookMap = new HashMap<>();
-        for (Book book : allBooks) {
-            bookMap.put(book.getBookID(), book);
-        }
-
         Set<Pair<Long, Long>> existingPairs = new HashSet<>();
         for (BookGenre bg : existingBookGenres) {
             existingPairs.add(Pair.of(bg.getBook().getId(), bg.getGenre().getId()));

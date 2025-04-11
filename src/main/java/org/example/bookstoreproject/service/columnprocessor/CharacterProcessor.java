@@ -1,6 +1,9 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
+import org.example.bookstoreproject.persistance.entry.Award;
 import org.example.bookstoreproject.persistance.entry.Character;
 import org.example.bookstoreproject.persistance.repository.CharacterRepository;
 import org.example.bookstoreproject.service.CSVRow;
@@ -11,20 +14,12 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-@Order(4)
-public class CharacterProcessor implements CSVColumnProcessor {
-    @Getter
-    private final Map<String, List<Character>> characterBookMap;
-
+@RequiredArgsConstructor
+public class CharacterProcessor{
     private final CharacterRepository characterRepository;
 
-    public CharacterProcessor(CharacterRepository characterRepository) {
-        this.characterRepository = characterRepository;
-        this.characterBookMap = new HashMap<>();
-    }
-
-    @Override
-    public void process(List<CSVRow> data) {
+    public Pair<Map<String, Character>, Map<String, List<Character>>> process(List<CSVRow> data) {
+        Map<String, List<Character>> characterBookMap = new HashMap<>();
         Map<String, Character> existingCharacterMap = new HashMap<>();
         List<Character> characterList = characterRepository.findAll();
         for (Character character : characterList) {
@@ -53,5 +48,6 @@ public class CharacterProcessor implements CSVColumnProcessor {
             characterRepository.saveAll(newCharactersToSave);
             newCharactersToSave.clear();
         }
+        return Pair.of(existingCharacterMap, characterBookMap);
     }
 }

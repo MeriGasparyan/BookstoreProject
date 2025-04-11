@@ -1,34 +1,25 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.enums.Role;
 import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.repository.AuthorRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.format.AuthorFormatter;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-@Order(1)
-@Getter
-public class AuthorProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class AuthorProcessor {
 
     private final AuthorRepository authorRepository;
     private final AuthorFormatter authorFormatter;
-    private final Map<String, List<Author>> authorBookMap;
 
-    public AuthorProcessor(AuthorRepository authorRepository, AuthorFormatter authorFormatter) {
-        this.authorRepository = authorRepository;
-        this.authorFormatter = authorFormatter;
-        this.authorBookMap = new HashMap<>();
-
-    }
-
-    @Override
-    public void process(List<CSVRow> data) {
+    public Pair<Map<String, Author>, Map<String, List<Author>>> process(List<CSVRow> data) {
+        Map<String, List<Author>> authorBookMap = new HashMap<>();
         Map<String, Author> existingAuthorMap = new HashMap<>();
         List<Author> authorList = authorRepository.findAll();
         for (Author author : authorList) {
@@ -39,10 +30,8 @@ public class AuthorProcessor implements CSVColumnProcessor {
         for (CSVRow row : data) {
             if (!row.getAuthor().isEmpty()) {
                 Map<String, List<Role>> formattedAuthors = authorFormatter.formatAuthor(row.getAuthor().trim());
-
                 for (Map.Entry<String, List<Role>> entry : formattedAuthors.entrySet()) {
                     String name = entry.getKey();
-
                     if (!existingAuthorMap.containsKey(name)) {
                         Author author = new Author(name);
                         existingAuthorMap.put(name, author);
@@ -57,5 +46,8 @@ public class AuthorProcessor implements CSVColumnProcessor {
         if (!newAuthorsToSave.isEmpty()) {
             authorRepository.saveAll(newAuthorsToSave);
         }
+
+        return Pair.of(existingAuthorMap, authorBookMap);
+
     }
 }

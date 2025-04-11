@@ -1,6 +1,7 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.repository.AuthorRepository;
@@ -12,25 +13,14 @@ import org.example.bookstoreproject.service.CSVRow;
 import java.util.*;
 
 @Component
-@AllArgsConstructor
-public class BookAuthorProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class BookAuthorProcessor{
 
     private final BookAuthorRepository bookAuthorRepository;
-    private final AuthorProcessor authorProcessor;
-    private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
 
-    @Override
-    public void process(List<CSVRow> data) {
-        Map<String, List<Author>> authorBookMap = authorProcessor.getAuthorBookMap();
-        List<Book> bookList = bookRepository.findAll();
+    public void process(Map<String, Book> bookMap, Map<String, List<Author>> authorBookMap) {
         List<BookAuthor> bookAuthorList = bookAuthorRepository.findAll();
         List<BookAuthor> newBookAuthorListToSave = new ArrayList<>();
-        Map<String, Book> bookMap = new HashMap<>();
-        for (Book book : bookList) {
-            bookMap.put(book.getBookID(), book);
-        }
-
         Set<Pair<Long, Long>> existingAuthorBookSet = new HashSet<>();
         for (BookAuthor bookAuthor : bookAuthorList) {
             existingAuthorBookSet.add(Pair.of(bookAuthor.getAuthor().getId(), bookAuthor.getBook().getId()));

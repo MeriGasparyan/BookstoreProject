@@ -1,5 +1,6 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
+import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.Role;
 import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.entry.AuthorRole;
@@ -16,32 +17,20 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.*;
 
 @Component
-@Order(2)
-public class AuthorRoleProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class AuthorRoleProcessor {
 
     private final AuthorRepository authorRepository;
     private final RoleRepository roleRepository;
     private final AuthorRoleRepository authorRoleRepository;
 
-    public AuthorRoleProcessor(AuthorRepository authorRepository, RoleRepository roleRepository, AuthorRoleRepository authorRoleRepository) {
-        this.authorRepository = authorRepository;
-        this.roleRepository = roleRepository;
-        this.authorRoleRepository = authorRoleRepository;
-    }
-
-    @Override
-    public void process(List<CSVRow> data) {
-        List<Author> authorList = authorRepository.findAll();
+    public void process(List<CSVRow> data,Map<String, Author> existingAuthorMap) {
         List<RoleEntity> roleList = roleRepository.findAll();
         List<AuthorRole> authorRoleList = authorRoleRepository.findAll();
 
-        Map<String, Author> existingAuthorMap = new HashMap<>();
         Map<String, RoleEntity> existingRoleMap = new HashMap<>();
         Set<Pair<Long, Long>> existingAuthorRoleSet = new HashSet<>();
 
-        for (Author author : authorList) {
-            existingAuthorMap.put(author.getName(), author);
-        }
         for (RoleEntity role : roleList) {
             existingRoleMap.put(role.getRoleName(), role);
         }

@@ -1,30 +1,23 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.Setting;
 import org.example.bookstoreproject.persistance.repository.SettingRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-@Order(8)
-@Getter
-public class SettingProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class SettingProcessor{
 
     private final SettingRepository settingRepository;
-    private final Map<String, List<Setting>> settingBookMap;
 
-    public SettingProcessor(SettingRepository settingRepository) {
-        this.settingRepository = settingRepository;
-        this.settingBookMap = new HashMap<>();
-    }
-
-    @Override
-    public void process(List<CSVRow> data) {
+    public Pair<Map<String, Setting>, Map<String, List<Setting>>> process(List<CSVRow> data) {
+        Map<String, List<Setting>> settingBookMap = new HashMap<>();
         Map<String, Setting> existingSettingMap = new HashMap<>();
         List<Setting> settingList = settingRepository.findAll();
         for (Setting setting : settingList) {
@@ -52,5 +45,6 @@ public class SettingProcessor implements CSVColumnProcessor {
         if (!newSettingsToSave.isEmpty()) {
             settingRepository.saveAll(newSettingsToSave);
         }
+        return Pair.of(existingSettingMap, settingBookMap);
     }
 }

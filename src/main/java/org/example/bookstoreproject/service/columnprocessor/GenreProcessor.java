@@ -1,30 +1,22 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.Genre;
 import org.example.bookstoreproject.persistance.repository.GenreRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-@Order(5)
-public class GenreProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class GenreProcessor{
     private final GenreRepository genreRepository;
 
-    @Getter
-    private final Map<String, List<Genre>> genreBookMap;
-
-    public GenreProcessor(GenreRepository genreRepository) {
-        this.genreRepository = genreRepository;
-        this.genreBookMap = new HashMap<>();
-    }
-
-    @Override
-    public void process(List<CSVRow> data) {
+    public Pair<Map<String, Genre>, Map<String, List<Genre>>> process(List<CSVRow> data) {
+        Map<String, List<Genre>> genreBookMap = new HashMap<>();
         Map<String, Genre> existingGenreMap = new HashMap<>();
         List<Genre> genreList = genreRepository.findAll();
         for (Genre genre : genreList) {
@@ -53,5 +45,6 @@ public class GenreProcessor implements CSVColumnProcessor {
             genreRepository.saveAll(newGenresToSave);
             newGenresToSave.clear();
         }
+        return Pair.of(existingGenreMap, genreBookMap);
     }
 }

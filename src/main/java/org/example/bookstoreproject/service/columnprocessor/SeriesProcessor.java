@@ -1,23 +1,20 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.persistance.entry.Series;
 import org.example.bookstoreproject.persistance.repository.SeriesRepository;
 import org.example.bookstoreproject.service.CSVRow;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-@AllArgsConstructor
-@Order(7)
-public class SeriesProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class SeriesProcessor{
 
     private final SeriesRepository seriesRepository;
 
-    @Override
-    public void process(List<CSVRow> data) {
+    public Map<String, Series> process(List<CSVRow> data) {
         Map<String, Series> existingSeriesMap = new HashMap<>();
         List<Series> seriesList = seriesRepository.findAll();
         for (Series series : seriesList) {
@@ -39,5 +36,6 @@ public class SeriesProcessor implements CSVColumnProcessor {
         if (!newSeriesToSave.isEmpty()) {
             seriesRepository.saveAll(newSeriesToSave);
         }
+        return existingSeriesMap;
     }
 }

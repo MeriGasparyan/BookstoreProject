@@ -5,7 +5,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.entry.Character;
 import org.example.bookstoreproject.persistance.repository.BookCharacterRepository;
-import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.springframework.stereotype.Component;
 import org.example.bookstoreproject.service.CSVRow;
 
@@ -13,23 +12,12 @@ import java.util.*;
 
 @Component
 @AllArgsConstructor
-public class BookCharacterProcessor implements CSVColumnProcessor {
+public class BookCharacterProcessor{
 
     private final BookCharacterRepository bookCharacterRepository;
-    private final CharacterProcessor characterProcessor;
-    private final BookRepository bookRepository;
 
-    @Override
-    public void process(List<CSVRow> data) {
-        Map<String, List<Character>> characterBookMap = characterProcessor.getCharacterBookMap();
-        List<Book> allBooks = bookRepository.findAll();
+    public void process(Map<String, Book> bookMap, Map<String, List<Character>> characterBookMap) {
         List<BookCharacter> existingBookCharacters = bookCharacterRepository.findAll();
-
-        Map<String, Book> bookMap = new HashMap<>();
-        for (Book book : allBooks) {
-            bookMap.put(book.getBookID(), book);
-        }
-
         Set<Pair<Long, Long>> existingPairs = new HashSet<>();
         for (BookCharacter bc : existingBookCharacters) {
             existingPairs.add(Pair.of(bc.getBook().getId(), bc.getCharacter().getId()));

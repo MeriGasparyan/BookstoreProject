@@ -1,34 +1,21 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.*;
-import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.example.bookstoreproject.persistance.repository.BookSettingRepository;
-import org.example.bookstoreproject.service.CSVRow;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-@AllArgsConstructor
-public class BookSettingProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class BookSettingProcessor {
 
     private final BookSettingRepository bookSettingRepository;
-    private final SettingProcessor settingProcessor;
-    private final BookRepository bookRepository;
 
-    @Override
-    public void process(List<CSVRow> data) {
-        Map<String, List<Setting>> settingBookMap = settingProcessor.getSettingBookMap();
-
-        List<Book> allBooks = bookRepository.findAll();
+    public void process(Map<String, Book> bookMap, Map<String, List<Setting>> settingBookMap) {
         List<BookSetting> existingBookSettings = bookSettingRepository.findAll();
-
-        Map<String, Book> bookMap = new HashMap<>();
-        for (Book book : allBooks) {
-            bookMap.put(book.getBookID(), book);
-        }
 
         Set<Pair<Long, Long>> existingPairs = new HashSet<>();
         for (BookSetting bs : existingBookSettings) {

@@ -1,43 +1,35 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.enums.RatingStarNumber;
 import org.example.bookstoreproject.persistance.entry.*;
-import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.example.bookstoreproject.persistance.repository.RatingStarRepository;
 import org.example.bookstoreproject.persistance.repository.StarRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.format.RatingByStarFormatter;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-@AllArgsConstructor
-public class RatingStarProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class BookRatingStarProcessor {
 
     private final RatingStarRepository ratingStarRepository;
     private final StarRepository starRepository;
     private final RatingByStarFormatter ratingByStarFormatter;
-    private final BookRepository bookRepository;
 
-    @Override
-    public void process(List<CSVRow> data) {
+    public void process(List<CSVRow> data, Map<String, Book> existingBookMap) {
         Map<String, Star> starMap = new HashMap<>();
         Set<Pair<Long, String>> existingRatingStarPairs = new HashSet<>();
-        Map<String, Book> existingBookMap = new HashMap<>();
-        List<Book> existingBook = bookRepository.findAll();
         List<BookRatingStar> bookRatingStarsToSave = new ArrayList<>();
         List<BookRatingStar> existingBookRatingStars = ratingStarRepository.findAll();
 
         for (BookRatingStar rs : existingBookRatingStars) {
             existingRatingStarPairs.add(Pair.of(rs.getBook().getId(), rs.getStar().getLevel()));
         }
-        for(Book book: existingBook){
-            existingBookMap.put(book.getBookID(), book);
-        }
+
         for (CSVRow row : data) {
             try {
                 Map<RatingStarNumber, Long> ratingsByStar = ratingByStarFormatter.formatRatingsByStar(row.getRatingsByStar());

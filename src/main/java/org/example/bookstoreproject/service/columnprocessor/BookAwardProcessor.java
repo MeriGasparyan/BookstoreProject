@@ -1,38 +1,26 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.repository.BookAwardRepository;
-import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.springframework.stereotype.Component;
-import org.example.bookstoreproject.service.CSVRow;
 
 import java.util.*;
 
 @Component
-@AllArgsConstructor
-public class BookAwardProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class BookAwardProcessor{
 
     private final BookAwardRepository bookAwardRepository;
-    private final AwardProcessor awardProcessor;
-    private final BookRepository bookRepository;
 
-    @Override
-    public void process(List<CSVRow> data) {
-        Map<String, Book> bookCache = new HashMap<>();
-        List<Book> allBooks = bookRepository.findAll();
-        for (Book book : allBooks) {
-            bookCache.put(book.getBookID(), book);
-        }
-
+    public void process(Map<String, Book> bookCache, Map<String, List<Award>> awardBookMap) {
         List<BookAward> existingBookAwards = bookAwardRepository.findAll();
         Set<Pair<Long, Long>> existingPairs = new HashSet<>();
         for (BookAward bookAward : existingBookAwards) {
             existingPairs.add(Pair.of(bookAward.getBook().getId(), bookAward.getAward().getId()));
         }
 
-        Map<String, List<Award>> awardBookMap = awardProcessor.getAwardBookMap();
         List<BookAward> bookAwardsToSave = new ArrayList<>();
 
         for (Map.Entry<String, List<Award>> entry : awardBookMap.entrySet()) {

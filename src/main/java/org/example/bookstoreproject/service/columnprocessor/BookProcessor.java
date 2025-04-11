@@ -1,6 +1,7 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.Format;
 import org.example.bookstoreproject.enums.Language;
 import org.example.bookstoreproject.persistance.entry.*;
@@ -17,12 +18,9 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-@AllArgsConstructor
-@Order(9)
-public class BookProcessor implements CSVColumnProcessor {
+@RequiredArgsConstructor
+public class BookProcessor{
     private final BookRepository bookRepository;
-    private final PublisherRepository publisherRepository;
-    private final SeriesRepository seriesRepository;
     private final LanguageRepository languageRepository;
     private final FormatRepository formatRepository;
 
@@ -32,23 +30,14 @@ public class BookProcessor implements CSVColumnProcessor {
     private final LanguageFormatter languageFormatter;
     private final FormatFormatter formatFormatter;
 
-    @Override
-    public void process(List<CSVRow> data) {
-        Map<String, Publisher> publisherMap = new HashMap<>();
-        Map<String, Series> seriesMap = new HashMap<>();
+    public Map<String, Book> process(List<CSVRow> data, Map<String, Publisher> publisherMap, Map<String, Series> seriesMap) {
         Map<String, LanguageEntity> languageMap = new HashMap<>();
         Map<String, FormatEntity> formatMap = new HashMap<>();
         Map<String, Book> bookMap = new HashMap<>();
 
-
-        publisherRepository.findAll().forEach(publisher -> publisherMap.put(publisher.getName(), publisher));
-        seriesRepository.findAll().forEach(series -> seriesMap.put(series.getTitle(), series));
         languageRepository.findAll().forEach(language -> languageMap.put(language.getLanguage(), language));
         formatRepository.findAll().forEach(format -> formatMap.put(format.getFormat(), format));
         bookRepository.findAll().forEach(book -> bookMap.put(book.getBookID(), book));
-
-        List<Publisher> newPublishersToSave = new ArrayList<>();
-        List<Series> newSeriesToSave = new ArrayList<>();
         List<Book> newBooksToSave = new ArrayList<>();
 
         for (CSVRow row : data) {
@@ -72,22 +61,18 @@ public class BookProcessor implements CSVColumnProcessor {
                 Date firstPublishDate = dateFormatter.getDate(row.getFirstPublishDate());
                 Integer bbeScore = integerFormatter.getInt(row.getBbeScore());
                 Integer bbeVotes = integerFormatter.getInt(row.getBbeVotes());
-                Publisher publisher = publisherMap.get(row.getPublisher().trim());
-                if(publisher == null) {
-                    publisher = new Publisher(row.getPublisher().trim());
-                    publisherRepository.save(publisher);
-                    publisherMap.put(publisher.getName(), publisher);
-                    newPublishersToSave.add(publisher);
-                }
 
-                Series series = seriesMap.get(row.getSeries().trim());
-                if(series == null) {
-                    series = new Series(row.getSeries().trim());
-                    seriesRepository.save(series);
-                    seriesMap.put(series.getTitle(), series);
-                    newSeriesToSave.add(series);
-                }
+                Publisher publisher;
+                if(row.getPublisher().trim().isEmpty()){
+                    publisher = null;
+                }else
+                    publisher = publisherMap.get(row.getPublisher().trim());
 
+                Series series;
+                if(row.getSeries().trim().isEmpty()){
+                    series = null;
+                }else
+                    series = seriesMap.get(row.getSeries().trim());
                 Book book = new Book();
                 book.setBookID(row.getBookID().trim());
                 book.setTitle(row.getTitle().trim());
@@ -112,14 +97,9 @@ public class BookProcessor implements CSVColumnProcessor {
                 System.err.println("Error processing row with ISBN: " + row.getIsbn() + ". Error: " + e.getMessage());
             }
         }
-        if (!newPublishersToSave.isEmpty()) {
-            publisherRepository.saveAll(newPublishersToSave);
-        }
-        if (!newSeriesToSave.isEmpty()) {
-            seriesRepository.saveAll(newSeriesToSave);
-        }
         if (!newBooksToSave.isEmpty()) {
             bookRepository.saveAll(newBooksToSave);
         }
+        return bookMap;
     }
 }
