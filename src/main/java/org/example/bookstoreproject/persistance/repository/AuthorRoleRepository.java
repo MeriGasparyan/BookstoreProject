@@ -12,5 +12,4 @@ import java.util.Optional;
 @Repository
 public interface AuthorRoleRepository extends JpaRepository<AuthorRole, Long> {
     boolean existsByAuthorAndRole(Author author, RoleEntity role);
-    List<AuthorRole> findAll();
 }

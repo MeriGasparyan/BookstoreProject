@@ -10,6 +10,4 @@ import java.util.Optional;
 @Repository
 public interface AwardRepository extends JpaRepository<Award, Long> {
     Optional<Award> findByTitle(String name);
-    List<Award> findAll();
-
 }

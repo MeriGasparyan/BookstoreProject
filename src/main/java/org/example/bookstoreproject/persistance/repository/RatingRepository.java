@@ -13,5 +13,4 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     Optional<Rating> findByRatingAndBook_Id(Float rating, Long bookId);
     Optional<Rating> findByRating(Rating rating);
     Optional<Rating> findByBook_Id(Long bookId);
-    List<Rating> findAll();
 }

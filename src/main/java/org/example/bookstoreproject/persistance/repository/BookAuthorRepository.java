@@ -11,8 +11,6 @@ import java.util.List;
 @Repository
 public interface BookAuthorRepository extends JpaRepository<BookAuthor, Long> {
     boolean existsByBookAndAuthor(Book book, Author author);
-
     List<BookAuthor> findByAuthorId(Long authorId);
     List<BookAuthor> findByBook(Book book);
-    List<BookAuthor> findAll();
 }

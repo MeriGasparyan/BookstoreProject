@@ -10,5 +10,4 @@ import java.util.Optional;
 @Repository
 public interface SettingRepository extends JpaRepository<Setting, Long> {
     Optional<Setting> findByName(String name);
-    List<Setting> findAll();
 }

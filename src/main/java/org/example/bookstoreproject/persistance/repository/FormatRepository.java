@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface FormatRepository extends JpaRepository<FormatEntity, Long> {
     Optional<FormatEntity> findByFormat(String formatName);
-    List<FormatEntity> findAll();
 }

@@ -12,5 +12,4 @@ import java.util.List;
 public interface BookCharacterRepository extends JpaRepository<BookCharacter, Long> {
 boolean existsByBookAndCharacter(Book book, Character character);
 List<BookCharacter> findByBook(Book book);
-List<BookCharacter> findAll();
 }

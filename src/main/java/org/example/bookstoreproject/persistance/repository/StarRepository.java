@@ -7,6 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StarRepository extends JpaRepository<Star, Long> {
-    List<Star> findAll();
     Optional<Star> findByLevel(String level);
 }

@@ -10,5 +10,4 @@ import java.util.Optional;
 @Repository
 public interface SeriesRepository extends JpaRepository<Series, Long> {
     Optional<Series> findByTitle(String name);
-    List<Series> findAll();
 }

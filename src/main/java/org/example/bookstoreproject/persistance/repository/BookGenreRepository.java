@@ -14,5 +14,4 @@ public interface BookGenreRepository extends JpaRepository<BookGenre, Long> {
     boolean existsByBookAndGenre(Book book, Genre genre);
     List<BookGenre> findByGenre(Genre genre);
     List<BookGenre> findByBook(Book book);
-    List<BookGenre> findAll();
 }

@@ -13,5 +13,4 @@ import java.util.List;
 public interface BookSettingRepository extends JpaRepository<BookSetting, Long> {
 boolean existsByBookAndSetting(Book book, Setting setting);
 List<BookSetting> findByBook(Book book);
-List<BookSetting> findAll();
 }
