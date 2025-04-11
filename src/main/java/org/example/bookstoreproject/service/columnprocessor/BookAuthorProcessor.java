@@ -1,9 +1,9 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
 import lombok.AllArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Author;
-import org.example.bookstoreproject.persistance.entry.Book;
-import org.example.bookstoreproject.persistance.entry.BookAuthor;
+import org.apache.commons.lang3.tuple.Pair;
+import org.example.bookstoreproject.persistance.entry.*;
+import org.example.bookstoreproject.persistance.repository.AuthorRepository;
 import org.example.bookstoreproject.persistance.repository.BookAuthorRepository;
 import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.springframework.stereotype.Component;
@@ -18,37 +18,42 @@ public class BookAuthorProcessor implements CSVColumnProcessor {
     private final BookAuthorRepository bookAuthorRepository;
     private final AuthorProcessor authorProcessor;
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
 
     @Override
     public void process(List<CSVRow> data) {
         Map<String, List<Author>> authorBookMap = authorProcessor.getAuthorBookMap();
-        Map<String, Book> bookCache = new HashMap<>();
-        Set<BookAuthor> bookAuthorsToSave = new HashSet<>();
-        Set<String> bookIDs = authorBookMap.keySet();
-        loadBooks(bookIDs, bookCache);
+        List<Book> bookList = bookRepository.findAll();
+        List<BookAuthor> bookAuthorList = bookAuthorRepository.findAll();
+        List<BookAuthor> newBookAuthorListToSave = new ArrayList<>();
+        Map<String, Book> bookMap = new HashMap<>();
+        for (Book book : bookList) {
+            bookMap.put(book.getBookID(), book);
+        }
+
+        Set<Pair<Long, Long>> existingAuthorBookSet = new HashSet<>();
+        for (BookAuthor bookAuthor : bookAuthorList) {
+            existingAuthorBookSet.add(Pair.of(bookAuthor.getAuthor().getId(), bookAuthor.getBook().getId()));
+        }
 
         for (Map.Entry<String, List<Author>> entry : authorBookMap.entrySet()) {
             List<Author> authors = entry.getValue();
             String bookID = entry.getKey().trim();
-            Book book = bookCache.get(bookID);
+            Book book = bookMap.get(bookID);
             if (book != null) {
                 for (Author author : authors) {
-                    if (!bookAuthorRepository.existsByBookAndAuthor(book, author)) {
-                        bookAuthorsToSave.add(new BookAuthor(book, author));
+                    Pair<Long, Long> pair = Pair.of(book.getId(),author.getId());
+                    if (!existingAuthorBookSet.contains(pair)) {
+                        BookAuthor bookAuthor = new BookAuthor(book, author);
+                        newBookAuthorListToSave.add(bookAuthor);
+                        existingAuthorBookSet.add(pair);
                     }
                 }
             }
         }
 
-        if (!bookAuthorsToSave.isEmpty()) {
-            bookAuthorRepository.saveAll(bookAuthorsToSave);
-        }
-    }
-
-    private void loadBooks(Set<String> bookIDs, Map<String, Book> bookCache) {
-        List<Book> books = bookRepository.findAllByBookIDIn(bookIDs);
-        for (Book book : books) {
-            bookCache.put(book.getBookID().trim(), book);
+        if (!newBookAuthorListToSave.isEmpty()) {
+            bookAuthorRepository.saveAll(newBookAuthorListToSave);
         }
     }
 }

@@ -34,17 +34,18 @@ public class BookProcessor implements CSVColumnProcessor {
 
     @Override
     public void process(List<CSVRow> data) {
-        // Cache existing entities to avoid redundant DB queries
         Map<String, Publisher> publisherMap = new HashMap<>();
         Map<String, Series> seriesMap = new HashMap<>();
         Map<String, LanguageEntity> languageMap = new HashMap<>();
         Map<String, FormatEntity> formatMap = new HashMap<>();
+        Map<String, Book> bookMap = new HashMap<>();
 
 
         publisherRepository.findAll().forEach(publisher -> publisherMap.put(publisher.getName(), publisher));
         seriesRepository.findAll().forEach(series -> seriesMap.put(series.getTitle(), series));
         languageRepository.findAll().forEach(language -> languageMap.put(language.getLanguage(), language));
         formatRepository.findAll().forEach(format -> formatMap.put(format.getFormat(), format));
+        bookRepository.findAll().forEach(book -> bookMap.put(book.getBookID(), book));
 
         List<Publisher> newPublishersToSave = new ArrayList<>();
         List<Series> newSeriesToSave = new ArrayList<>();
@@ -52,41 +53,40 @@ public class BookProcessor implements CSVColumnProcessor {
 
         for (CSVRow row : data) {
             try {
-                Optional<Book> existingBook = bookRepository.findByBookID(row.getBookID().trim());
-                if (existingBook.isPresent()) {
-                    System.out.println("Book already exists: ISBN = " + row.getIsbn().trim() + ", Title = " + row.getTitle().trim());
+
+                if (bookMap.containsKey(row.getBookID())) {
+                    System.out.println("Book already exists: BookID = " + row.getBookID().trim() + ", Title = " + row.getTitle().trim());
                     continue;
                 }
 
                 Language language = languageFormatter.formatLanguage(row.getLanguage());
                 Format format = formatFormatter.formatFormat(row.getFormat());
 
-                LanguageEntity languageEntity = languageMap.computeIfAbsent(language.name(), lang -> {
-                    LanguageEntity newLang = new LanguageEntity(lang);
-                    return languageRepository.save(newLang);
-                });
+                LanguageEntity languageEntity = languageMap.get(language.name());
 
-                FormatEntity formatEntity = formatMap.computeIfAbsent(format.name(), fmt -> {
-                    FormatEntity newFormat = new FormatEntity(fmt);
-                    return formatRepository.save(newFormat);
-                });
+                FormatEntity formatEntity = formatMap.get(format.name());
 
                 Integer pages = pagesFormatter.getInt(row.getPages());
                 Float price = priceFormatter.getFloat(row.getPrice());
                 Date publishDate = dateFormatter.getDate(row.getPublishDate());
                 Date firstPublishDate = dateFormatter.getDate(row.getFirstPublishDate());
 
-                Publisher publisher = publisherMap.computeIfAbsent(row.getPublisher(), pub -> {
-                    Publisher newPublisher = new Publisher(pub);
-                    newPublishersToSave.add(newPublisher);
-                    return newPublisher;
-                });
+                Publisher publisher = publisherMap.get(row.getPublisher().trim());
+                if(publisher == null) {
+                    publisher = new Publisher(row.getPublisher().trim());
+                    publisherRepository.save(publisher);
+                    publisherMap.put(publisher.getName(), publisher);
+                    newPublishersToSave.add(publisher);
+                }
 
-                Series series = seriesMap.computeIfAbsent(row.getSeries(), ser -> {
-                    Series newSeries = new Series(ser);
-                    newSeriesToSave.add(newSeries);
-                    return newSeries;
-                });
+                Series series = seriesMap.get(row.getSeries().trim());
+                if(series == null) {
+                    series = new Series(row.getSeries().trim());
+                    seriesRepository.save(series);
+                    seriesMap.put(series.getTitle(), series);
+                    newSeriesToSave.add(series);
+                }
+
 
                 Book book = new Book(
                         row.getTitle(),
@@ -102,8 +102,7 @@ public class BookProcessor implements CSVColumnProcessor {
                         series
                 );
                 newBooksToSave.add(book);
-
-                System.out.println("Processed and queued book with ISBN: " + row.getIsbn());
+                bookMap.put(book.getBookID(), book);
 
             } catch (Exception e) {
                 System.err.println("Error processing row with ISBN: " + row.getIsbn() + ". Error: " + e.getMessage());
