@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Entity
 @Table(
-        name = "rating_star",
+        name = "book_rating_star",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"rating", "star"})
         }
