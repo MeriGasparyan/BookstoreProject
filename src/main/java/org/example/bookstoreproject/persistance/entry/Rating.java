@@ -21,10 +21,10 @@ public class Rating {
     @Column(nullable = false)
     private Float rating;
 
-    @Column
+    @Column(name = "bbe_score")
     private Integer bbeScore;
 
-    @Column
+    @Column(name = "bbe_votes")
     private Integer bbeVotes;
 
     @ManyToOne(fetch = FetchType.LAZY)

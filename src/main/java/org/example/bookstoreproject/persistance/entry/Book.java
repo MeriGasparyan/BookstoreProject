@@ -13,7 +13,7 @@ import java.util.Date;
 @Table(
         name = "book",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"bookID", "title"})
+                @UniqueConstraint(columnNames = {"book_id", "title"})
         }
 )
 @Setter
@@ -28,7 +28,7 @@ public class Book {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "book_id")
     private String bookID;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,10 +50,10 @@ public class Book {
     @Column
     private Float price;
 
-    @Column(name = "Publish date")
+    @Column(name = "publish_date")
     private Date publishDate;
 
-    @Column(name = "First publish date")
+    @Column(name = "first_publish_date")
     private Date firstPublishDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

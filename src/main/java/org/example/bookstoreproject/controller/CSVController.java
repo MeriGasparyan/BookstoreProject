@@ -1,5 +1,6 @@
 package org.example.bookstoreproject.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.service.CSVDataHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/csv")
 public class CSVController {
 
-    @Autowired
-    private CSVDataHandler csvDataHandler;
+    private final CSVDataHandler csvDataHandler;
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadCsv(@RequestParam("books") MultipartFile file) {
