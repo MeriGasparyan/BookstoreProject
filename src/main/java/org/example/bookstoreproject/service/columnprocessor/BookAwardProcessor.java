@@ -48,7 +48,7 @@ public class BookAwardProcessor implements CSVColumnProcessor {
                 if (!existingPairs.contains(pair)) {
                     BookAward bookAward = new BookAward(book, award);
                     bookAwardsToSave.add(bookAward);
-                    existingPairs.add(pair); // Add to set to avoid duplicates in this batch
+                    existingPairs.add(pair);
                 }
             }
         }

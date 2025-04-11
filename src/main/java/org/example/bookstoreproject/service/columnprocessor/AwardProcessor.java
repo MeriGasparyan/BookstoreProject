@@ -45,13 +45,11 @@ public class AwardProcessor implements CSVColumnProcessor {
                 }
                 awardsForBook.add(award);
             }
-
-            if (!newAwardsToSave.isEmpty()) {
-                awardRepository.saveAll(newAwardsToSave);
-                newAwardsToSave.clear();
-            }
-
             awardBookMap.put(row.getBookID().trim(), awardsForBook);
+        }
+        if (!newAwardsToSave.isEmpty()) {
+            awardRepository.saveAll(newAwardsToSave);
+            newAwardsToSave.clear();
         }
     }
 }

@@ -47,11 +47,11 @@ public class GenreProcessor implements CSVColumnProcessor {
                 }
                 genresForBook.add(genre);
             }
-            if (!newGenresToSave.isEmpty()) {
-                genreRepository.saveAll(newGenresToSave);
-                newGenresToSave.clear();
-            }
             genreBookMap.put(row.getBookID().trim(), genresForBook);
+        }
+        if (!newGenresToSave.isEmpty()) {
+            genreRepository.saveAll(newGenresToSave);
+            newGenresToSave.clear();
         }
     }
 }

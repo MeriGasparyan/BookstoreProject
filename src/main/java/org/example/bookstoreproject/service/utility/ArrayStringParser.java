@@ -7,14 +7,20 @@ import java.util.List;
 public class ArrayStringParser {
 
     public static String[] getArrElements(String input) {
-        if (input == null || input.length() <= 1) {
+        if (input == null) {
             return null;
         }
 
         String trimmed = input.trim();
+        if (trimmed.length() < 2) {
+            return null;
+        }
+
         if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+            if (trimmed.length() <= 2) return null;
             trimmed = trimmed.substring(1, trimmed.length() - 1);
         }
+
         Matcher matcher = Pattern.compile("(['\"])(.*?)\\1|([^,]+)").matcher(trimmed);
         List<String> elements = new ArrayList<>();
 
@@ -27,10 +33,15 @@ public class ArrayStringParser {
                 String clean = raw.trim();
                 if ((clean.startsWith("'") && clean.endsWith("'")) ||
                         (clean.startsWith("\"") && clean.endsWith("\""))) {
-                    clean = clean.substring(1, clean.length() - 1).trim();
+                    if (clean.length() > 1) {
+                        clean = clean.substring(1, clean.length() - 1).trim();
+                    } else {
+                        continue;
+                    }
                 }
-
-                elements.add(clean);
+                if (!clean.isEmpty()) {
+                    elements.add(clean);
+                }
             }
         }
 

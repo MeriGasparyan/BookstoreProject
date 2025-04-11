@@ -47,12 +47,11 @@ public class CharacterProcessor implements CSVColumnProcessor {
                 charactersForBook.add(character);
             }
 
-            if (!newCharactersToSave.isEmpty()) {
-                characterRepository.saveAll(newCharactersToSave);
-                newCharactersToSave.clear();
-            }
-
             characterBookMap.put(row.getBookID().trim(), charactersForBook);
+        }
+        if (!newCharactersToSave.isEmpty()) {
+            characterRepository.saveAll(newCharactersToSave);
+            newCharactersToSave.clear();
         }
     }
 }
