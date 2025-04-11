@@ -13,7 +13,6 @@ public class RatingByStarFormatter {
     private final LongFormatter longFormatter = new LongFormatter();
 
     public Map<RatingStarNumber, Long> formatRatingsByStar(String ratings) {
-        System.out.println(ratings);
         if (ratings == null || ratings.isEmpty()) {
             return null;
         }

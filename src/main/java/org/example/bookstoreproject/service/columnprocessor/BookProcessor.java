@@ -12,7 +12,6 @@ import org.example.bookstoreproject.service.format.FormatFormatter;
 import org.example.bookstoreproject.service.format.LanguageFormatter;
 import org.example.bookstoreproject.service.format.IntegerFormatter;
 import org.example.bookstoreproject.service.format.FloatFormatter;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -57,8 +56,18 @@ public class BookProcessor{
 
                 Integer pages = integerFormatter.getInt(row.getPages());
                 Float price = priceFormatter.getFloat(row.getPrice());
-                Date publishDate = dateFormatter.getDate(row.getPublishDate());
-                Date firstPublishDate = dateFormatter.getDate(row.getFirstPublishDate());
+                Date publishDate;
+                if(row.getPublishDate().isEmpty())
+                    publishDate = null;
+                else
+                    publishDate= dateFormatter.getDate(row.getPublishDate());
+
+                Date firstPublishDate;
+                if(row.getFirstPublishDate().isEmpty())
+                    firstPublishDate = null;
+                else
+                    firstPublishDate= dateFormatter.getDate(row.getFirstPublishDate());
+
                 Integer bbeScore = integerFormatter.getInt(row.getBbeScore());
                 Integer bbeVotes = integerFormatter.getInt(row.getBbeVotes());
 

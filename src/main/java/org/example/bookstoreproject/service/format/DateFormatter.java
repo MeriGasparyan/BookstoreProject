@@ -19,7 +19,7 @@ public class DateFormatter {
         if (dateString == null || dateString.trim().isEmpty()) {
             return null;
         }
-
+        dateString = dateString.replaceAll("(?<=\\d)(st|nd|rd|th)", "").trim();
         for (String format : formats) {
             try {
                 return new SimpleDateFormat(format).parse(dateString);
