@@ -12,7 +12,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Setting {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "setting_id_seq")
+    @SequenceGenerator(
+            name = "setting_id_seq",
+            sequenceName = "setting_id_seq",
+            allocationSize = 100)
     private Long id;
 
     @Column(nullable = false, unique = true)

@@ -17,7 +17,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuthorRole {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_role_id_seq")
+    @SequenceGenerator(
+            name = "author_role_id_seq",
+            sequenceName = "author_role_id_seq",
+            allocationSize = 100)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

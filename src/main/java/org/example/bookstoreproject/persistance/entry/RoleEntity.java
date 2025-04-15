@@ -12,7 +12,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RoleEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_id_seq")
+    @SequenceGenerator(
+            name = "role_id_seq",
+            sequenceName = "role_id_seq",
+            allocationSize = 100)
     private Long id;
 
     @Column(nullable = false, unique = true)

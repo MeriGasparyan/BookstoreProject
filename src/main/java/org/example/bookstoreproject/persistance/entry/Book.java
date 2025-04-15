@@ -22,7 +22,11 @@ import java.util.Date;
 @AllArgsConstructor
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book_id_seq")
+    @SequenceGenerator(
+            name = "book_id_seq",
+            sequenceName = "book_id_seq",
+            allocationSize = 100)
     private Long id;
 
     @Column(nullable = false)
@@ -32,16 +36,14 @@ public class Book {
     private String bookID;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "language")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "language", referencedColumnName = "language")
     private LanguageEntity language;
 
     @Column
     private String isbn;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "format")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "format",referencedColumnName = "format")
     private FormatEntity format;
 
     @Column

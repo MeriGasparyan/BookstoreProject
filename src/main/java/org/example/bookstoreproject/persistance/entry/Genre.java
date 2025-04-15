@@ -13,7 +13,11 @@ import lombok.Setter;
 public class Genre {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "genre_id_seq")
+    @SequenceGenerator(
+            name = "genre_id_seq",
+            sequenceName = "genre_id_seq",
+            allocationSize = 100)
     private Long id;
 
     @Column(nullable = false, unique = true)

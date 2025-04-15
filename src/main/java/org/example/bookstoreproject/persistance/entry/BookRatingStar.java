@@ -10,7 +10,7 @@ import lombok.Setter;
 @Table(
         name = "book_rating_star",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"rating", "star"})
+                @UniqueConstraint(columnNames = {"book", "star"})
         }
 )
 @Setter
@@ -18,7 +18,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BookRatingStar {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book_rating_star_id_seq")
+    @SequenceGenerator(
+            name = "book_rating_star_id_seq",
+            sequenceName = "book_rating_star_id_seq",
+            allocationSize = 100)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
