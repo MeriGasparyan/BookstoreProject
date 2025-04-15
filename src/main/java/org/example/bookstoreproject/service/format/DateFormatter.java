@@ -27,7 +27,6 @@ public class DateFormatter {
             }
         }
 
-        System.err.println("Error parsing date: " + dateString);
         return null;
     }
 }
