@@ -1,6 +1,5 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.Character;
@@ -8,43 +7,56 @@ import org.example.bookstoreproject.persistance.repository.CharacterRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
 @RequiredArgsConstructor
-public class CharacterProcessor{
+public class CharacterProcessor {
+
     private final CharacterRepository characterRepository;
 
+    @Transactional
     public Pair<Map<String, Character>, Map<String, List<Character>>> process(List<CSVRow> data) {
-        Map<String, List<Character>> characterBookMap = new HashMap<>();
-        Map<String, Character> existingCharacterMap = new HashMap<>();
+        Map<String, List<Character>> characterBookMap = new ConcurrentHashMap<>();
+        Map<String, Character> existingCharacterMap = new ConcurrentHashMap<>();
+        List<Character> newCharactersToSave = new CopyOnWriteArrayList<>();
+
+        // Load existing characters once
         List<Character> characterList = characterRepository.findAll();
-        for (Character character : characterList) {
-            existingCharacterMap.put(character.getName(), character);
-        }
+        characterList.forEach(character -> existingCharacterMap.put(character.getName(), character));
 
-        List<Character> newCharactersToSave = new ArrayList<>();
-        for (CSVRow row : data) {
+        data.parallelStream().forEach(row -> {
             String[] charactersArr = ArrayStringParser.getArrElements(row.getCharacters());
-            if (charactersArr == null) continue;
+            if (charactersArr == null) return;
 
-            List<Character> charactersForBook = new ArrayList<>();
+            List<Character> charactersForBook = new CopyOnWriteArrayList<>();
             for (String characterName : charactersArr) {
-                Character character = existingCharacterMap.get(characterName);
-                if (character == null) {
-                    character = new Character(characterName);
-                    existingCharacterMap.put(characterName, character);
-                    newCharactersToSave.add(character);
-                }
+                String trimmedCharacterName = characterName.trim();
+                // Atomic get or create
+                Character character = existingCharacterMap.computeIfAbsent(trimmedCharacterName, k -> {
+                    Character newCharacter = new Character(trimmedCharacterName);
+                    newCharactersToSave.add(newCharacter);
+                    return newCharacter;
+                });
                 charactersForBook.add(character);
             }
 
-            characterBookMap.put(row.getBookID().trim(), charactersForBook);
-        }
+            characterBookMap.compute(row.getBookID().trim(), (bookId, characterListForBook) -> {
+                if (characterListForBook == null) {
+                    characterListForBook = new CopyOnWriteArrayList<>();
+                }
+                characterListForBook.addAll(charactersForBook);
+                return characterListForBook;
+            });
+        });
+
+        // Save new characters outside the stream
         if (!newCharactersToSave.isEmpty()) {
             characterRepository.saveAll(newCharactersToSave);
-            newCharactersToSave.clear();
         }
         return Pair.of(existingCharacterMap, characterBookMap);
     }

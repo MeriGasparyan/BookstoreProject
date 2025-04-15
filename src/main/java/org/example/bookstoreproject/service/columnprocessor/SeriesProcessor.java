@@ -1,38 +1,43 @@
 package org.example.bookstoreproject.service.columnprocessor;
-
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.persistance.entry.Series;
 import org.example.bookstoreproject.persistance.repository.SeriesRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
 @RequiredArgsConstructor
-public class SeriesProcessor{
+public class SeriesProcessor {
 
     private final SeriesRepository seriesRepository;
 
+    @Transactional
     public Map<String, Series> process(List<CSVRow> data) {
-        Map<String, Series> existingSeriesMap = new HashMap<>();
-        List<Series> seriesList = seriesRepository.findAll();
-        for (Series series : seriesList) {
-            existingSeriesMap.put(series.getTitle(), series);
-        }
+        Map<String, Series> existingSeriesMap = new ConcurrentHashMap<>();
+        List<Series> newSeriesToSave = new CopyOnWriteArrayList<>();
 
-        List<Series> newSeriesToSave = new ArrayList<>();
-        for (CSVRow row : data) {
+        // Load existing series once
+        List<Series> seriesList = seriesRepository.findAll();
+        seriesList.forEach(series -> existingSeriesMap.put(series.getTitle(), series));
+
+        data.parallelStream().forEach(row -> {
             if (!row.getSeries().isEmpty()) {
                 String seriesTitle = row.getSeries().trim();
-                Series series = existingSeriesMap.get(seriesTitle);
-                if (series == null) {
-                    series = new Series(seriesTitle);
-                    existingSeriesMap.put(seriesTitle, series);
-                    newSeriesToSave.add(series);
-                }
+                // Atomic get or create
+                Series series = existingSeriesMap.computeIfAbsent(seriesTitle, k -> {
+                    Series newSeries = new Series(seriesTitle);
+                    newSeriesToSave.add(newSeries);
+                    return newSeries;
+                });
             }
-        }
+        });
+
+        // Save new series outside the stream
         if (!newSeriesToSave.isEmpty()) {
             seriesRepository.saveAll(newSeriesToSave);
         }

@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -31,47 +34,62 @@ public class CSVColumnDataProcessor {
     private final SeriesProcessor seriesProcessor;
     private final SettingProcessor settingProcessor;
     private final BookSettingProcessor bookSettingProcessor;
+    private final ExecutorService executorService;
 
     public void processColumns(List<CSVRow> data) {
         if (data == null || data.isEmpty()) {
             System.err.println("CSV data is empty. Skipping service initialization.");
             return;
         }
-        Pair<Map<String, Author>, Map<String, List<Author>>> authorProcess = authorProcessor.process(data);
-        Map<String, Author> existingAuthorMap = authorProcess.getLeft();
-        Map<String, List<Author>> sameBookAuthorsMap = authorProcess.getRight();
-        authorRoleProcessor.process(data, existingAuthorMap);
 
-        Pair<Map<String, Genre>, Map<String, List<Genre>>> genreProcess = genreProcessor.process(data);
-        Map<String, Genre> existingGenreMap = genreProcess.getLeft();
-        Map<String, List<Genre>> sameBookGenreMap = genreProcess.getRight();
+        CompletableFuture<Pair<Map<String, Author>, Map<String, List<Author>>>> authorFuture =
+                CompletableFuture.supplyAsync(() -> authorProcessor.process(data), executorService);
 
-        Pair<Map<String, Character>, Map<String, List<Character>>> characterProcess = characterProcessor.process(data);
-        Map<String, Character> existingCharacterMap = characterProcess.getLeft();
-        Map<String, List<Character>> sameBookCharactersMap = characterProcess.getRight();
+        CompletableFuture<Pair<Map<String, Genre>, Map<String, List<Genre>>>> genreFuture =
+                CompletableFuture.supplyAsync(() -> genreProcessor.process(data), executorService);
 
-        Pair<Map<String, Setting>, Map<String, List<Setting>>> settingProcess = settingProcessor.process(data);
-        Map<String, Setting> existingSettingMap = settingProcess.getLeft();
-        Map<String, List<Setting>> sameBookSettingMap = settingProcess.getRight();
+        CompletableFuture<Pair<Map<String, Character>, Map<String, List<Character>>>> characterFuture =
+                CompletableFuture.supplyAsync(() -> characterProcessor.process(data), executorService);
 
-        Pair<Map<String, Award>, Map<String, List<Award>>> awardProcess = awardProcessor.process(data);
-        Map<String, Award> existingAwardMap = awardProcess.getLeft();
-        Map<String, List<Award>> sameBookAwardMap = awardProcess.getRight();
+        CompletableFuture<Pair<Map<String, Setting>, Map<String, List<Setting>>>> settingFuture =
+                CompletableFuture.supplyAsync(() -> settingProcessor.process(data), executorService);
 
-        Map<String, Publisher> existingPublisherMap = publisherProcessor.process(data);
-        Map<String, Series> existingSeriesMap = seriesProcessor.process(data);
+        CompletableFuture<Pair<Map<String, Award>, Map<String, List<Award>>>> awardFuture =
+                CompletableFuture.supplyAsync(() -> awardProcessor.process(data), executorService);
 
-        Map<String, Book> bookMap = bookProcessor.process(data, existingPublisherMap, existingSeriesMap);
-        bookAuthorProcessor.process(bookMap, sameBookAuthorsMap);
-        bookAwardProcessor.process(bookMap, sameBookAwardMap);
-        bookCharacterProcessor.process(bookMap, sameBookCharactersMap);
-        bookGenreProcessor.process(bookMap, sameBookGenreMap);
-        bookSettingProcessor.process(bookMap, sameBookSettingMap);
-        bookAwardProcessor.process(bookMap, sameBookAwardMap);
+        CompletableFuture<Map<String, Publisher>> publisherFuture =
+                CompletableFuture.supplyAsync(() -> publisherProcessor.process(data), executorService);
 
-        bookRatingStarProcessor.process(data, bookMap);
+        CompletableFuture<Map<String, Series>> seriesFuture =
+                CompletableFuture.supplyAsync(() -> seriesProcessor.process(data), executorService);
+       // logThreadPoolStatus();
 
-        imageProcessor.process(data);
+        Map<String, Book> bookMap = bookProcessor.process(data,
+                publisherFuture.join(), seriesFuture.join());
 
+        CompletableFuture.allOf(
+                CompletableFuture.runAsync(() ->
+                        bookAuthorProcessor.process(bookMap, authorFuture.join().getRight()), executorService),
+                CompletableFuture.runAsync(() ->
+                        bookGenreProcessor.process(bookMap, genreFuture.join().getRight()), executorService),
+                CompletableFuture.runAsync(() ->
+                        bookCharacterProcessor.process(bookMap, characterFuture.join().getRight()), executorService),
+                CompletableFuture.runAsync(() ->
+                        bookSettingProcessor.process(bookMap, settingFuture.join().getRight()), executorService),
+                CompletableFuture.runAsync(() ->
+                        bookAwardProcessor.process(bookMap, awardFuture.join().getRight()), executorService),
+                CompletableFuture.runAsync(() ->
+                        bookRatingStarProcessor.process(data, bookMap), executorService)
+        ).join();
+    }
+
+    private void logThreadPoolStatus() {
+        if (executorService instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutor tpe = (ThreadPoolExecutor) executorService;
+            System.out.printf("Thread pool status: Active=%d, Queue=%d, Completed=%d%n",
+                    tpe.getActiveCount(),
+                    tpe.getQueue().size(),
+                    tpe.getCompletedTaskCount());
+        }
     }
 }

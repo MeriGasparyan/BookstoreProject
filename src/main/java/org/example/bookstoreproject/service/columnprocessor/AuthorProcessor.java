@@ -10,6 +10,8 @@ import org.example.bookstoreproject.service.format.AuthorFormatter;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
 @RequiredArgsConstructor
@@ -19,35 +21,41 @@ public class AuthorProcessor {
     private final AuthorFormatter authorFormatter;
 
     public Pair<Map<String, Author>, Map<String, List<Author>>> process(List<CSVRow> data) {
-        Map<String, List<Author>> authorBookMap = new HashMap<>();
-        Map<String, Author> existingAuthorMap = new HashMap<>();
-        List<Author> authorList = authorRepository.findAll();
-        for (Author author : authorList) {
-            existingAuthorMap.put(author.getName(), author);
-        }
-        List<Author> newAuthorsToSave = new ArrayList<>();
 
-        for (CSVRow row : data) {
+        Map<String, Author> existingAuthorMap = new ConcurrentHashMap<>();
+        Map<String, List<Author>> authorBookMap = new ConcurrentHashMap<>();
+        List<Author> newAuthorsToSave = new CopyOnWriteArrayList<>();
+
+        List<Author> authorList = authorRepository.findAll();
+        authorList.forEach(author -> existingAuthorMap.put(author.getName(), author));
+
+        data.parallelStream().forEach(row -> {
             if (!row.getAuthor().isEmpty()) {
                 Map<String, List<Role>> formattedAuthors = authorFormatter.formatAuthor(row.getAuthor().trim());
-                for (Map.Entry<String, List<Role>> entry : formattedAuthors.entrySet()) {
-                    String name = entry.getKey();
-                    if (!existingAuthorMap.containsKey(name)) {
-                        Author author = new Author(name);
-                        existingAuthorMap.put(name, author);
-                        newAuthorsToSave.add(author);
-                    }
-                    List<Author> authorsForBook = authorBookMap.getOrDefault(row.getBookID().trim(), new ArrayList<>());
-                    authorsForBook.add(existingAuthorMap.get(name));
-                    authorBookMap.put(row.getBookID().trim(), authorsForBook);
-                }
+
+                formattedAuthors.forEach((name, roles) -> {
+                    // ComputeIfAbsent is atomic
+                    Author author = existingAuthorMap.computeIfAbsent(name, k -> {
+                        Author newAuthor = new Author(name);
+                        newAuthorsToSave.add(newAuthor);
+                        return newAuthor;
+                    });
+
+                    authorBookMap.compute(row.getBookID().trim(), (k, v) -> {
+                        if (v == null) {
+                            v = new CopyOnWriteArrayList<>();
+                        }
+                        v.add(author);
+                        return v;
+                    });
+                });
             }
-        }
+        });
+
         if (!newAuthorsToSave.isEmpty()) {
             authorRepository.saveAll(newAuthorsToSave);
         }
 
         return Pair.of(existingAuthorMap, authorBookMap);
-
     }
 }
