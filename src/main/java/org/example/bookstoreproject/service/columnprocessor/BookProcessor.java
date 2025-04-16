@@ -12,7 +12,9 @@ import org.example.bookstoreproject.service.format.LanguageFormatter;
 import org.example.bookstoreproject.service.format.IntegerFormatter;
 import org.example.bookstoreproject.service.format.FloatFormatter;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
 import java.util.*;
 
 @Component
@@ -26,7 +28,7 @@ public class BookProcessor {
     private final LanguageFormatter languageFormatter;
     private final FormatFormatter formatFormatter;
 
-
+    @Transactional
     public Map<String, Book> process(List<CSVRow> data, Map<String, Publisher> publisherMap, Map<String, Series> seriesMap) {
 
         Map<String, Book> newBookMap = new HashMap<>();
@@ -82,7 +84,7 @@ public class BookProcessor {
                 System.err.println("Error processing row with ISBN: " + row.getIsbn() + ". Error: " + e.getMessage());
             }
         }
-
+        System.out.println("Books processed: " + newBookMap.get("2767052-the-hunger-games").getTitle());
         if (!newBookMap.isEmpty()) {
             bookRepository.saveAll(newBookMap.values());
         }

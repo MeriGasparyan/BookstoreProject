@@ -55,23 +55,23 @@ public class BookDTO {
             dto.setSeriesTitle(book.getSeries().getTitle());
         }
 
-        dto.setAuthors(bookAuthorRepository.findByBook(book).stream()
+        dto.setAuthors(book.getBookAuthors().stream()
                 .map(ba -> ba.getAuthor().getName())
                 .collect(Collectors.toList()));
 
-        dto.setAwards(bookAwardRepository.findByBook(book).stream()
+        dto.setAwards(book.getBookAwards().stream()
                 .map(ba -> ba.getAward().getTitle())
                 .collect(Collectors.toList()));
 
-        dto.setCharacters(bookCharacterRepository.findByBook(book).stream()
+        dto.setCharacters(book.getBookCharacters().stream()
                 .map(bc -> bc.getCharacter().getName())
                 .collect(Collectors.toList()));
 
-        dto.setGenres(bookGenreRepository.findByBook(book).stream()
+        dto.setGenres(book.getBookGenres().stream()
                 .map(bg -> bg.getGenre().getName())
                 .collect(Collectors.toList()));
 
-        dto.setSettings(bookSettingRepository.findByBook(book).stream()
+        dto.setSettings(book.getBookSettings().stream()
                 .map(bs -> bs.getSetting().getName())
                 .collect(Collectors.toList()));
 

@@ -43,6 +43,7 @@ public class BookCharacterProcessor{
                 if (!existingPairs.contains(pair)) {
                     BookCharacter bookCharacter = new BookCharacter(book, character);
                     bookCharactersToSave.add(bookCharacter);
+                    book.addBookCharacter(bookCharacter);
                     existingPairs.add(pair);
                 }
             }

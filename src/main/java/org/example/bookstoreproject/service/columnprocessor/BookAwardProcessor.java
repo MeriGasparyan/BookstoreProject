@@ -39,6 +39,7 @@ public class BookAwardProcessor{
                 Pair<Long, Long> pair = Pair.of(book.getId(), award.getId());
                 if (!existingPairs.contains(pair)) {
                     BookAward bookAward = new BookAward(book, award);
+                    book.addBookAward(bookAward);
                     bookAwardsToSave.add(bookAward);
                     existingPairs.add(pair);
                 }

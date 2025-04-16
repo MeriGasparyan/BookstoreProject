@@ -1,6 +1,5 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.*;
@@ -38,6 +37,7 @@ public class BookAuthorProcessor{
                     if (!existingAuthorBookSet.contains(pair)) {
                         BookAuthor bookAuthor = new BookAuthor(book, author);
                         newBookAuthorListToSave.add(bookAuthor);
+                        book.addBookAuthor(bookAuthor);
                         existingAuthorBookSet.add(pair);
                     }
                 }

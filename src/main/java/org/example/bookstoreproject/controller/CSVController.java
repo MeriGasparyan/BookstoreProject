@@ -1,5 +1,6 @@
 package org.example.bookstoreproject.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.service.CSVDataHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,8 @@ public class CSVController {
     private final CSVDataHandler csvDataHandler;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadCsv(@RequestParam("books") MultipartFile file) {
+    public ResponseEntity<String> uploadCsv(@RequestParam("books") MultipartFile file, HttpServletRequest request) {
+        System.out.println("Content-Type: " + request.getContentType());
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.status(400).body("No file uploaded");

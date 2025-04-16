@@ -41,6 +41,7 @@ public class BookGenreProcessor{
                 if (!existingPairs.contains(pair)) {
                     BookGenre bookGenre = new BookGenre(book, genre);
                     bookGenresToSave.add(bookGenre);
+                    book.addBookGenre(bookGenre);
                     existingPairs.add(pair);
                 }
             }

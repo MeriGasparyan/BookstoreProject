@@ -33,18 +33,6 @@ public class BookController {
     }
 
 
-    @GetMapping("/author/name/{authorName}/title")
-    public ResponseEntity<List<String>> getBooksByAuthorName(@PathVariable String authorName) {
-        List<BookDTO> bookDTOs = bookService.getBooksByAuthorName(authorName);
-        if (bookDTOs.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        List<String> titles = bookDTOs.stream()
-                .map(BookDTO::getTitle)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(titles);
-    }
-
     @PostMapping("/add")
     public ResponseEntity<String> addBook(@RequestBody BookCreateRequestDTO createRequest) {
         try {

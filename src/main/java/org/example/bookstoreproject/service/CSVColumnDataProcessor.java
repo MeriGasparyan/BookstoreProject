@@ -59,9 +59,6 @@ public class CSVColumnDataProcessor {
                         () -> bookProcessor.process(data, publisherMap, seriesMap),
                         executorService);
 
-        CompletableFuture<Void> authorRoleFuture =
-                CompletableFuture.runAsync(() -> authorRoleProcessor.process(data, existingAuthorMap), executorService);
-
         CompletableFuture<Map<String, List<Genre>>> genreFuture =
                 CompletableFuture.supplyAsync(() -> genreProcessor.process(data), executorService);
 
@@ -80,6 +77,8 @@ public class CSVColumnDataProcessor {
         Map<String, List<Setting>> settingResults = settingFuture.join();
         Map<String, List<Award>> awardResults = awardFuture.join();
         CompletableFuture.allOf(
+                CompletableFuture.runAsync(() ->
+                        authorRoleProcessor.process(data, existingAuthorMap), executorService),
                 CompletableFuture.runAsync(() ->
                         bookAuthorProcessor.process(bookMap, authorBookMap), executorService),
                 CompletableFuture.runAsync(() ->

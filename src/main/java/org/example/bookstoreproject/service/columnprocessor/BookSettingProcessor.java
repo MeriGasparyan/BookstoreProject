@@ -42,6 +42,7 @@ public class BookSettingProcessor {
                 if (!existingPairs.contains(pair)) {
                     BookSetting bookSetting = new BookSetting(book, setting);
                     bookSettingsToSave.add(bookSetting);
+                    book.addBookSetting(bookSetting);
                     existingPairs.add(pair);
                 }
             }

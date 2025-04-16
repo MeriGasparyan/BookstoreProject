@@ -9,7 +9,7 @@ import lombok.Setter;
 import org.example.bookstoreproject.enums.Format;
 import org.example.bookstoreproject.enums.Language;
 
-import java.util.Date;
+import java.util.*;
 
 @Entity
 @Table(
@@ -76,4 +76,41 @@ public class Book {
     @Column(name = "bbe_votes")
     private Integer bbeVotes;
 
+    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BookAuthor> bookAuthors = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BookAward> bookAwards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BookCharacter> bookCharacters = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BookGenre> bookGenres = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BookSetting> bookSettings = new ArrayList<>();
+
+    public void addBookAuthor(BookAuthor bookAuthor) {
+        bookAuthors.add(bookAuthor);
+        bookAuthor.setBook(this);
+    }
+
+    public void addBookAward(BookAward bookAward) {
+        bookAwards.add(bookAward);
+        bookAward.setBook(this);
+    }
+
+    public void addBookCharacter(BookCharacter bookCharacter) {
+        bookCharacters.add(bookCharacter);
+        bookCharacter.setBook(this);
+    }
+    public void addBookGenre(BookGenre bookGenre) {
+        bookGenres.add(bookGenre);
+        bookGenre.setBook(this);
+    }
+    public void addBookSetting(BookSetting bookSetting) {
+        bookSettings.add(bookSetting);
+        bookSetting.setBook(this);
+    }
 }
