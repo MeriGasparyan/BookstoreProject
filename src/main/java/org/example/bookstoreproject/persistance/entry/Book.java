@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.bookstoreproject.enums.Format;
+import org.example.bookstoreproject.enums.Language;
 
 import java.util.Date;
 
@@ -26,7 +28,7 @@ public class Book {
     @SequenceGenerator(
             name = "book_id_seq",
             sequenceName = "book_id_seq",
-            allocationSize = 100)
+            allocationSize = 50)
     private Long id;
 
     @Column(nullable = false)
@@ -35,16 +37,16 @@ public class Book {
     @Column(nullable = false, name = "book_id")
     private String bookID;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "language", referencedColumnName = "language")
-    private LanguageEntity language;
+    @Column(name = "language")
+    @Enumerated(EnumType.STRING)
+    private Language language;
 
     @Column
     private String isbn;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "format",referencedColumnName = "format")
-    private FormatEntity format;
+    @Column(name = "format")
+    @Enumerated(EnumType.STRING)
+    private Format format;
 
     @Column
     private Integer pages;
@@ -74,20 +76,4 @@ public class Book {
     @Column(name = "bbe_votes")
     private Integer bbeVotes;
 
-
-    public Book(String title, String bookID, LanguageEntity language, String isbn, FormatEntity format, Integer pages, Float price, Date publishDate, Date firstPublishDate, Publisher publisher, Series series) {
-        this.title = title;
-        this.bookID = bookID;
-        this.language = language;
-        this.isbn = isbn;
-        this.format = format;
-        this.pages = pages;
-        this.price = price;
-        this.publishDate = publishDate;
-        this.firstPublishDate = firstPublishDate;
-        this.publisher = publisher;
-        this.series = series;
-
-
-    }
 }

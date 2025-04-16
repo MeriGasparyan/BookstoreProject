@@ -22,7 +22,7 @@ public class BookRatingStar {
     @SequenceGenerator(
             name = "book_rating_star_id_seq",
             sequenceName = "book_rating_star_id_seq",
-            allocationSize = 100)
+            allocationSize = 50)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

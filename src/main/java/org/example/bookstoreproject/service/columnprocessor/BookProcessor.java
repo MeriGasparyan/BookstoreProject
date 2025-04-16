@@ -1,6 +1,5 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
-
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.Format;
 import org.example.bookstoreproject.enums.Language;
@@ -18,97 +17,76 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class BookProcessor{
-    private final BookRepository bookRepository;
-    private final LanguageRepository languageRepository;
-    private final FormatRepository formatRepository;
+public class BookProcessor {
 
+    private final BookRepository bookRepository;
     private final DateFormatter dateFormatter;
     private final IntegerFormatter integerFormatter;
     private final FloatFormatter priceFormatter;
     private final LanguageFormatter languageFormatter;
     private final FormatFormatter formatFormatter;
 
-    public Map<String, Book> process(List<CSVRow> data, Map<String, Publisher> publisherMap, Map<String, Series> seriesMap) {
-        Map<String, LanguageEntity> languageMap = new HashMap<>();
-        Map<String, FormatEntity> formatMap = new HashMap<>();
-        Map<String, Book> bookMap = new HashMap<>();
 
-        languageRepository.findAll().forEach(language -> languageMap.put(language.getLanguage(), language));
-        formatRepository.findAll().forEach(format -> formatMap.put(format.getFormat(), format));
-        bookRepository.findAll().forEach(book -> bookMap.put(book.getBookID(), book));
-        List<Book> newBooksToSave = new ArrayList<>();
+    public Map<String, Book> process(List<CSVRow> data, Map<String, Publisher> publisherMap, Map<String, Series> seriesMap) {
+
+        Map<String, Book> newBookMap = new HashMap<>();
+
+        Set<String> existingBooks = new HashSet<>(bookRepository.findAllBookIds());
 
         for (CSVRow row : data) {
             try {
-
-                if (bookMap.containsKey(row.getBookID())) {
-                    System.out.println("Book already exists: BookID = " + row.getBookID().trim() + ", Title = " + row.getTitle().trim());
+                String bookId = row.getBookID().trim();
+                if (existingBooks.contains(bookId)) {
                     continue;
                 }
+
+                String title = row.getTitle().trim();
+                String seriesString = row.getSeries().trim();
+                String publisherString = row.getPublisher().trim();
+                String isbn = row.getIsbn() != null ? row.getIsbn().trim() : null;
 
                 Language language = languageFormatter.formatLanguage(row.getLanguage());
                 Format format = formatFormatter.formatFormat(row.getFormat());
 
-                LanguageEntity languageEntity = languageMap.get(language.name());
-
-                FormatEntity formatEntity = formatMap.get(format.name());
-
                 Integer pages = integerFormatter.getInt(row.getPages());
                 Float price = priceFormatter.getFloat(row.getPrice());
-                Date publishDate;
-                if(row.getPublishDate().isEmpty())
-                    publishDate = null;
-                else
-                    publishDate= dateFormatter.getDate(row.getPublishDate());
-
-                Date firstPublishDate;
-                if(row.getFirstPublishDate().isEmpty())
-                    firstPublishDate = null;
-                else
-                    firstPublishDate= dateFormatter.getDate(row.getFirstPublishDate());
-
+                Date publishDate = row.getPublishDate().isEmpty() ? null : dateFormatter.getDate(row.getPublishDate());
+                Date firstPublishDate = row.getFirstPublishDate().isEmpty() ? null : dateFormatter.getDate(row.getFirstPublishDate());
                 Integer bbeScore = integerFormatter.getInt(row.getBbeScore());
                 Integer bbeVotes = integerFormatter.getInt(row.getBbeVotes());
 
-                Publisher publisher;
-                if(row.getPublisher().trim().isEmpty()){
-                    publisher = null;
-                }else
-                    publisher = publisherMap.get(row.getPublisher().trim());
+                Publisher publisher = publisherString.isEmpty() ? null : publisherMap.get(publisherString);
+                Series series = seriesString.isEmpty() ? null : seriesMap.get(seriesString);
 
-                Series series;
-                if(row.getSeries().trim().isEmpty()){
-                    series = null;
-                }else
-                    series = seriesMap.get(row.getSeries().trim());
                 Book book = new Book();
-                book.setBookID(row.getBookID().trim());
-                book.setTitle(row.getTitle().trim());
+                book.setBookID(bookId);
+                book.setTitle(title);
                 book.setPublisher(publisher);
                 book.setSeries(series);
                 book.setPublishDate(publishDate);
                 book.setFirstPublishDate(firstPublishDate);
                 book.setPages(pages);
                 book.setPrice(price);
-                book.setTitle(row.getTitle().trim());
                 book.setBbeScore(bbeScore);
                 book.setBbeVotes(bbeVotes);
-                book.setLanguage(languageEntity);
-                book.setFormat(formatEntity);
-                book.setIsbn(row.getIsbn() != null ? row.getIsbn().trim() : null);
+                book.setLanguage(language);
+                book.setFormat(format);
+                if (isbn != null && !isbn.isEmpty()) {
+                    book.setIsbn(isbn);
+                }
 
-                newBooksToSave.add(book);
-                bookMap.put(book.getBookID(), book);
-
+                newBookMap.put(bookId, book);
+                existingBooks.add(bookId);
 
             } catch (Exception e) {
                 System.err.println("Error processing row with ISBN: " + row.getIsbn() + ". Error: " + e.getMessage());
             }
         }
-        if (!newBooksToSave.isEmpty()) {
-            bookRepository.saveAll(newBooksToSave);
+
+        if (!newBookMap.isEmpty()) {
+            bookRepository.saveAll(newBookMap.values());
         }
-        return bookMap;
+
+        return newBookMap;
     }
 }

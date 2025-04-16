@@ -16,7 +16,7 @@ public class BookGenre {
     @SequenceGenerator(
             name = "book_genre_id_seq",
             sequenceName = "book_genre_id_seq",
-            allocationSize = 100)
+            allocationSize = 50)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -41,6 +41,22 @@ public class CSVColumnDataProcessor {
             System.err.println("CSV data is empty. Skipping service initialization.");
             return;
         }
+        // Phase 1: Process publishers and series first (these are needed for books)
+        CompletableFuture<Map<String, Publisher>> publisherFuture =
+                CompletableFuture.supplyAsync(() -> publisherProcessor.process(data), executorService);
+
+        CompletableFuture<Map<String, Series>> seriesFuture =
+                CompletableFuture.supplyAsync(() -> seriesProcessor.process(data), executorService);
+
+        // Wait for these to complete before processing books
+        Map<String, Publisher> publisherMap = publisherFuture.join();
+        Map<String, Series> seriesMap = seriesFuture.join();
+
+        // Phase 2: Process books AND start processing other independent entities in parallel
+        CompletableFuture<Map<String, Book>> bookFuture =
+                CompletableFuture.supplyAsync(
+                        () -> bookProcessor.process(data, publisherMap, seriesMap),
+                        executorService);
 
         CompletableFuture<Pair<Map<String, Author>, Map<String, List<Author>>>> authorFuture =
                 CompletableFuture.supplyAsync(() -> authorProcessor.process(data), executorService);
@@ -57,30 +73,31 @@ public class CSVColumnDataProcessor {
         CompletableFuture<Pair<Map<String, Award>, Map<String, List<Award>>>> awardFuture =
                 CompletableFuture.supplyAsync(() -> awardProcessor.process(data), executorService);
 
-        CompletableFuture<Map<String, Publisher>> publisherFuture =
-                CompletableFuture.supplyAsync(() -> publisherProcessor.process(data), executorService);
+        // Wait for all phase 2 tasks to complete
+        Map<String, Book> bookMap = bookFuture.join();
+        Pair<Map<String, Author>, Map<String, List<Author>>> authorResults = authorFuture.join();
+        Pair<Map<String, Genre>, Map<String, List<Genre>>> genreResults = genreFuture.join();
+        Pair<Map<String, Character>, Map<String, List<Character>>> characterResults = characterFuture.join();
+        Pair<Map<String, Setting>, Map<String, List<Setting>>> settingResults = settingFuture.join();
+        Pair<Map<String, Award>, Map<String, List<Award>>> awardResults = awardFuture.join();
 
-        CompletableFuture<Map<String, Series>> seriesFuture =
-                CompletableFuture.supplyAsync(() -> seriesProcessor.process(data), executorService);
-       // logThreadPoolStatus();
+        // logThreadPoolStatus();
 
-        Map<String, Book> bookMap = bookProcessor.process(data,
-                publisherFuture.join(), seriesFuture.join());
 
-        CompletableFuture.allOf(
-                CompletableFuture.runAsync(() ->
-                        bookAuthorProcessor.process(bookMap, authorFuture.join().getRight()), executorService),
-                CompletableFuture.runAsync(() ->
-                        bookGenreProcessor.process(bookMap, genreFuture.join().getRight()), executorService),
-                CompletableFuture.runAsync(() ->
-                        bookCharacterProcessor.process(bookMap, characterFuture.join().getRight()), executorService),
-                CompletableFuture.runAsync(() ->
-                        bookSettingProcessor.process(bookMap, settingFuture.join().getRight()), executorService),
-                CompletableFuture.runAsync(() ->
-                        bookAwardProcessor.process(bookMap, awardFuture.join().getRight()), executorService),
-                CompletableFuture.runAsync(() ->
-                        bookRatingStarProcessor.process(data, bookMap), executorService)
-        ).join();
+//        CompletableFuture.allOf(
+//                CompletableFuture.runAsync(() ->
+//                        bookAuthorProcessor.process(bookMap, authorFuture.join().getRight()), executorService),
+//                CompletableFuture.runAsync(() ->
+//                        bookGenreProcessor.process(bookMap, genreFuture.join().getRight()), executorService),
+//                CompletableFuture.runAsync(() ->
+//                        bookCharacterProcessor.process(bookMap, characterFuture.join().getRight()), executorService),
+//                CompletableFuture.runAsync(() ->
+//                        bookSettingProcessor.process(bookMap, settingFuture.join().getRight()), executorService),
+//                CompletableFuture.runAsync(() ->
+//                        bookAwardProcessor.process(bookMap, awardFuture.join().getRight()), executorService),
+//                CompletableFuture.runAsync(() ->
+//                        bookRatingStarProcessor.process(data, bookMap), executorService)
+//        ).join();
     }
 
     private void logThreadPoolStatus() {

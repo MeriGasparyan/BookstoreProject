@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.bookstoreproject.enums.Format;
+import org.example.bookstoreproject.enums.Language;
 import org.example.bookstoreproject.persistance.entry.Book;
 import org.example.bookstoreproject.persistance.repository.*;
 
@@ -17,9 +19,9 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class BookDTO {
     private String title;
-    private LanguageDTO language;
+    private Language language;
     private String isbn;
-    private FormatDTO format;
+    private Format format;
     private Integer pages;
     private Float price;
     private Date publishDate;
@@ -44,13 +46,8 @@ public class BookDTO {
         dto.setPrice(book.getPrice());
         dto.setPublishDate(book.getPublishDate());
         dto.setFirstPublishDate(book.getFirstPublishDate());
-
-        if (book.getLanguage() != null) {
-            dto.setLanguage(new LanguageDTO(book.getLanguage().getLanguage()));
-        }
-        if (book.getFormat() != null) {
-            dto.setFormat(new FormatDTO(book.getFormat().getFormat()));
-        }
+        dto.setLanguage(book.getLanguage());
+        dto.setFormat(book.getFormat());
         if (book.getPublisher() != null) {
             dto.setPublisherName(book.getPublisher().getName());
         }

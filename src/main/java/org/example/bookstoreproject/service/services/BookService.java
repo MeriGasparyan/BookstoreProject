@@ -33,8 +33,7 @@ public class BookService {
     private final BookGenreRepository bookGenreRepository;
     private final BookSettingRepository bookSettingRepository;
     private final AuthorRepository authorRepository;
-    private final FormatRepository formatRepository;
-    private final LanguageRepository languageRepository;
+
     private final SeriesRepository seriesRepository;
     private final PublisherRepository publisherRepository;
     private final RatingStarRepository ratingStarRepository;
@@ -86,8 +85,8 @@ public class BookService {
             throw new IllegalArgumentException("Book with ID " + createRequest.getBookID() + " already exists.");
         }
 
-        LanguageEntity language = languageRepository.findByLanguage(Language.fromString(createRequest.getLanguage()).name()).orElse(null);
-        FormatEntity format = formatRepository.findByFormat(Format.fromString(createRequest.getFormat()).name()).orElse(null);
+        Language language = Language.fromString(createRequest.getLanguage());
+        Format format = Format.fromString(createRequest.getFormat());
         Publisher publisher = publisherRepository.findByName(createRequest.getPublisher()).orElseGet(() -> publisherRepository.save(new Publisher(createRequest.getPublisher())));
         Series series = seriesRepository.findByTitle(createRequest.getSeries()).orElseGet(() -> seriesRepository.save(new Series(createRequest.getSeries())));
 
