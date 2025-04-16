@@ -11,9 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -95,15 +93,5 @@ public class CSVColumnDataProcessor {
                 CompletableFuture.runAsync(() ->
                         bookRatingStarProcessor.process(data, bookMap), executorService)
         );
-    }
-
-    private void logThreadPoolStatus() {
-        if (executorService instanceof ThreadPoolExecutor) {
-            ThreadPoolExecutor tpe = (ThreadPoolExecutor) executorService;
-            System.out.printf("Thread pool status: Active=%d, Queue=%d, Completed=%d%n",
-                    tpe.getActiveCount(),
-                    tpe.getQueue().size(),
-                    tpe.getCompletedTaskCount());
-        }
     }
 }
