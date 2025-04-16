@@ -60,6 +60,7 @@ public class BookRatingStarProcessor {
                         BookRatingStar bookRatingStar = new BookRatingStar(book, star, entry.getValue());
                         bookRatingStarsToSave.add(bookRatingStar);
                         existingRatingStarPairs.add(bookStarPair);
+                        book.addBookRatingStar(bookRatingStar);
                     }
                 }
             } catch (Exception e) {

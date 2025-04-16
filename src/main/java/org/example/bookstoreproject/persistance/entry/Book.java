@@ -91,6 +91,9 @@ public class Book {
     @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BookSetting> bookSettings = new ArrayList<>();
 
+    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BookRatingStar> BookRatingStars = new ArrayList<>();
+
     public void addBookAuthor(BookAuthor bookAuthor) {
         bookAuthors.add(bookAuthor);
         bookAuthor.setBook(this);
@@ -112,5 +115,10 @@ public class Book {
     public void addBookSetting(BookSetting bookSetting) {
         bookSettings.add(bookSetting);
         bookSetting.setBook(this);
+    }
+
+    public void addBookRatingStar(BookRatingStar bookRatingStar) {
+        BookRatingStars.add(bookRatingStar);
+        bookRatingStar.setBook(this);
     }
 }

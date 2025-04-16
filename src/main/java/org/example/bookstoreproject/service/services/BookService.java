@@ -46,7 +46,7 @@ public class BookService {
     @Transactional(readOnly = true)
     public BookDTO getBookByTitle(String title) {
         return bookRepository.findByTitle(title)
-                .map(book -> BookDTO.fromEntity(book, bookAuthorRepository, bookAwardRepository, bookCharacterRepository, bookGenreRepository, bookSettingRepository))
+                .map(BookDTO::fromEntity)
                 .orElse(null);
     }
 

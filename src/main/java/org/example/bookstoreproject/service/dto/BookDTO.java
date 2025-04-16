@@ -6,11 +6,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.bookstoreproject.enums.Format;
 import org.example.bookstoreproject.enums.Language;
+import org.example.bookstoreproject.enums.RatingStarNumber;
 import org.example.bookstoreproject.persistance.entry.Book;
+import org.example.bookstoreproject.persistance.entry.BookRatingStar;
 import org.example.bookstoreproject.persistance.repository.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -33,12 +37,9 @@ public class BookDTO {
     private List<String> characters;
     private List<String> genres;
     private List<String> settings;
+    private Map<String, Long> ratingStars;
 
-    public static BookDTO fromEntity(Book book, BookAuthorRepository bookAuthorRepository,
-                                     BookAwardRepository bookAwardRepository,
-                                     BookCharacterRepository bookCharacterRepository,
-                                     BookGenreRepository bookGenreRepository,
-                                     BookSettingRepository bookSettingRepository) {
+    public static BookDTO fromEntity(Book book) {
         BookDTO dto = new BookDTO();
         dto.setTitle(book.getTitle());
         dto.setIsbn(book.getIsbn());
@@ -74,6 +75,12 @@ public class BookDTO {
         dto.setSettings(book.getBookSettings().stream()
                 .map(bs -> bs.getSetting().getName())
                 .collect(Collectors.toList()));
+
+        List<BookRatingStar> ratingsList= book.getBookRatingStars().stream().toList();
+        dto.ratingStars = new HashMap<>();
+        for (BookRatingStar ratingStar : ratingsList) {
+            dto.ratingStars.put(ratingStar.getStar().getLevel(), ratingStar.getNumRating());
+        }
 
         return dto;
     }
