@@ -19,6 +19,9 @@ public class BookCharacterProcessor{
 
     @Transactional
     public void process(Map<String, Book> bookMap, Map<String, List<Character>> characterBookMap) {
+        if (bookMap.isEmpty()) {
+            return;
+        }
         List<BookCharacter> existingBookCharacters = bookCharacterRepository.findAll();
         Set<Pair<Long, Long>> existingPairs = new HashSet<>();
         for (BookCharacter bc : existingBookCharacters) {
@@ -32,7 +35,6 @@ public class BookCharacterProcessor{
             Book book = bookMap.get(bookID);
 
             if (book == null) {
-                System.out.println("No book found for bookID: " + bookID);
                 continue;
             }
 

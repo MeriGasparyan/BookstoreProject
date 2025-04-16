@@ -17,6 +17,9 @@ public class BookAwardProcessor{
 
     @Transactional
     public void process(Map<String, Book> bookCache, Map<String, List<Award>> awardBookMap) {
+        if (bookCache.isEmpty()) {
+            return;
+        }
         List<BookAward> existingBookAwards = bookAwardRepository.findAll();
         Set<Pair<Long, Long>> existingPairs = new HashSet<>();
         for (BookAward bookAward : existingBookAwards) {
@@ -29,7 +32,6 @@ public class BookAwardProcessor{
             String bookID = entry.getKey().trim();
             Book book = bookCache.get(bookID);
             if (book == null) {
-                System.out.println("No book found for bookID: " + bookID);
                 continue;
             }
 

@@ -23,6 +23,9 @@ public class BookRatingStarProcessor {
 
     @Transactional
     public void process(List<CSVRow> data, Map<String, Book> existingBookMap) {
+        if (existingBookMap.isEmpty()) {
+            return;
+        }
         Map<String, Star> starMap = new HashMap<>();
         Set<Pair<Long, String>> existingRatingStarPairs = new HashSet<>();
         List<BookRatingStar> bookRatingStarsToSave = new ArrayList<>();
@@ -49,6 +52,9 @@ public class BookRatingStarProcessor {
                     }
 
                     Book book = existingBookMap.get(row.getBookID().trim());
+                    if(book == null) {
+                        continue;
+                    }
                     Pair<Long, String> bookStarPair = Pair.of(book.getId(), star.getLevel());
                     if (!existingRatingStarPairs.contains(bookStarPair)) {
                         BookRatingStar bookRatingStar = new BookRatingStar(book, star, entry.getValue());

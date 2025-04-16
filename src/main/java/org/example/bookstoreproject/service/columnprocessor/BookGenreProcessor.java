@@ -17,7 +17,9 @@ public class BookGenreProcessor{
 
     @Transactional
     public void process(Map<String, Book> bookMap, Map<String, List<Genre>> genreBookMap) {
-
+        if (bookMap.isEmpty()) {
+            return;
+        }
         List<BookGenre> existingBookGenres = bookGenreRepository.findAll();
         Set<Pair<Long, Long>> existingPairs = new HashSet<>();
         for (BookGenre bg : existingBookGenres) {
@@ -31,7 +33,6 @@ public class BookGenreProcessor{
             Book book = bookMap.get(bookID);
 
             if (book == null) {
-                System.out.println("No book found for bookID: " + bookID);
                 continue;
             }
 

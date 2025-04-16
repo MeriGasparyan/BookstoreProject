@@ -18,6 +18,9 @@ public class BookAuthorProcessor{
 
     @Transactional
     public void process(Map<String, Book> bookMap, Map<String, List<Author>> authorBookMap) {
+        if (bookMap.isEmpty()) {
+            return;
+        }
         List<BookAuthor> bookAuthorList = bookAuthorRepository.findAll();
         List<BookAuthor> newBookAuthorListToSave = new ArrayList<>();
         Set<Pair<Long, Long>> existingAuthorBookSet = new HashSet<>();

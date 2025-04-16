@@ -17,6 +17,9 @@ public class BookSettingProcessor {
 
     @Transactional
     public void process(Map<String, Book> bookMap, Map<String, List<Setting>> settingBookMap) {
+        if (settingBookMap.isEmpty() || bookMap.isEmpty()) {
+            return;
+        }
         List<BookSetting> existingBookSettings = bookSettingRepository.findAll();
 
         Set<Pair<Long, Long>> existingPairs = new HashSet<>();
@@ -31,7 +34,6 @@ public class BookSettingProcessor {
             Book book = bookMap.get(bookID);
 
             if (book == null) {
-                System.out.println("No book found for bookID: " + bookID);
                 continue;
             }
 
