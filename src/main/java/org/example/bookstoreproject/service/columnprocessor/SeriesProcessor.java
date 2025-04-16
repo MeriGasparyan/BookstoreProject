@@ -21,14 +21,12 @@ public class SeriesProcessor {
         Map<String, Series> existingSeriesMap = new ConcurrentHashMap<>();
         List<Series> newSeriesToSave = new CopyOnWriteArrayList<>();
 
-        // Load existing series once
         List<Series> seriesList = seriesRepository.findAll();
         seriesList.forEach(series -> existingSeriesMap.put(series.getTitle(), series));
 
         data.parallelStream().forEach(row -> {
             if (!row.getSeries().isEmpty()) {
                 String seriesTitle = row.getSeries().trim();
-                // Atomic get or create
                 Series series = existingSeriesMap.computeIfAbsent(seriesTitle, k -> {
                     Series newSeries = new Series(seriesTitle);
                     newSeriesToSave.add(newSeries);
@@ -37,7 +35,6 @@ public class SeriesProcessor {
             }
         });
 
-        // Save new series outside the stream
         if (!newSeriesToSave.isEmpty()) {
             seriesRepository.saveAll(newSeriesToSave);
         }

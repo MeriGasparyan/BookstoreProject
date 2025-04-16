@@ -7,6 +7,7 @@ import org.example.bookstoreproject.persistance.entry.Character;
 import org.example.bookstoreproject.persistance.repository.BookCharacterRepository;
 import org.springframework.stereotype.Component;
 import org.example.bookstoreproject.service.CSVRow;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -16,6 +17,7 @@ public class BookCharacterProcessor{
 
     private final BookCharacterRepository bookCharacterRepository;
 
+    @Transactional
     public void process(Map<String, Book> bookMap, Map<String, List<Character>> characterBookMap) {
         List<BookCharacter> existingBookCharacters = bookCharacterRepository.findAll();
         Set<Pair<Long, Long>> existingPairs = new HashSet<>();

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.repository.BookSettingRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -14,6 +15,7 @@ public class BookSettingProcessor {
 
     private final BookSettingRepository bookSettingRepository;
 
+    @Transactional
     public void process(Map<String, Book> bookMap, Map<String, List<Setting>> settingBookMap) {
         List<BookSetting> existingBookSettings = bookSettingRepository.findAll();
 

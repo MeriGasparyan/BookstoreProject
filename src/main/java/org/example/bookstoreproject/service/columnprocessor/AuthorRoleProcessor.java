@@ -26,14 +26,13 @@ public class AuthorRoleProcessor {
     private final RoleRepository roleRepository;
     private final AuthorRoleRepository authorRoleRepository;
 
-    @Transactional // Ensure database operations are transactional
+    @Transactional
     public void process(List<CSVRow> data, Map<String, Author> existingAuthorMap) {
-        // Use thread-safe collections
+
         Map<String, RoleEntity> existingRoleMap = new ConcurrentHashMap<>();
         Set<Pair<Long, Long>> existingAuthorRoleSet = new ConcurrentSkipListSet<>(); // Thread-safe Set
         List<AuthorRole> newAuthorRolesToSave = new CopyOnWriteArrayList<>();
 
-        // Load data once at the beginning
         List<RoleEntity> roleList = roleRepository.findAll();
         roleList.forEach(role -> existingRoleMap.put(role.getRoleName(), role));
 
@@ -47,27 +46,25 @@ public class AuthorRoleProcessor {
                 formattedAuthors.forEach((authorName, roles) -> {
                     Author author = existingAuthorMap.get(authorName);
                     if (author == null) {
-                        return; // Skip if author is not found
+                        return;
                     }
 
                     roles.forEach(roleEnum -> {
                         RoleEntity roleEntity = existingRoleMap.get(roleEnum.name());
                         if (roleEntity == null) {
-                            return; // Skip if role is not found
+                            return;
                         }
 
                         Pair<Long, Long> pair = Pair.of(author.getId(), roleEntity.getId());
-                        // Atomic operation to add if absent
                         if (existingAuthorRoleSet.add(pair)) {
                             AuthorRole authorRole = new AuthorRole(author, roleEntity);
-                            newAuthorRolesToSave.add(authorRole); // Add to thread-safe list
+                            newAuthorRolesToSave.add(authorRole);
                         }
                     });
                 });
             }
         });
 
-        // Save new author roles outside the stream
         if (!newAuthorRolesToSave.isEmpty()) {
             authorRoleRepository.saveAll(newAuthorRolesToSave);
         }

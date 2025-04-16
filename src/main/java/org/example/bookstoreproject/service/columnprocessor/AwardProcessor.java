@@ -18,13 +18,12 @@ public class AwardProcessor {
 
     private final AwardRepository awardRepository;
 
-    @Transactional // Ensure database operations are transactional
-    public Pair<Map<String, Award>, Map<String, List<Award>>> process(List<CSVRow> data) {
+    @Transactional
+    public Map<String, List<Award>> process(List<CSVRow> data) {
         Map<String, List<Award>> awardBookMap = new ConcurrentHashMap<>();
         Map<String, Award> existingAwardsMap = new ConcurrentHashMap<>();
         List<Award> newAwardsToSave = new CopyOnWriteArrayList<>();
 
-        // Load existing awards once
         List<Award> awardList = awardRepository.findAll();
         awardList.forEach(award -> existingAwardsMap.put(award.getTitle(), award));
 
@@ -35,7 +34,6 @@ public class AwardProcessor {
 
             for (String awardTitle : awardArr) {
                 String trimmedAwardTitle = awardTitle.trim();
-                // Atomic get or create
                 Award award = existingAwardsMap.computeIfAbsent(trimmedAwardTitle, k -> {
                     Award newAward = new Award(trimmedAwardTitle);
                     newAwardsToSave.add(newAward);
@@ -52,10 +50,9 @@ public class AwardProcessor {
             });
         });
 
-        // Save new awards outside the stream
         if (!newAwardsToSave.isEmpty()) {
             awardRepository.saveAll(newAwardsToSave);
         }
-        return Pair.of(existingAwardsMap, awardBookMap);
+        return awardBookMap;
     }
 }

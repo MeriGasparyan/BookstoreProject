@@ -8,6 +8,7 @@ import org.example.bookstoreproject.persistance.repository.AuthorRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.format.AuthorFormatter;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +21,7 @@ public class AuthorProcessor {
     private final AuthorRepository authorRepository;
     private final AuthorFormatter authorFormatter;
 
+    @Transactional
     public Pair<Map<String, Author>, Map<String, List<Author>>> process(List<CSVRow> data) {
 
         Map<String, Author> existingAuthorMap = new ConcurrentHashMap<>();
@@ -34,7 +36,6 @@ public class AuthorProcessor {
                 Map<String, List<Role>> formattedAuthors = authorFormatter.formatAuthor(row.getAuthor().trim());
 
                 formattedAuthors.forEach((name, roles) -> {
-                    // ComputeIfAbsent is atomic
                     Author author = existingAuthorMap.computeIfAbsent(name, k -> {
                         Author newAuthor = new Author(name);
                         newAuthorsToSave.add(newAuthor);

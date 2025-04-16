@@ -20,12 +20,11 @@ public class CharacterProcessor {
     private final CharacterRepository characterRepository;
 
     @Transactional
-    public Pair<Map<String, Character>, Map<String, List<Character>>> process(List<CSVRow> data) {
+    public Map<String, List<Character>> process(List<CSVRow> data) {
         Map<String, List<Character>> characterBookMap = new ConcurrentHashMap<>();
         Map<String, Character> existingCharacterMap = new ConcurrentHashMap<>();
         List<Character> newCharactersToSave = new CopyOnWriteArrayList<>();
 
-        // Load existing characters once
         List<Character> characterList = characterRepository.findAll();
         characterList.forEach(character -> existingCharacterMap.put(character.getName(), character));
 
@@ -36,7 +35,6 @@ public class CharacterProcessor {
             List<Character> charactersForBook = new CopyOnWriteArrayList<>();
             for (String characterName : charactersArr) {
                 String trimmedCharacterName = characterName.trim();
-                // Atomic get or create
                 Character character = existingCharacterMap.computeIfAbsent(trimmedCharacterName, k -> {
                     Character newCharacter = new Character(trimmedCharacterName);
                     newCharactersToSave.add(newCharacter);
@@ -54,10 +52,9 @@ public class CharacterProcessor {
             });
         });
 
-        // Save new characters outside the stream
         if (!newCharactersToSave.isEmpty()) {
             characterRepository.saveAll(newCharactersToSave);
         }
-        return Pair.of(existingCharacterMap, characterBookMap);
+        return characterBookMap;
     }
 }

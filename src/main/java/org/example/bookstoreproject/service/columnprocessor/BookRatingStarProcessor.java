@@ -9,6 +9,7 @@ import org.example.bookstoreproject.persistance.repository.StarRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.format.RatingByStarFormatter;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -20,6 +21,7 @@ public class BookRatingStarProcessor {
     private final StarRepository starRepository;
     private final RatingByStarFormatter ratingByStarFormatter;
 
+    @Transactional
     public void process(List<CSVRow> data, Map<String, Book> existingBookMap) {
         Map<String, Star> starMap = new HashMap<>();
         Set<Pair<Long, String>> existingRatingStarPairs = new HashSet<>();

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.repository.BookAwardRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -14,6 +15,7 @@ public class BookAwardProcessor{
 
     private final BookAwardRepository bookAwardRepository;
 
+    @Transactional
     public void process(Map<String, Book> bookCache, Map<String, List<Award>> awardBookMap) {
         List<BookAward> existingBookAwards = bookAwardRepository.findAll();
         Set<Pair<Long, Long>> existingPairs = new HashSet<>();

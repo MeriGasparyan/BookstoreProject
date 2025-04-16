@@ -21,14 +21,12 @@ public class PublisherProcessor {
         Map<String, Publisher> existingPublisherMap = new ConcurrentHashMap<>();
         List<Publisher> newPublishersToSave = new CopyOnWriteArrayList<>();
 
-        // Load existing publishers once
         List<Publisher> publisherList = publisherRepository.findAll();
         publisherList.forEach(publisher -> existingPublisherMap.put(publisher.getName(), publisher));
 
         data.parallelStream().forEach(row -> {
             if (!row.getPublisher().isEmpty()) {
                 String publisherName = row.getPublisher().trim();
-                // Atomic get or create
                 Publisher publisher = existingPublisherMap.computeIfAbsent(publisherName, k -> {
                     Publisher newPublisher = new Publisher(publisherName);
                     newPublishersToSave.add(newPublisher);
@@ -37,7 +35,6 @@ public class PublisherProcessor {
             }
         });
 
-        // Save new publishers outside the stream
         if (!newPublishersToSave.isEmpty()) {
             publisherRepository.saveAll(newPublishersToSave);
         }

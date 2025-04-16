@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.repository.BookAuthorRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -15,6 +16,7 @@ public class BookAuthorProcessor{
 
     private final BookAuthorRepository bookAuthorRepository;
 
+    @Transactional
     public void process(Map<String, Book> bookMap, Map<String, List<Author>> authorBookMap) {
         List<BookAuthor> bookAuthorList = bookAuthorRepository.findAll();
         List<BookAuthor> newBookAuthorListToSave = new ArrayList<>();

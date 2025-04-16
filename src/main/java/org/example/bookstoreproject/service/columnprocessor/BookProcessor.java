@@ -12,6 +12,7 @@ import org.example.bookstoreproject.service.format.LanguageFormatter;
 import org.example.bookstoreproject.service.format.IntegerFormatter;
 import org.example.bookstoreproject.service.format.FloatFormatter;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -27,6 +28,7 @@ public class BookProcessor {
     private final FormatFormatter formatFormatter;
 
 
+    @Transactional
     public Map<String, Book> process(List<CSVRow> data, Map<String, Publisher> publisherMap, Map<String, Series> seriesMap) {
 
         Map<String, Book> newBookMap = new HashMap<>();
