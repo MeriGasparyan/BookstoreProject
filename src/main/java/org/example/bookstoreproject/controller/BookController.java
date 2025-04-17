@@ -25,8 +25,9 @@ public class BookController {
     private RatingService ratingService;
 
     @PostMapping("/search")
-    public ResponseEntity<List<BookDTO>> searchBooks(@RequestBody BookSearchRequestDTO request) {
-        List<BookDTO> result = bookService.searchBooks(request)
+    public ResponseEntity<List<BookDTO>> searchBooks(@RequestBody BookSearchRequestDTO request,
+                                                     @RequestParam(value = "limit", defaultValue = "20") int limit) {
+        List<BookDTO> result = bookService.searchBooks(request, limit)
                 .stream()
                 .limit(20)
                 .collect(Collectors.toList());

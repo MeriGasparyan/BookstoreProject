@@ -98,7 +98,7 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookDTO> searchBooks(BookSearchRequestDTO request) {
+    public List<BookDTO> searchBooks(BookSearchRequestDTO request, int limit) {
         Set<Book> result = null;
 
         if (request.getTitle() != null) {
@@ -148,7 +148,7 @@ public class BookService {
         }
 
         return result.stream()
-                .limit(20)
+                .limit(limit)
                 .map(BookDTO::fromEntity)
                 .collect(Collectors.toList());
     }
