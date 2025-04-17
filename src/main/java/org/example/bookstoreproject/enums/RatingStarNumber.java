@@ -20,4 +20,15 @@ public enum RatingStarNumber {
             default -> null;
         };
     }
+
+    public static RatingStarNumber fromInt(int value) {
+        return switch (value) {
+            case 1 -> ONE_STAR;
+            case 2 -> TWO_STAR;
+            case 3 -> THREE_STAR;
+            case 4 -> FOUR_STAR;
+            case 5 -> FIVE_STAR;
+            default -> throw new IllegalArgumentException("Invalid rating star: " + value);
+        };
+    }
 }

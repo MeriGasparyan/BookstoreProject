@@ -40,13 +40,17 @@ public class BookController {
         }
     }
 
-    @PostMapping("/rate/{bookId}/{star}")
-    public ResponseEntity<String> rateBook(@PathVariable Long bookId, @PathVariable Integer star) {
-        if (star < 1 || star > 5) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Rating star must be between 1 and 5.");
+    @PostMapping("/{bookID}/rate")
+    public ResponseEntity<String> rateBook(
+            @PathVariable String bookID,
+            @RequestParam("star") Integer starValue) {
+
+        if (starValue < 1 || starValue > 5) {
+            return ResponseEntity.badRequest().body("Rating star must be between 1 and 5.");
         }
+
         try {
-            ratingService.rateBook(bookId, star);
+            ratingService.rateBook(bookID, starValue);
             return ResponseEntity.ok("Book rated successfully.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

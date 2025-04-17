@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.bookstoreproject.enums.RatingStarNumber;
 
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -21,43 +20,19 @@ public class RatingService {
     private final StarRepository starRepository;
 
     @Transactional
-    public void rateBook(Long bookId, Integer starValue) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new IllegalArgumentException("Book with ID " + bookId + " not found."));
+    public void rateBook(String bookID, Integer starValue) {
+        Book book = bookRepository.findByBookID(bookID)
+                .orElseThrow(() -> new IllegalArgumentException("Book with ID " + bookID + " not found."));
 
-        String starLevel;
-        switch (starValue) {
-            case 1:
-                starLevel = RatingStarNumber.ONE_STAR.name();
-                break;
-            case 2:
-                starLevel = RatingStarNumber.TWO_STAR.name();
-                break;
-            case 3:
-                starLevel = RatingStarNumber.THREE_STAR.name();
-                break;
-            case 4:
-                starLevel = RatingStarNumber.FOUR_STAR.name();
-                break;
-            case 5:
-                starLevel = RatingStarNumber.FIVE_STAR.name();
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid star value: " + starValue);
-        }
+        RatingStarNumber ratingEnum = RatingStarNumber.fromInt(starValue); // create helper
+        Star star = starRepository.findByLevel(ratingEnum.name())
+                .orElseThrow(() -> new IllegalArgumentException("Star level '" + ratingEnum + "' not found."));
 
-        Star star = starRepository.findByLevel(starLevel)
-                .orElseThrow(() -> new IllegalArgumentException("Star level '" + starLevel + "' not found."));
+        BookRatingStar ratingStar = ratingStarRepository.findByBookAndStar(book, star)
+                .orElseGet(() -> new BookRatingStar(book, star, 0L));
 
-        Optional<BookRatingStar> existingRatingStar = ratingStarRepository.findByBookAndStar(book, star);
-
-        if (existingRatingStar.isPresent()) {
-            BookRatingStar bookRatingStar = existingRatingStar.get();
-            bookRatingStar.setNumRating(bookRatingStar.getNumRating() + 1);
-            ratingStarRepository.save(bookRatingStar);
-        } else {
-            BookRatingStar newBookRatingStar = new BookRatingStar(book, star, 1L);
-            ratingStarRepository.save(newBookRatingStar);
-        }
+        ratingStar.setNumRating(ratingStar.getNumRating() + 1);
+        ratingStarRepository.save(ratingStar);
     }
+
 }
