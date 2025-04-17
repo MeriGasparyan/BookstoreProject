@@ -9,6 +9,7 @@ import org.example.bookstoreproject.persistance.entry.Character;
 import org.example.bookstoreproject.persistance.repository.*;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.BookDTO;
+import org.example.bookstoreproject.service.dto.BookSearchRequestDTO;
 import org.example.bookstoreproject.service.format.FloatFormatter;
 import org.example.bookstoreproject.service.format.IntegerFormatter;
 import org.example.bookstoreproject.service.format.RatingByStarFormatter;
@@ -42,13 +43,6 @@ public class BookService {
     private final IntegerFormatter integerFormatter;
     private final FloatFormatter floatFormatter;
     private final SettingRepository settingRepository;
-
-    @Transactional(readOnly = true)
-    public BookDTO getBookByTitle(String title) {
-        return bookRepository.findByTitle(title)
-                .map(BookDTO::fromEntity)
-                .orElse(null);
-    }
 
     @Transactional
     public void addBook(BookCreateRequestDTO createRequest) {
@@ -161,6 +155,23 @@ public class BookService {
                             .orElseGet(() -> settingRepository.save(new Setting(name.trim())));
                     book.addBookSetting(new BookSetting(book, setting));
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookDTO> searchBooks(BookSearchRequestDTO request) {
+        List<Book> books = bookRepository.findAll();
+
+        return books.stream()
+                .filter(book -> request.getTitle() == null || book.getTitle().toLowerCase().contains(request.getTitle().toLowerCase()))
+                .filter(book -> request.getAuthor() == null || book.getBookAuthors().stream()
+                        .anyMatch(bookAuthor -> bookAuthor.getAuthor().getName().toLowerCase().contains(request.getAuthor().toLowerCase())))
+                .filter(book -> request.getGenre() == null || book.getBookGenres().stream()
+                        .anyMatch(bookGenre -> bookGenre.getGenre().getName().toLowerCase().contains(request.getGenre().toLowerCase())))
+                .filter(book -> request.getLanguage() == null || book.getLanguage().name().equalsIgnoreCase(request.getLanguage()))
+                .filter(book -> request.getPublisher() == null || (book.getPublisher() != null && book.getPublisher().getName().toLowerCase().contains(request.getPublisher().toLowerCase())))
+                .filter(book -> request.getSeries() == null || (book.getSeries() != null && book.getSeries().getTitle().toLowerCase().contains(request.getSeries().toLowerCase())))
+                .map(BookDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
 }

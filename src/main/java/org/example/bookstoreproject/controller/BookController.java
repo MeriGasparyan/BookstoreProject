@@ -2,6 +2,7 @@ package org.example.bookstoreproject.controller;
 
 import lombok.AllArgsConstructor;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
+import org.example.bookstoreproject.service.dto.BookSearchRequestDTO;
 import org.example.bookstoreproject.service.services.BookService;
 import org.example.bookstoreproject.service.services.RatingService;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor(onConstructor_ = {@Autowired})
@@ -23,16 +23,11 @@ public class BookController {
     private BookService bookService;
     private RatingService ratingService;
 
-    @GetMapping("/title/{title}")
-    public ResponseEntity<BookDTO> getBookByTitle(@PathVariable String title) {
-        BookDTO bookDTO = bookService.getBookByTitle(title);
-        if (bookDTO == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        return ResponseEntity.ok(bookDTO);
+    @PostMapping("/search")
+    public ResponseEntity<List<BookDTO>> searchBooks(@RequestBody BookSearchRequestDTO request) {
+        List<BookDTO> result = bookService.searchBooks(request);
+        return ResponseEntity.ok(result);
     }
-
-
     @PostMapping("/add")
     public ResponseEntity<String> addBook(@RequestBody BookCreateRequestDTO createRequest) {
         try {
