@@ -104,29 +104,43 @@ public class BookService {
         if (request.getTitle() != null) {
             result = intersect(result, bookRepository.findByTitleContainingIgnoreCase(request.getTitle()));
         }
-        if (request.getAuthor() != null) {
-            result = intersect(result, bookRepository.findByBookAuthors_Author_NameContainingIgnoreCase(request.getAuthor()));
+        if (request.getAuthors() != null && !request.getAuthors().isEmpty()) {
+            for (String author : request.getAuthors()) {
+                result = intersect(result, bookRepository.findByBookAuthors_Author_NameContainingIgnoreCase(author));
+            }
         }
-        if (request.getGenre() != null) {
-            result = intersect(result, bookRepository.findByBookGenres_Genre_NameContainingIgnoreCase(request.getGenre()));
+        if (request.getGenres() != null && !request.getGenres().isEmpty()) {
+            for (String genre : request.getGenres()) {
+                result = intersect(result, bookRepository.findByBookGenres_Genre_NameContainingIgnoreCase(genre));
+            }
         }
         if (request.getLanguage() != null) {
             result = intersect(result, bookRepository.findByLanguage(Language.fromString(request.getLanguage())));
         }
-        if (request.getPublisher() != null) {
-            result = intersect(result, bookRepository.findByPublisher_NameContainingIgnoreCase(request.getPublisher()));
+        if (request.getPublishers() != null && !request.getPublishers().isEmpty()) {
+            for (String publisher : request.getPublishers()) {
+                result = intersect(result, bookRepository.findByPublisher_NameContainingIgnoreCase(publisher));
+            }
         }
-        if (request.getSeries() != null) {
-            result = intersect(result, bookRepository.findBySeries_TitleContainingIgnoreCase(request.getSeries()));
+        if (request.getSeries() != null && !request.getSeries().isEmpty()) {
+            for (String series : request.getSeries()) {
+                result = intersect(result, bookRepository.findBySeries_TitleContainingIgnoreCase(series));
+            }
         }
-        if (request.getAward() != null) {
-            result = intersect(result, bookRepository.findByBookAwards_Award_TitleContainingIgnoreCase(request.getAward()));
+        if (request.getAwards() != null && !request.getAwards().isEmpty()) {
+            for (String award : request.getAwards()) {
+                result = intersect(result, bookRepository.findByBookAwards_Award_TitleContainingIgnoreCase(award));
+            }
         }
-        if (request.getCharacter() != null) {
-            result = intersect(result, bookRepository.findByBookCharacters_Character_NameContainingIgnoreCase(request.getCharacter()));
+        if (request.getCharacters() != null && !request.getCharacters().isEmpty()) {
+            for (String character : request.getCharacters()) {
+                result = intersect(result, bookRepository.findByBookCharacters_Character_NameContainingIgnoreCase(character));
+            }
         }
-        if (request.getSetting() != null) {
-            result = intersect(result, bookRepository.findByBookSettings_Setting_NameContainingIgnoreCase(request.getSetting()));
+        if (request.getSettings() != null && !request.getSettings().isEmpty()) {
+            for (String setting : request.getSettings()) {
+                result = intersect(result, bookRepository.findByBookSettings_Setting_NameContainingIgnoreCase(setting));
+            }
         }
 
         if (result == null) {
@@ -144,5 +158,6 @@ public class BookService {
         base.retainAll(newSet);
         return base;
     }
+
 
 }
