@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor(onConstructor_ = {@Autowired})
@@ -25,7 +26,10 @@ public class BookController {
 
     @PostMapping("/search")
     public ResponseEntity<List<BookDTO>> searchBooks(@RequestBody BookSearchRequestDTO request) {
-        List<BookDTO> result = bookService.searchBooks(request);
+        List<BookDTO> result = bookService.searchBooks(request)
+                .stream()
+                .limit(20)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(result);
     }
     @PostMapping("/add")

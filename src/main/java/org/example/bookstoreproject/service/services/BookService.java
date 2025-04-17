@@ -1,6 +1,7 @@
 package org.example.bookstoreproject.service.services;
 
 import lombok.AllArgsConstructor;
+import org.example.bookstoreproject.enums.Language;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.entry.Character;
 import org.example.bookstoreproject.persistance.repository.*;
@@ -98,19 +99,50 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public List<BookDTO> searchBooks(BookSearchRequestDTO request) {
-        List<Book> books = bookRepository.findAll();
+        Set<Book> result = null;
 
-        return books.stream()
-                .filter(book -> request.getTitle() == null || book.getTitle().toLowerCase().contains(request.getTitle().toLowerCase()))
-                .filter(book -> request.getAuthor() == null || book.getBookAuthors().stream()
-                        .anyMatch(bookAuthor -> bookAuthor.getAuthor().getName().toLowerCase().contains(request.getAuthor().toLowerCase())))
-                .filter(book -> request.getGenre() == null || book.getBookGenres().stream()
-                        .anyMatch(bookGenre -> bookGenre.getGenre().getName().toLowerCase().contains(request.getGenre().toLowerCase())))
-                .filter(book -> request.getLanguage() == null || book.getLanguage().name().equalsIgnoreCase(request.getLanguage()))
-                .filter(book -> request.getPublisher() == null || (book.getPublisher() != null && book.getPublisher().getName().toLowerCase().contains(request.getPublisher().toLowerCase())))
-                .filter(book -> request.getSeries() == null || (book.getSeries() != null && book.getSeries().getTitle().toLowerCase().contains(request.getSeries().toLowerCase())))
+        if (request.getTitle() != null) {
+            result = intersect(result, bookRepository.findByTitleContainingIgnoreCase(request.getTitle()));
+        }
+        if (request.getAuthor() != null) {
+            result = intersect(result, bookRepository.findByBookAuthors_Author_NameContainingIgnoreCase(request.getAuthor()));
+        }
+        if (request.getGenre() != null) {
+            result = intersect(result, bookRepository.findByBookGenres_Genre_NameContainingIgnoreCase(request.getGenre()));
+        }
+        if (request.getLanguage() != null) {
+            result = intersect(result, bookRepository.findByLanguage(Language.fromString(request.getLanguage())));
+        }
+        if (request.getPublisher() != null) {
+            result = intersect(result, bookRepository.findByPublisher_NameContainingIgnoreCase(request.getPublisher()));
+        }
+        if (request.getSeries() != null) {
+            result = intersect(result, bookRepository.findBySeries_TitleContainingIgnoreCase(request.getSeries()));
+        }
+        if (request.getAward() != null) {
+            result = intersect(result, bookRepository.findByBookAwards_Award_TitleContainingIgnoreCase(request.getAward()));
+        }
+        if (request.getCharacter() != null) {
+            result = intersect(result, bookRepository.findByBookCharacters_Character_NameContainingIgnoreCase(request.getCharacter()));
+        }
+        if (request.getSetting() != null) {
+            result = intersect(result, bookRepository.findByBookSettings_Setting_NameContainingIgnoreCase(request.getSetting()));
+        }
+
+        if (result == null) {
+            result = new HashSet<>(bookRepository.findAll());
+        }
+
+        return result.stream()
+                .limit(20)
                 .map(BookDTO::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    private Set<Book> intersect(Set<Book> base, Set<Book> newSet) {
+        if (base == null) return new HashSet<>(newSet);
+        base.retainAll(newSet);
+        return base;
     }
 
 }

@@ -12,4 +12,7 @@ public class BookSearchRequestDTO {
     private String language;
     private String publisher;
     private String series;
+    private String setting;
+    private String award;
+    private String character;
 }
