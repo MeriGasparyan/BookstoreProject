@@ -37,7 +37,7 @@ public class BookDTO {
     private List<String> characters;
     private List<String> genres;
     private List<String> settings;
-    private Map<String, Long> ratingStars;
+    private Map<RatingStarNumber, Long> ratingStars = new HashMap<>();
     private Float averageRating;
     private Long totalNumRatings;
 
@@ -79,15 +79,14 @@ public class BookDTO {
                 .collect(Collectors.toList()));
 
         List<BookRatingStar> ratingsList= book.getBookRatingStars().stream().toList();
-        dto.ratingStars = new HashMap<>();
         long totalNumRatings = 0;
         long weightedSum = 0;
         for (BookRatingStar ratingStar : ratingsList) {
             long localNumRating = ratingStar.getNumRating();
-            String starLevel = ratingStar.getStar().getLevel();
+            RatingStarNumber starLevel = ratingStar.getStar().getLevel();
             dto.ratingStars.put(starLevel, localNumRating);
             totalNumRatings += localNumRating;
-            weightedSum += (RatingStarNumber.fromString(starLevel).ordinal() + 1) * localNumRating;
+            weightedSum += (starLevel.ordinal() + 1) * localNumRating;
         }
         dto.setTotalNumRatings(totalNumRatings);
         dto.setAverageRating((float)weightedSum / totalNumRatings);
