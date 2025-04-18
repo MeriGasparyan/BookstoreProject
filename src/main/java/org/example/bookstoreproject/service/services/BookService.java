@@ -167,9 +167,9 @@ public class BookService {
     }
 
     @Transactional
-    public void updateBook(String bookID, BookUpdateRequestDTO updateRequest) {
-        Book book = bookRepository.findByBookID(bookID)
-                .orElseThrow(() -> new NoSuchElementException("Book with ID " + bookID + " not found"));
+    public void updateBook(Long id, BookUpdateRequestDTO updateRequest) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Book with ID " + id + " not found"));
 
         if (updateRequest.getTitle() != null) book.setTitle(updateRequest.getTitle());
         if (updateRequest.getIsbn() != null) book.setIsbn(updateRequest.getIsbn());
@@ -211,9 +211,9 @@ public class BookService {
     }
 
     @Transactional
-    public void deleteBook(String bookID) {
-        Book book = bookRepository.findByBookID(bookID)
-                .orElseThrow(() -> new NoSuchElementException("Book with ID " + bookID + " not found"));
+    public void deleteBook(Long id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Book with ID " + id + " not found"));
 
         book.clearBookAuthors();
         book.clearBookAwards();

@@ -25,15 +25,15 @@ public class BookController {
     private BookService bookService;
     private RatingService ratingService;
 
-    @PutMapping("/{bookID}")
-    public ResponseEntity<Void> updateBook(@PathVariable String bookID, @RequestBody BookUpdateRequestDTO request) {
-        bookService.updateBook(bookID, request);
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateBook(@PathVariable Long id, @RequestBody BookUpdateRequestDTO request) {
+        bookService.updateBook(id, request);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{bookID}")
-    public ResponseEntity<Void> deleteBook(@PathVariable String bookID) {
-        bookService.deleteBook(bookID);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -58,9 +58,9 @@ public class BookController {
         }
     }
 
-    @PostMapping("/{bookID}/rate")
+    @PostMapping("/{id}/rate")
     public ResponseEntity<String> rateBook(
-            @PathVariable String bookID,
+            @PathVariable Long id,
             @RequestParam("star") Integer starValue) {
 
         if (starValue < 1 || starValue > 5) {
@@ -68,7 +68,7 @@ public class BookController {
         }
 
         try {
-            ratingService.rateBook(bookID, starValue);
+            ratingService.rateBook(id, starValue);
             return ResponseEntity.ok("Book rated successfully.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
