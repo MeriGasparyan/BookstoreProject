@@ -8,6 +8,7 @@ import org.example.bookstoreproject.persistance.repository.*;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.BookDTO;
 import org.example.bookstoreproject.service.dto.BookSearchRequestDTO;
+import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -157,6 +158,64 @@ public class BookService {
         if (base == null) return new HashSet<>(newSet);
         base.retainAll(newSet);
         return base;
+    }
+
+    @Transactional
+    public void updateBook(String bookID, BookUpdateRequestDTO updateRequest) {
+        Book book = bookRepository.findByBookID(bookID)
+                .orElseThrow(() -> new NoSuchElementException("Book with ID " + bookID + " not found"));
+
+        if (updateRequest.getTitle() != null) book.setTitle(updateRequest.getTitle());
+        if (updateRequest.getIsbn() != null) book.setIsbn(updateRequest.getIsbn());
+        if (updateRequest.getPages() != null) book.setPages(updateRequest.getPages());
+        if (updateRequest.getPrice() != null) book.setPrice(updateRequest.getPrice());
+        if (updateRequest.getPublishDate() != null) book.setPublishDate(updateRequest.getPublishDate());
+        if (updateRequest.getFirstPublishDate() != null) book.setFirstPublishDate(updateRequest.getFirstPublishDate());
+        if (updateRequest.getLanguage() != null) book.setLanguage(updateRequest.getLanguage());
+        if (updateRequest.getFormat() != null) book.setFormat(updateRequest.getFormat());
+
+        if (updateRequest.getPublisherName() != null) {
+            Publisher publisher = publisherRepository.findByName(updateRequest.getPublisherName())
+                    .orElseGet(() -> publisherRepository.save(new Publisher(updateRequest.getPublisherName())));
+            book.setPublisher(publisher);
+        }
+
+        if (updateRequest.getSeriesTitle() != null) {
+            Series series = seriesRepository.findByTitle(updateRequest.getSeriesTitle())
+                    .orElseGet(() -> seriesRepository.save(new Series(updateRequest.getSeriesTitle())));
+            book.setSeries(series);
+        }
+
+        book.clearBookAuthors();
+        addAuthors(book, updateRequest.getAuthors());
+
+        book.clearBookCharacters();
+        addCharacters(book, updateRequest.getCharacters());
+
+        book.clearBookGenres();
+        addGenres(book, updateRequest.getGenres());
+
+        book.clearBookAwards();
+        addAwards(book, updateRequest.getAwards());
+
+        book.clearBookSettings();
+        addSettings(book, updateRequest.getSettings());
+
+        bookRepository.save(book);
+    }
+
+    @Transactional
+    public void deleteBook(String bookID) {
+        Book book = bookRepository.findByBookID(bookID)
+                .orElseThrow(() -> new NoSuchElementException("Book with ID " + bookID + " not found"));
+
+        book.clearBookAuthors();
+        book.clearBookAwards();
+        book.clearBookCharacters();
+        book.clearBookGenres();
+        book.clearBookSettings();
+
+        bookRepository.delete(book);
     }
 
 

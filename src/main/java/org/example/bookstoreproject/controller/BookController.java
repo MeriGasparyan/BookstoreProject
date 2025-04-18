@@ -3,6 +3,7 @@ package org.example.bookstoreproject.controller;
 import lombok.AllArgsConstructor;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.BookSearchRequestDTO;
+import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
 import org.example.bookstoreproject.service.services.BookService;
 import org.example.bookstoreproject.service.services.RatingService;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,18 @@ import java.util.stream.Collectors;
 public class BookController {
     private BookService bookService;
     private RatingService ratingService;
+
+    @PutMapping("/{bookID}")
+    public ResponseEntity<Void> updateBook(@PathVariable String bookID, @RequestBody BookUpdateRequestDTO request) {
+        bookService.updateBook(bookID, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{bookID}")
+    public ResponseEntity<Void> deleteBook(@PathVariable String bookID) {
+        bookService.deleteBook(bookID);
+        return ResponseEntity.noContent().build();
+    }
 
     @PostMapping("/search")
     public ResponseEntity<List<BookDTO>> searchBooks(@RequestBody BookSearchRequestDTO request,

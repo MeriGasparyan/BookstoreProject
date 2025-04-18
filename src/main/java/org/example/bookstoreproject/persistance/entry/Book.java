@@ -76,22 +76,22 @@ public class Book {
     @Column(name = "bbe_votes")
     private Integer bbeVotes;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BookAuthor> bookAuthors = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BookAward> bookAwards = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BookCharacter> bookCharacters = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BookGenre> bookGenres = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BookSetting> bookSettings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BookRatingStar> BookRatingStars = new ArrayList<>();
 
     public void addBookAuthor(BookAuthor bookAuthor) {
@@ -121,4 +121,40 @@ public class Book {
         BookRatingStars.add(bookRatingStar);
         bookRatingStar.setBook(this);
     }
+
+    public void clearBookAuthors() {
+        if (bookAuthors != null) {
+            bookAuthors.forEach(bookAuthor -> bookAuthor.setBook(null));
+            bookAuthors.clear();
+        }
+    }
+
+    public void clearBookAwards() {
+        if (bookAwards != null) {
+            bookAwards.forEach(bookAward -> bookAward.setBook(null));
+            bookAwards.clear();
+        }
+    }
+
+    public void clearBookCharacters() {
+        if (bookCharacters != null) {
+            bookCharacters.forEach(bookCharacter -> bookCharacter.setBook(null));
+            bookCharacters.clear();
+        }
+    }
+
+    public void clearBookGenres() {
+        if (bookGenres != null) {
+            bookGenres.forEach(bookGenre -> bookGenre.setBook(null));
+            bookGenres.clear();
+        }
+    }
+
+    public void clearBookSettings() {
+        if (bookSettings != null) {
+            bookSettings.forEach(bookSetting -> bookSetting.setBook(null));
+            bookSettings.clear();
+        }
+    }
+
 }
