@@ -5,10 +5,13 @@ import org.example.bookstoreproject.enums.Language;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.entry.Character;
 import org.example.bookstoreproject.persistance.repository.*;
+import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.BookDTO;
 import org.example.bookstoreproject.service.dto.BookSearchRequestDTO;
 import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,72 +101,29 @@ public class BookService {
                 });
     }
 
-    @Transactional(readOnly = true)
-    public List<BookDTO> searchBooks(BookSearchRequestDTO request, int limit) {
-        if (request.isEmpty()) {
-            return bookRepository.findAll().stream()
-                    .limit(limit)
-                    .map(BookDTO::fromEntity)
-                    .collect(Collectors.toList());
-        }
-        Set<Book> result = null;
+    public List<BookDTO> searchBooks(BookSearchCriteria criteria, int size) {
+        String title = criteria.getTitle() != null ? criteria.getTitle().toLowerCase() : null;
 
-        if (request.getTitle() != null) {
-            result = intersect(result, bookRepository.findByTitleContainingIgnoreCase(request.getTitle()));
-        }
-        if (request.getAuthors() != null && !request.getAuthors().isEmpty()) {
-            for (String author : request.getAuthors()) {
-                result = intersect(result, bookRepository.findByBookAuthors_Author_NameContainingIgnoreCase(author));
-            }
-        }
-        if (request.getGenres() != null && !request.getGenres().isEmpty()) {
-            for (String genre : request.getGenres()) {
-                result = intersect(result, bookRepository.findByBookGenres_Genre_NameContainingIgnoreCase(genre));
-            }
-        }
-        if (request.getLanguage() != null) {
-            result = intersect(result, bookRepository.findByLanguage(Language.fromString(request.getLanguage())));
-        }
-        if (request.getPublishers() != null && !request.getPublishers().isEmpty()) {
-            for (String publisher : request.getPublishers()) {
-                result = intersect(result, bookRepository.findByPublisher_NameContainingIgnoreCase(publisher));
-            }
-        }
-        if (request.getSeries() != null && !request.getSeries().isEmpty()) {
-            for (String series : request.getSeries()) {
-                result = intersect(result, bookRepository.findBySeries_TitleContainingIgnoreCase(series));
-            }
-        }
-        if (request.getAwards() != null && !request.getAwards().isEmpty()) {
-            for (String award : request.getAwards()) {
-                result = intersect(result, bookRepository.findByBookAwards_Award_TitleContainingIgnoreCase(award));
-            }
-        }
-        if (request.getCharacters() != null && !request.getCharacters().isEmpty()) {
-            for (String character : request.getCharacters()) {
-                result = intersect(result, bookRepository.findByBookCharacters_Character_NameContainingIgnoreCase(character));
-            }
-        }
-        if (request.getSettings() != null && !request.getSettings().isEmpty()) {
-            for (String setting : request.getSettings()) {
-                result = intersect(result, bookRepository.findByBookSettings_Setting_NameContainingIgnoreCase(setting));
-            }
-        }
-
-        if (result == null) {
-            result = new HashSet<>(bookRepository.findAll());
-        }
+        Pageable pageable = PageRequest.of(0, size);
+        List<Book> result = bookRepository.searchBooks(
+                title,
+                criteria.getAuthorIds(),
+                criteria.getGenreIds(),
+                criteria.getPublisherIds(),
+                criteria.getSeriesIds(),
+                criteria.getAwardIds(),
+                criteria.getCharacterIds(),
+                criteria.getSettingIds(),
+                pageable
+        );
 
         return result.stream()
-                .limit(limit)
                 .map(BookDTO::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private Set<Book> intersect(Set<Book> base, Set<Book> newSet) {
-        if (base == null) return new HashSet<>(newSet);
-        base.retainAll(newSet);
-        return base;
+    private List<String> lower(List<String> values) {
+        return values == null ? null : values.stream().map(String::toLowerCase).toList();
     }
 
     @Transactional

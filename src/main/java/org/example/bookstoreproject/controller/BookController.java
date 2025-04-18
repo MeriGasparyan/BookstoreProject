@@ -1,6 +1,7 @@
 package org.example.bookstoreproject.controller;
 
 import lombok.AllArgsConstructor;
+import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.BookSearchRequestDTO;
 import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
@@ -37,15 +38,12 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/search")
-    public ResponseEntity<List<BookDTO>> searchBooks(@RequestBody BookSearchRequestDTO request,
-                                                     @RequestParam(value = "limit", defaultValue = "20") int limit) {
-        List<BookDTO> result = bookService.searchBooks(request, limit)
-                .stream()
-                .limit(20)
-                .collect(Collectors.toList());
+    @GetMapping("/")
+    public ResponseEntity<List<BookDTO>> searchBooks(@ModelAttribute BookSearchCriteria criteria) {
+        List<BookDTO> result = bookService.searchBooks(criteria, criteria.getSize());
         return ResponseEntity.ok(result);
     }
+
     @PostMapping("/add")
     public ResponseEntity<String> addBook(@RequestBody BookCreateRequestDTO createRequest) {
         try {
