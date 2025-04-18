@@ -26,8 +26,8 @@ public class BookRatingStarProcessor {
         if (existingBookMap.isEmpty()) {
             return;
         }
-        Map<String, Star> starMap = new HashMap<>();
-        Set<Pair<Long, String>> existingRatingStarPairs = new HashSet<>();
+        Map<RatingStarNumber, Star> starMap = new HashMap<>();
+        Set<Pair<Long, RatingStarNumber>> existingRatingStarPairs = new HashSet<>();
         List<BookRatingStar> bookRatingStarsToSave = new ArrayList<>();
         List<BookRatingStar> existingBookRatingStars = ratingStarRepository.findAll();
 
@@ -43,7 +43,7 @@ public class BookRatingStarProcessor {
                 }
 
                 for (Map.Entry<RatingStarNumber, Long> entry : ratingsByStar.entrySet()) {
-                    Star star = starMap.computeIfAbsent(entry.getKey().name(), starLevel ->
+                    Star star = starMap.computeIfAbsent(entry.getKey(), starLevel ->
                             starRepository.findByLevel(starLevel).orElse(null));
 
                     if (star == null) {
@@ -55,7 +55,7 @@ public class BookRatingStarProcessor {
                     if(book == null) {
                         continue;
                     }
-                    Pair<Long, String> bookStarPair = Pair.of(book.getId(), star.getLevel());
+                    Pair<Long, RatingStarNumber> bookStarPair = Pair.of(book.getId(), star.getLevel());
                     if (!existingRatingStarPairs.contains(bookStarPair)) {
                         BookRatingStar bookRatingStar = new BookRatingStar(book, star, entry.getValue());
                         bookRatingStarsToSave.add(bookRatingStar);
