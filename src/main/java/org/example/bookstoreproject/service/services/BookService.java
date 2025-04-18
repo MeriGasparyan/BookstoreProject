@@ -171,9 +171,7 @@ public class BookService {
         Book book = bookRepository.findByBookID(bookID)
                 .orElseThrow(() -> new NoSuchElementException("Book with ID " + bookID + " not found"));
 
-        if (updateRequest.getTitle() != null) {
-            book.setTitle(updateRequest.getTitle());
-        }
+        if (updateRequest.getTitle() != null) book.setTitle(updateRequest.getTitle());
         if (updateRequest.getIsbn() != null) book.setIsbn(updateRequest.getIsbn());
         if (updateRequest.getPages() != null) book.setPages(updateRequest.getPages());
         if (updateRequest.getPrice() != null) book.setPrice(updateRequest.getPrice());

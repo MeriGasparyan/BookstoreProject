@@ -1,7 +1,6 @@
 package org.example.bookstoreproject.controller;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.BookSearchRequestDTO;
 import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
@@ -20,11 +19,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor(onConstructor_ = {@Autowired})
 @RequestMapping("/books")
 public class BookController {
-    private final BookService bookService;
-    private final RatingService ratingService;
+    private BookService bookService;
+    private RatingService ratingService;
 
     @PutMapping("/{bookID}")
     public ResponseEntity<Void> updateBook(@PathVariable String bookID, @RequestBody BookUpdateRequestDTO request) {
@@ -38,7 +37,7 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
+    @PostMapping("/search")
     public ResponseEntity<List<BookDTO>> searchBooks(@RequestBody BookSearchRequestDTO request,
                                                      @RequestParam(value = "limit", defaultValue = "20") int limit) {
         List<BookDTO> result = bookService.searchBooks(request, limit)
@@ -47,7 +46,6 @@ public class BookController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(result);
     }
-
     @PostMapping("/add")
     public ResponseEntity<String> addBook(@RequestBody BookCreateRequestDTO createRequest) {
         try {
