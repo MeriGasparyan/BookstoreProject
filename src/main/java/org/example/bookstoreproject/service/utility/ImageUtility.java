@@ -41,14 +41,15 @@ public class ImageUtility {
         return baseFolder + File.separator + subfolder + File.separator + safeTitle + ".jpg";
     }
 
-    public void createThumbnail(String originalPath, String thumbPath, int width, int height) throws IOException {
+    public void createThumbnail(String originalPath, String outputPath, int width, int height) throws IOException {
         BufferedImage img = ImageIO.read(new File(originalPath));
         BufferedImage thumbnail = Thumbnails.of(img)
                 .size(width, height)
                 .asBufferedImage();
 
-        File thumbFile = new File(thumbPath);
-        thumbFile.getParentFile().mkdirs(); // Just in case
-        ImageIO.write(thumbnail, "jpg", thumbFile);
+        File outputFile = new File(outputPath);
+        outputFile.getParentFile().mkdirs();
+        ImageIO.write(thumbnail, "jpg", outputFile);
     }
+
 }

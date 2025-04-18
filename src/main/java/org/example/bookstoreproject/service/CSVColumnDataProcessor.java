@@ -90,7 +90,9 @@ public class CSVColumnDataProcessor {
                 CompletableFuture.runAsync(() ->
                         bookAwardProcessor.process(bookMap, awardResults), executorService),
                 CompletableFuture.runAsync(() ->
-                        bookRatingStarProcessor.process(data, bookMap), executorService)
+                        bookRatingStarProcessor.process(data, bookMap), executorService),
+                CompletableFuture.runAsync(() ->
+                        imageProcessor.process(data), executorService)
         );
     }
 }

@@ -84,7 +84,6 @@ public class BookProcessor {
                 System.err.println("Error processing row with ISBN: " + row.getIsbn() + ". Error: " + e.getMessage());
             }
         }
-        System.out.println("Books processed: " + newBookMap.get("2767052-the-hunger-games").getTitle());
         if (!newBookMap.isEmpty()) {
             bookRepository.saveAll(newBookMap.values());
         }

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor(onConstructor_ = {@Autowired})
-@RequestMapping("/book")
+@RequestMapping("/books")
 public class BookController {
     private BookService bookService;
     private RatingService ratingService;
