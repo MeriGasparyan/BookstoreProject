@@ -1,10 +1,7 @@
 package org.example.bookstoreproject.persistance.entry;
 import jakarta.persistence.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.example.bookstoreproject.enums.ImageSize;
 
 
@@ -12,13 +9,12 @@ import org.example.bookstoreproject.enums.ImageSize;
 @Table(
         name = "image_metadata",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"file_name", "book_id", "format"})
+                @UniqueConstraint(columnNames = {"file_name", "book_id", "size"})
         }
 )
 @Setter
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ImageMetaData {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "image_metadata_id_seq")
@@ -29,6 +25,7 @@ public class ImageMetaData {
     private Long id;
 
     @Column(nullable = false, name = "size")
+    @Enumerated(EnumType.STRING)
     private ImageSize imageSize;
 
     @Column(nullable = false, name = "main_folder_name")

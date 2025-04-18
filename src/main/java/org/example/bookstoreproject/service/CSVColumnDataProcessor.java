@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.persistance.entry.*;
 import org.example.bookstoreproject.persistance.entry.Character;
+import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.example.bookstoreproject.service.columnprocessor.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,7 @@ public class CSVColumnDataProcessor {
     private final SettingProcessor settingProcessor;
     private final BookSettingProcessor bookSettingProcessor;
     private final ExecutorService executorService;
+    private final BookRepository bookRepository;
 
     public void processColumns(List<CSVRow> data) {
         if (data == null || data.isEmpty()) {
@@ -92,7 +94,7 @@ public class CSVColumnDataProcessor {
                 CompletableFuture.runAsync(() ->
                         bookRatingStarProcessor.process(data, bookMap), executorService),
                 CompletableFuture.runAsync(() ->
-                        imageProcessor.process(data), executorService)
+                        imageProcessor.process(data, bookRepository), executorService)
         );
     }
 }

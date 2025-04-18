@@ -1,6 +1,7 @@
 package org.example.bookstoreproject.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreproject.enums.ImageSize;
 import org.example.bookstoreproject.service.services.ImageDataService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
@@ -17,17 +18,19 @@ public class ImageController {
 
     @GetMapping("/{id}/image")
     public ResponseEntity<InputStreamResource> getImage(
-            @PathVariable("id") String bookId,
+            @PathVariable("id") Long bookId,
             @RequestParam(value = "size", defaultValue = "original") String size
     ) {
-        String imagePath = metadataService.getImagePath(bookId, size);
+        String imagePath = metadataService.getImagePath(bookId, ImageSize.fromString(size));
         if (imagePath == null) {
+            System.out.println(11111111);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         try {
             File imageFile = new File(imagePath);
             if (!imageFile.exists()) {
+                System.out.println(22222);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
