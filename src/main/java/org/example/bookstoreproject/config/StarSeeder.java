@@ -16,10 +16,9 @@ public class StarSeeder {
     @PostConstruct
     public void seedStars() {
         for (RatingStarNumber rating : RatingStarNumber.values()) {
-            String level = rating.name();
 
-            starRepository.findByLevel(level).orElseGet(() -> {
-                Star star = new Star(level);
+            starRepository.findByLevel(rating).orElseGet(() -> {
+                Star star = new Star(rating);
                 return starRepository.save(star);
             });
         }
