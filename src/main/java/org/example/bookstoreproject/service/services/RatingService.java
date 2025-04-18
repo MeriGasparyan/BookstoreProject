@@ -24,8 +24,8 @@ public class RatingService {
         Book book = bookRepository.findByBookID(bookID)
                 .orElseThrow(() -> new IllegalArgumentException("Book with ID " + bookID + " not found."));
 
-        RatingStarNumber ratingEnum = RatingStarNumber.fromInt(starValue);
-        Star star = starRepository.findByLevel(ratingEnum)
+        RatingStarNumber ratingEnum = RatingStarNumber.fromInt(starValue); // create helper
+        Star star = starRepository.findByLevel(ratingEnum.name())
                 .orElseThrow(() -> new IllegalArgumentException("Star level '" + ratingEnum + "' not found."));
 
         BookRatingStar ratingStar = ratingStarRepository.findByBookAndStar(book, star)

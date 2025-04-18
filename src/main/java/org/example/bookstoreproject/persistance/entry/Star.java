@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.bookstoreproject.enums.RatingStarNumber;
 
 @Entity
 @Table(name = "star")
@@ -15,10 +14,9 @@ public class Star {
 
     @Id
     @Column(nullable = false, unique = true)
-    @Enumerated(EnumType.STRING)
-    private RatingStarNumber level;
+    private String level;
 
-    public Star(RatingStarNumber level) {
+    public Star(String level) {
         this.level = level;
     }
 }
