@@ -9,6 +9,7 @@ import org.example.bookstoreproject.enums.Language;
 import org.example.bookstoreproject.enums.RatingStarNumber;
 import org.example.bookstoreproject.persistance.entry.Book;
 import org.example.bookstoreproject.persistance.entry.BookRatingStar;
+import org.example.bookstoreproject.service.utility.RatingCalculator;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ public class BookDTO {
     private List<Map<String, Object>> settings;
     private Map<RatingStarNumber, Long> ratingStars = new HashMap<>();
     private Float averageRating;
+    private Integer likedPercentage;
     private Long totalNumRatings;
 
     public static BookDTO fromEntity(Book book) {
@@ -107,24 +109,25 @@ public class BookDTO {
 
         if (book.getBookRatingStars() != null) {
             List<BookRatingStar> ratingsList = book.getBookRatingStars().stream().toList();
-            long totalNumRatings = 0;
-            long weightedSum = 0;
+            long totalNumRatings = RatingCalculator.calculateTotalRatingCount(ratingsList);
+            int likedPercentage = RatingCalculator.calculateLikedPercentage(ratingsList);
+            float averageRating = RatingCalculator.calculateAverageRating(ratingsList);
 
             for (BookRatingStar ratingStar : ratingsList) {
                 if (ratingStar != null && ratingStar.getStar() != null) {
                     long localNumRating = ratingStar.getNumRating();
                     RatingStarNumber starLevel = ratingStar.getStar().getLevel();
-                    dto.ratingStars.put(starLevel, localNumRating);
-                    totalNumRatings += localNumRating;
-                    weightedSum += (starLevel.ordinal() + 1) * localNumRating;
+                    dto.getRatingStars().put(starLevel, localNumRating);
                 }
             }
 
             dto.setTotalNumRatings(totalNumRatings);
-            dto.setAverageRating(totalNumRatings > 0 ? (float) weightedSum / totalNumRatings : 0f);
+            dto.setAverageRating(averageRating);
+            dto.setLikedPercentage(likedPercentage);
         } else {
             dto.setTotalNumRatings(0L);
             dto.setAverageRating(0f);
+            dto.setLikedPercentage(0);
         }
 
         return dto;

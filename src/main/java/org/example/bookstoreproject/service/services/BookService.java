@@ -8,7 +8,6 @@ import org.example.bookstoreproject.persistance.repository.*;
 import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.BookDTO;
-import org.example.bookstoreproject.service.dto.BookSearchRequestDTO;
 import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
