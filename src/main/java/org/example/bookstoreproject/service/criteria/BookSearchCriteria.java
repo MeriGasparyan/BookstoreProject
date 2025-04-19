@@ -18,4 +18,5 @@ public class BookSearchCriteria extends SearchCriteria {
     private List<Long> awardIds;
     private List<Long> characterIds;
     private List<Long> settingIds;
+
 }

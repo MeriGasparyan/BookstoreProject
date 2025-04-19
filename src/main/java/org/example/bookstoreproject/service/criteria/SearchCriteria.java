@@ -6,4 +6,5 @@ import lombok.Setter;
 @Getter
 public class SearchCriteria {
     private int size = 20;
+    private int page = 0;
 }

@@ -32,19 +32,19 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("""
     SELECT DISTINCT b FROM Book b
-    JOIN BookAuthor ba on ba.book.id = b.id
-    JOIN Author a on a.id = ba.author.id
-    JOIN BookGenre bg on bg.book.id = b.id
-    JOIN Genre g on g.id = bg.genre.id
-    JOIN BookAward baw on baw.book.id = b.id
-    JOIN Award aw on aw.id = baw.award.id
-    JOIN BookCharacter bc on bc.book.id = b.id
-    JOIN Character c on c.id = bc.character.id
-    JOIN BookSetting bs on bs.book.id = b.id
-    JOIN Setting s on s.id = bs.setting.id
-    JOIN Publisher p on p.id = b.publisher.id
-    JOIN Series sr on sr.id = b.series.id
-    WHERE (:title IS NULL OR b.title LIKE :title)
+    JOIN BookAuthor ba ON ba.book.id = b.id
+    JOIN Author a ON a.id = ba.author.id
+    JOIN BookGenre bg ON bg.book.id = b.id
+    JOIN Genre g ON g.id = bg.genre.id
+    JOIN BookAward baw ON baw.book.id = b.id
+    JOIN Award aw ON aw.id = baw.award.id
+    JOIN BookCharacter bc ON bc.book.id = b.id
+    JOIN Character c ON c.id = bc.character.id
+    JOIN BookSetting bs ON bs.book.id = b.id
+    JOIN Setting s ON s.id = bs.setting.id
+    JOIN Publisher p ON p.id = b.publisher.id
+    JOIN Series sr ON sr.id = b.series.id
+    WHERE (LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%')) OR :title IS NULL OR b.title IS NULL)
     AND (:authorIds IS NULL OR a.id IN :authorIds)
     AND (:genreIds IS NULL OR g.id IN :genreIds)
     AND (:publisherIds IS NULL OR p.id IN :publisherIds)
@@ -52,6 +52,17 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     AND (:awardIds IS NULL OR aw.id IN :awardIds)
     AND (:characterIds IS NULL OR c.id IN :characterIds)
     AND (:settingIds IS NULL OR s.id IN :settingIds)
+    AND (:language IS NULL OR b.language = :language)
+    
+    GROUP BY b
+    HAVING 
+        (:authorIds IS NULL OR COUNT(DISTINCT a.id) = :authorIdsSize) AND
+        (:genreIds IS NULL OR COUNT(DISTINCT g.id) = :genreIdsSize) AND
+        (:publisherIds IS NULL OR COUNT(DISTINCT p.id) = :publisherIdsSize) AND
+        (:seriesIds IS NULL OR COUNT(DISTINCT sr.id) = :seriesIdsSize) AND
+        (:awardIds IS NULL OR COUNT(DISTINCT aw.id) = :awardIdsSize) AND
+        (:characterIds IS NULL OR COUNT(DISTINCT c.id) = :characterIdsSize) AND
+        (:settingIds IS NULL OR COUNT(DISTINCT s.id) = :settingIdsSize)
     """)
     List<Book> searchBooks(
             @Param("title") String title,
@@ -62,6 +73,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             @Param("awardIds") List<Long> awardIds,
             @Param("characterIds") List<Long> characterIds,
             @Param("settingIds") List<Long> settingIds,
+            @Param("authorIdsSize") Integer authorIdsSize,
+            @Param("genreIdsSize") Integer genreIdsSize,
+            @Param("publisherIdsSize") Integer publisherIdsSize,
+            @Param("seriesIdsSize") Integer seriesIdsSize,
+            @Param("awardIdsSize") Integer awardIdsSize,
+            @Param("characterIdsSize") Integer characterIdsSize,
+            @Param("settingIdsSize") Integer settingIdsSize,
+            @Param("language") Language language,
             Pageable pageable
     );
 

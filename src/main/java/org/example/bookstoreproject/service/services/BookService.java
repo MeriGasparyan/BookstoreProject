@@ -104,16 +104,40 @@ public class BookService {
     public List<BookDTO> searchBooks(BookSearchCriteria criteria, int size) {
         String title = criteria.getTitle() != null ? criteria.getTitle().toLowerCase() : null;
 
-        Pageable pageable = PageRequest.of(0, size);
+        List<Long> authorIds = criteria.getAuthorIds() != null ? criteria.getAuthorIds() : null;
+        List<Long> genreIds = criteria.getGenreIds() != null ? criteria.getGenreIds() : null;
+        Language language = criteria.getLanguage() != null ? criteria.getLanguage() : null;
+        List<Long> publisherIds = criteria.getPublisherIds() != null ? criteria.getPublisherIds() : null;
+        List<Long> seriesIds = criteria.getSeriesIds() != null ? criteria.getSeriesIds() : null;
+        List<Long> awardIds = criteria.getAwardIds() != null ? criteria.getAwardIds() : null;
+        List<Long> characterIds = criteria.getCharacterIds() != null ? criteria.getCharacterIds() : null;
+        List<Long> settingIds = criteria.getSettingIds() != null ? criteria.getSettingIds() : null;
+        int authorIdsSize = (authorIds != null) ? authorIds.size() : 0;
+        int genreIdsSize = (genreIds != null) ? genreIds.size() : 0;
+        int publisherIdsSize = (publisherIds != null) ? publisherIds.size() : 0;
+        int seriesIdsSize = (seriesIds != null) ? seriesIds.size() : 0;
+        int awardIdsSize = (awardIds != null) ? awardIds.size() : 0;
+        int characterIdsSize = (characterIds != null) ? characterIds.size() : 0;
+        int settingsSize = (settingIds != null) ? settingIds.size() : 0;
+
+        Pageable pageable = PageRequest.of(criteria.getPage(), size);
         List<Book> result = bookRepository.searchBooks(
                 title,
-                criteria.getAuthorIds(),
-                criteria.getGenreIds(),
-                criteria.getPublisherIds(),
-                criteria.getSeriesIds(),
-                criteria.getAwardIds(),
-                criteria.getCharacterIds(),
-                criteria.getSettingIds(),
+                authorIds,
+                genreIds,
+                publisherIds,
+                seriesIds,
+                awardIds,
+                characterIds,
+                settingIds,
+                authorIdsSize,
+                genreIdsSize,
+                publisherIdsSize,
+                seriesIdsSize,
+                awardIdsSize,
+                characterIdsSize,
+                settingsSize,
+                language,
                 pageable
         );
 
@@ -122,9 +146,6 @@ public class BookService {
                 .toList();
     }
 
-    private List<String> lower(List<String> values) {
-        return values == null ? null : values.stream().map(String::toLowerCase).toList();
-    }
 
     @Transactional
     public void updateBook(Long id, BookUpdateRequestDTO updateRequest) {
