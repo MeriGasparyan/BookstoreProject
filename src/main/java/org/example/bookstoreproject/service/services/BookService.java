@@ -36,22 +36,6 @@ public class BookService {
 
         Book book = createRequest.createBookEntity(createRequest, publisherRepository, seriesRepository);
         bookRepository.save(book);
-        addAuthors(book, createRequest.getAuthor());
-        addCharacters(book, createRequest.getCharacters());
-        addGenres(book, createRequest.getGenres());
-        addAwards(book, createRequest.getAwards());
-        addSettings(book, createRequest.getSettings());
-    }
-
-    private void addAuthors(Book book, List<String> authors) {
-        Optional.ofNullable(authors).orElse(List.of()).stream()
-                .map(String::trim)
-                .filter(name -> !name.isEmpty())
-                .forEach(name -> {
-                    Author author = authorRepository.findByName(name)
-                            .orElseGet(() -> authorRepository.save(new Author(name)));
-                    book.addBookAuthor(new BookAuthor(book, author));
-                });
     }
 
 
@@ -146,7 +130,7 @@ public class BookService {
 
 
     @Transactional
-    public void updateBook(Long id, BookUpdateRequestDTO updateRequest) {
+    public Book updateBook(Long id, BookUpdateRequestDTO updateRequest) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Book with ID " + id + " not found"));
 
@@ -171,22 +155,7 @@ public class BookService {
             book.setSeries(series);
         }
 
-        book.clearBookAuthors();
-        addAuthors(book, updateRequest.getAuthors());
-
-        book.clearBookCharacters();
-        addCharacters(book, updateRequest.getCharacters());
-
-        book.clearBookGenres();
-        addGenres(book, updateRequest.getGenres());
-
-        book.clearBookAwards();
-        addAwards(book, updateRequest.getAwards());
-
-        book.clearBookSettings();
-        addSettings(book, updateRequest.getSettings());
-
-        bookRepository.save(book);
+        return bookRepository.save(book);
     }
 
     @Transactional

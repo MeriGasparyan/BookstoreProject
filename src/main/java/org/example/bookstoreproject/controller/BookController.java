@@ -1,9 +1,11 @@
 package org.example.bookstoreproject.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.example.bookstoreproject.persistance.entry.Book;
 import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
+import org.example.bookstoreproject.service.services.AuthorService;
 import org.example.bookstoreproject.service.services.BookService;
 import org.example.bookstoreproject.service.services.RatingService;
 import org.springframework.http.HttpStatus;
@@ -11,24 +13,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.example.bookstoreproject.service.dto.BookDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@AllArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 @RequestMapping("/books")
 public class BookController {
-    private BookService bookService;
-    private RatingService ratingService;
+    private final BookService bookService;
+    private final RatingService ratingService;
+    private final AuthorService authorService;
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateBook(@PathVariable Long id, @RequestBody BookUpdateRequestDTO request) {
-        bookService.updateBook(id, request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookUpdateRequestDTO request) {
+        Book updated = bookService.updateBook(id, request);
+        return new ResponseEntity<>(BookDTO.fromEntity(updated), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -37,13 +38,30 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}/authors")
+    public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody List<Long> authorIds) {
+        try{
+        Book book = authorService.addAuthorsToBook(id, authorIds);
+        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);}
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{id}/authors")
+    public ResponseEntity<BookDTO> deleteBookAuthor(@PathVariable Long id, @RequestBody List<Long> authorIds) {
+        Book book = authorService.removeAuthorsFromBook(id, authorIds);
+        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+    }
+
     @GetMapping("/")
     public ResponseEntity<List<BookDTO>> searchBooks(@ModelAttribute BookSearchCriteria criteria) {
         List<BookDTO> result = bookService.searchBooks(criteria, criteria.getSize());
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/")
     public ResponseEntity<String> addBook(@RequestBody BookCreateRequestDTO createRequest) {
         try {
             bookService.addBook(createRequest);

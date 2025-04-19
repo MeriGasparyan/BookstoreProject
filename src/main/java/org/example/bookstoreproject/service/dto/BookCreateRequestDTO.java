@@ -10,7 +10,6 @@ import org.example.bookstoreproject.persistance.entry.Series;
 import org.example.bookstoreproject.persistance.repository.*;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,20 +17,15 @@ public class BookCreateRequestDTO {
     private String title;
     private String bookID;
     private String series;
-    private List<String> author;
     private String description;
     private String language;
     private String isbn;
-    private List<String> genres;
-    private List<String> characters;
     private String format;
     private String edition;
     private Integer pages;
     private String publisher;
     private Date publishDate;
     private Date firstPublishDate;
-    private List<String> awards;
-    private List<String> settings;
     private Integer bbeScore;
     private Integer bbeVotes;
     private Float price;

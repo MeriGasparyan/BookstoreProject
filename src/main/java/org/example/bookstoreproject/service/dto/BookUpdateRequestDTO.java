@@ -8,7 +8,6 @@ import org.example.bookstoreproject.enums.Format;
 import org.example.bookstoreproject.enums.Language;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -25,10 +24,5 @@ public class BookUpdateRequestDTO {
     private Date firstPublishDate;
     private String publisherName;
     private String seriesTitle;
-    private List<String> authors;
-    private List<String> awards;
-    private List<String> characters;
-    private List<String> genres;
-    private List<String> settings;
 }
 
