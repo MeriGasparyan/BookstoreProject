@@ -55,13 +55,13 @@ public class BookController {
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<BookDTO>> searchBooks(@ModelAttribute BookSearchCriteria criteria) {
         List<BookDTO> result = bookService.searchBooks(criteria, criteria.getSize());
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<String> addBook(@RequestBody BookCreateRequestDTO createRequest) {
         try {
             bookService.addBook(createRequest);

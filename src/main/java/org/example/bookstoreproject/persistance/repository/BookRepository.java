@@ -32,19 +32,19 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("""
     SELECT DISTINCT b FROM Book b
-    JOIN BookAuthor ba ON ba.book.id = b.id
-    JOIN Author a ON a.id = ba.author.id
-    JOIN BookGenre bg ON bg.book.id = b.id
-    JOIN Genre g ON g.id = bg.genre.id
-    JOIN BookAward baw ON baw.book.id = b.id
-    JOIN Award aw ON aw.id = baw.award.id
-    JOIN BookCharacter bc ON bc.book.id = b.id
-    JOIN Character c ON c.id = bc.character.id
-    JOIN BookSetting bs ON bs.book.id = b.id
-    JOIN Setting s ON s.id = bs.setting.id
-    JOIN Publisher p ON p.id = b.publisher.id
-    JOIN Series sr ON sr.id = b.series.id
-    WHERE (LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%')) OR :title IS NULL OR b.title IS NULL)
+    LEFT JOIN BookAuthor ba ON ba.book.id = b.id
+    LEFT JOIN Author a ON a.id = ba.author.id
+    LEFT JOIN BookGenre bg ON bg.book.id = b.id
+    LEFT JOIN Genre g ON g.id = bg.genre.id
+    LEFT JOIN BookAward baw ON baw.book.id = b.id
+    LEFT JOIN Award aw ON aw.id = baw.award.id
+    LEFT JOIN BookCharacter bc ON bc.book.id = b.id
+    LEFT JOIN Character c ON c.id = bc.character.id
+    LEFT JOIN BookSetting bs ON bs.book.id = b.id
+    LEFT JOIN Setting s ON s.id = bs.setting.id
+    LEFT JOIN Publisher p ON p.id = b.publisher.id
+    LEFT JOIN Series sr ON sr.id = b.series.id
+    WHERE (LOWER(CONCAT('%', b.title, '%')) LIKE LOWER(:title) OR :title IS NULL OR b.title IS NULL)
     AND (:authorIds IS NULL OR a.id IN :authorIds)
     AND (:genreIds IS NULL OR g.id IN :genreIds)
     AND (:publisherIds IS NULL OR p.id IN :publisherIds)

@@ -84,16 +84,16 @@ public class BookService {
     }
 
     public List<BookDTO> searchBooks(BookSearchCriteria criteria, int size) {
-        String title = criteria.getTitle() != null ? criteria.getTitle().toLowerCase() : null;
+        String title = criteria.getTitle() != null ? '%' + criteria.getTitle().toLowerCase() + '%' : null;
 
-        List<Long> authorIds = criteria.getAuthorIds() != null ? criteria.getAuthorIds() : null;
-        List<Long> genreIds = criteria.getGenreIds() != null ? criteria.getGenreIds() : null;
+        List<Long> authorIds = criteria.getAuthors() != null ? criteria.getAuthors() : null;
+        List<Long> genreIds = criteria.getGenres() != null ? criteria.getGenres() : null;
         Language language = criteria.getLanguage() != null ? criteria.getLanguage() : null;
-        List<Long> publisherIds = criteria.getPublisherIds() != null ? criteria.getPublisherIds() : null;
-        List<Long> seriesIds = criteria.getSeriesIds() != null ? criteria.getSeriesIds() : null;
-        List<Long> awardIds = criteria.getAwardIds() != null ? criteria.getAwardIds() : null;
-        List<Long> characterIds = criteria.getCharacterIds() != null ? criteria.getCharacterIds() : null;
-        List<Long> settingIds = criteria.getSettingIds() != null ? criteria.getSettingIds() : null;
+        List<Long> publisherIds = criteria.getPublishers() != null ? criteria.getPublishers() : null;
+        List<Long> seriesIds = criteria.getSeries() != null ? criteria.getSeries() : null;
+        List<Long> awardIds = criteria.getAwards() != null ? criteria.getAwards() : null;
+        List<Long> characterIds = criteria.getCharacters() != null ? criteria.getCharacters() : null;
+        List<Long> settingIds = criteria.getSettings() != null ? criteria.getSettings() : null;
         int authorIdsSize = (authorIds != null) ? authorIds.size() : 0;
         int genreIdsSize = (genreIds != null) ? genreIds.size() : 0;
         int publisherIdsSize = (publisherIds != null) ? publisherIds.size() : 0;
