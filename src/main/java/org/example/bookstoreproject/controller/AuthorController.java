@@ -2,16 +2,15 @@ package org.example.bookstoreproject.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.persistance.entry.Author;
+import org.example.bookstoreproject.service.criteria.AuthorSearchCriteria;
 import org.example.bookstoreproject.service.dto.AuthorDTO;
-import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.CreateAuthorDTO;
 import org.example.bookstoreproject.service.services.AuthorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthorController {
     private final AuthorService authorService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<AuthorDTO> createAuthor(@RequestBody CreateAuthorDTO authorDTO) {
         try {
             Author author = authorService.createAuthor(authorDTO);
@@ -30,4 +29,15 @@ public class AuthorController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    @GetMapping
+    public ResponseEntity<List<AuthorDTO>> searchAuthors(@ModelAttribute AuthorSearchCriteria criteria) {
+        List<Author> authors = authorService.getAuthors(criteria);
+        List<AuthorDTO> dtos = authors.stream()
+                .map(AuthorDTO::fromEntity)
+                .toList();
+        return ResponseEntity.ok(dtos);
+    }
+
 }

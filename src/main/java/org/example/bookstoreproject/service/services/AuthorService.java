@@ -7,6 +7,7 @@ import org.example.bookstoreproject.persistance.entry.BookAuthor;
 import org.example.bookstoreproject.persistance.repository.AuthorRepository;
 import org.example.bookstoreproject.persistance.repository.BookAuthorRepository;
 import org.example.bookstoreproject.persistance.repository.BookRepository;
+import org.example.bookstoreproject.service.criteria.AuthorSearchCriteria;
 import org.example.bookstoreproject.service.dto.AuthorDTO;
 import org.example.bookstoreproject.service.dto.CreateAuthorDTO;
 import org.springframework.stereotype.Service;
@@ -41,9 +42,8 @@ public class AuthorService {
     }
 
     @Transactional(readOnly = true)
-    public Author getAuthorById(Long id) {
-        return authorRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Author with ID " + id + " not found"));
+    public List<Author> getAuthors(AuthorSearchCriteria authorSearchCriteria) {
+        return authorRepository.searchAuthor(authorSearchCriteria.getId(), authorSearchCriteria.getName());
     }
 
     @Transactional
