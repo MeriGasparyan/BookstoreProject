@@ -1,0 +1,31 @@
+package org.example.bookstoreproject.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.example.bookstoreproject.persistance.entry.Award;
+import org.example.bookstoreproject.service.dto.AwardDTO;
+import org.example.bookstoreproject.service.dto.CreateAwardDTO;
+import org.example.bookstoreproject.service.services.AwardService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/awards")
+public class AwardController {
+    private final AwardService awardService;
+
+    @PostMapping
+    public ResponseEntity<AwardDTO> createAward(@RequestBody CreateAwardDTO awardDTO) {
+        try {
+            Award award = awardService.createAward(awardDTO);
+            return new ResponseEntity<>(AwardDTO.fromEntity(award), HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+}
