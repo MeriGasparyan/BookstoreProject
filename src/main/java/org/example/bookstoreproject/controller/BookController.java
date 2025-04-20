@@ -5,10 +5,7 @@ import org.example.bookstoreproject.persistance.entry.Book;
 import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
-import org.example.bookstoreproject.service.services.AuthorService;
-import org.example.bookstoreproject.service.services.AwardService;
-import org.example.bookstoreproject.service.services.BookService;
-import org.example.bookstoreproject.service.services.RatingService;
+import org.example.bookstoreproject.service.services.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -29,6 +26,9 @@ public class BookController {
     private final RatingService ratingService;
     private final AuthorService authorService;
     private final AwardService awardService;
+    private final GenreService genreService;
+    private final CharacterService characterService;
+    private final SettingService settingService;
 
     @PutMapping("/{id}")
     public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookUpdateRequestDTO request) {
@@ -73,6 +73,57 @@ public class BookController {
     @DeleteMapping("/{id}/awards")
     public ResponseEntity<BookDTO> deleteBookAward(@PathVariable Long id, @RequestBody List<Long> awardIds) {
         Book book = awardService.removeAwardsFromBook(id, awardIds);
+        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/characters")
+    public ResponseEntity<BookDTO> addBookCharacter(@PathVariable Long id, @RequestBody List<Long> characterIds) {
+        try {
+            Book book = characterService.addCharactersToBook(id, characterIds);
+            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{id}/characters")
+    public ResponseEntity<BookDTO> deleteBookCharacter(@PathVariable Long id, @RequestBody List<Long> characterIds) {
+        Book book = characterService.removeCharactersFromBook(id, characterIds);
+        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/genres")
+    public ResponseEntity<BookDTO> addBookGenre(@PathVariable Long id, @RequestBody List<Long> genreIds) {
+        try {
+            Book book = genreService.addGenresToBook(id, genreIds);
+            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{id}/genres")
+    public ResponseEntity<BookDTO> deleteBookGenre(@PathVariable Long id, @RequestBody List<Long> genreIds) {
+        Book book = genreService.removeGenresFromBook(id, genreIds);
+        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/settings")
+    public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id, @RequestBody List<Long> settingIds) {
+        try {
+            Book book = settingService.addSettingsToBook(id, settingIds);
+            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{id}/settings")
+    public ResponseEntity<BookDTO> deleteBookSetting(@PathVariable Long id, @RequestBody List<Long> settingIds) {
+        Book book = settingService.removeSettingsFromBook(id, settingIds);
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
