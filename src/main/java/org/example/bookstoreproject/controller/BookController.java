@@ -147,21 +147,21 @@ public class BookController {
     }
 
     @PostMapping("/{id}/rate")
-    public ResponseEntity<String> rateBook(
+    public ResponseEntity<BookDTO> rateBook(
             @PathVariable Long id,
             @RequestBody RatingDTO ratingDTO) {
-        Integer starValue = ratingDTO.getRating();
+        Integer starValue = ratingDTO.getStar();
         if (starValue < 1 || starValue > 5) {
-            return ResponseEntity.badRequest().body("Rating star must be between 1 and 5.");
+            return ResponseEntity.badRequest().build();
         }
 
         try {
-            ratingService.rateBook(id, starValue);
-            return ResponseEntity.ok("Book rated successfully.");
+            Book book = ratingService.rateBook(id, starValue);
+            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error rating book: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

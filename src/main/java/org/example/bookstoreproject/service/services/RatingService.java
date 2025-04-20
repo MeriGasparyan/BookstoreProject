@@ -20,7 +20,7 @@ public class RatingService {
     private final StarRepository starRepository;
 
     @Transactional
-    public void rateBook(Long id, Integer starValue) {
+    public Book rateBook(Long id, Integer starValue) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Book with ID " + id + " not found."));
 
@@ -33,6 +33,7 @@ public class RatingService {
 
         ratingStar.setNumRating(ratingStar.getNumRating() + 1);
         ratingStarRepository.save(ratingStar);
+        return book;
     }
 
 }
