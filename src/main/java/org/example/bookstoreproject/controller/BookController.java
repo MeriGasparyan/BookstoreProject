@@ -3,8 +3,7 @@ package org.example.bookstoreproject.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.persistance.entry.Book;
 import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
-import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
-import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
+import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import org.example.bookstoreproject.service.dto.BookDTO;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,9 +41,9 @@ public class BookController {
     }
 
     @PutMapping("/{id}/authors")
-    public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody List<Long> authorIds) {
+    public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody BookAuthorUpdateDTO request) {
         try{
-        Book book = authorService.addAuthorsToBook(id, authorIds);
+        Book book = authorService.addAuthorsToBook(id, request.getAuthors());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);}
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -54,15 +52,15 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/authors")
-    public ResponseEntity<BookDTO> deleteBookAuthor(@PathVariable Long id, @RequestBody List<Long> authorIds) {
-        Book book = authorService.removeAuthorsFromBook(id, authorIds);
+    public ResponseEntity<BookDTO> deleteBookAuthor(@PathVariable Long id, @RequestBody BookAuthorUpdateDTO request) {
+        Book book = authorService.removeAuthorsFromBook(id, request.getAuthors());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/awards")
-    public ResponseEntity<BookDTO> addBookAward(@PathVariable Long id, @RequestBody List<Long> awardIds) {
+    public ResponseEntity<BookDTO> addBookAward(@PathVariable Long id, @RequestBody BookAwardUpdateDTO request) {
         try {
-            Book book = awardService.addAwardsToBook(id, awardIds);
+            Book book = awardService.addAwardsToBook(id, request.getAwards());
             return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -71,15 +69,15 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/awards")
-    public ResponseEntity<BookDTO> deleteBookAward(@PathVariable Long id, @RequestBody List<Long> awardIds) {
-        Book book = awardService.removeAwardsFromBook(id, awardIds);
+    public ResponseEntity<BookDTO> deleteBookAward(@PathVariable Long id, @RequestBody BookAwardUpdateDTO request) {
+        Book book = awardService.removeAwardsFromBook(id, request.getAwards());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/characters")
-    public ResponseEntity<BookDTO> addBookCharacter(@PathVariable Long id, @RequestBody List<Long> characterIds) {
+    public ResponseEntity<BookDTO> addBookCharacter(@PathVariable Long id, @RequestBody BookCharacterUpdateDTO request) {
         try {
-            Book book = characterService.addCharactersToBook(id, characterIds);
+            Book book = characterService.addCharactersToBook(id, request.getCharacters());
             return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -88,15 +86,15 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/characters")
-    public ResponseEntity<BookDTO> deleteBookCharacter(@PathVariable Long id, @RequestBody List<Long> characterIds) {
-        Book book = characterService.removeCharactersFromBook(id, characterIds);
+    public ResponseEntity<BookDTO> deleteBookCharacter(@PathVariable Long id, @RequestBody BookCharacterUpdateDTO request) {
+        Book book = characterService.removeCharactersFromBook(id, request.getCharacters());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/genres")
-    public ResponseEntity<BookDTO> addBookGenre(@PathVariable Long id, @RequestBody List<Long> genreIds) {
+    public ResponseEntity<BookDTO> addBookGenre(@PathVariable Long id, @RequestBody BookGenreUpdateDTO request) {
         try {
-            Book book = genreService.addGenresToBook(id, genreIds);
+            Book book = genreService.addGenresToBook(id, request.getGenres());
             return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -105,15 +103,15 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/genres")
-    public ResponseEntity<BookDTO> deleteBookGenre(@PathVariable Long id, @RequestBody List<Long> genreIds) {
-        Book book = genreService.removeGenresFromBook(id, genreIds);
+    public ResponseEntity<BookDTO> deleteBookGenre(@PathVariable Long id, @RequestBody BookGenreUpdateDTO request) {
+        Book book = genreService.removeGenresFromBook(id, request.getGenres());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/settings")
-    public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id, @RequestBody List<Long> settingIds) {
+    public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id, @RequestBody BookSettingUpdateDTO request) {
         try {
-            Book book = settingService.addSettingsToBook(id, settingIds);
+            Book book = settingService.addSettingsToBook(id, request.getSettings());
             return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -122,8 +120,8 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/settings")
-    public ResponseEntity<BookDTO> deleteBookSetting(@PathVariable Long id, @RequestBody List<Long> settingIds) {
-        Book book = settingService.removeSettingsFromBook(id, settingIds);
+    public ResponseEntity<BookDTO> deleteBookSetting(@PathVariable Long id, @RequestBody BookSettingUpdateDTO request) {
+        Book book = settingService.removeSettingsFromBook(id, request.getSettings());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
