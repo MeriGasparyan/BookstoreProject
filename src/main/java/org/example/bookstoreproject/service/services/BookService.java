@@ -83,26 +83,26 @@ public class BookService {
                 });
     }
 
-    public List<BookDTO> searchBooks(BookSearchCriteria criteria, int size) {
+    public List<BookDTO> searchBooks(BookSearchCriteria criteria, Pageable pageable) {
         String title = criteria.getTitle() != null ? '%' + criteria.getTitle().toLowerCase() + '%' : null;
 
-        List<Long> authorIds = criteria.getAuthors() != null ? criteria.getAuthors() : null;
-        List<Long> genreIds = criteria.getGenres() != null ? criteria.getGenres() : null;
-        Language language = criteria.getLanguage() != null ? criteria.getLanguage() : null;
-        List<Long> publisherIds = criteria.getPublishers() != null ? criteria.getPublishers() : null;
-        List<Long> seriesIds = criteria.getSeries() != null ? criteria.getSeries() : null;
-        List<Long> awardIds = criteria.getAwards() != null ? criteria.getAwards() : null;
-        List<Long> characterIds = criteria.getCharacters() != null ? criteria.getCharacters() : null;
-        List<Long> settingIds = criteria.getSettings() != null ? criteria.getSettings() : null;
-        int authorIdsSize = (authorIds != null) ? authorIds.size() : 0;
-        int genreIdsSize = (genreIds != null) ? genreIds.size() : 0;
-        int publisherIdsSize = (publisherIds != null) ? publisherIds.size() : 0;
-        int seriesIdsSize = (seriesIds != null) ? seriesIds.size() : 0;
-        int awardIdsSize = (awardIds != null) ? awardIds.size() : 0;
-        int characterIdsSize = (characterIds != null) ? characterIds.size() : 0;
-        int settingsSize = (settingIds != null) ? settingIds.size() : 0;
+        List<Long> authorIds = criteria.getAuthors();
+        List<Long> genreIds = criteria.getGenres();
+        Language language = criteria.getLanguage();
+        List<Long> publisherIds = criteria.getPublishers();
+        List<Long> seriesIds = criteria.getSeries();
+        List<Long> awardIds = criteria.getAwards();
+        List<Long> characterIds = criteria.getCharacters();
+        List<Long> settingIds = criteria.getSettings();
 
-        Pageable pageable = PageRequest.of(criteria.getPage(), size);
+        int authorIdsSize = authorIds != null ? authorIds.size() : 0;
+        int genreIdsSize = genreIds != null ? genreIds.size() : 0;
+        int publisherIdsSize = publisherIds != null ? publisherIds.size() : 0;
+        int seriesIdsSize = seriesIds != null ? seriesIds.size() : 0;
+        int awardIdsSize = awardIds != null ? awardIds.size() : 0;
+        int characterIdsSize = characterIds != null ? characterIds.size() : 0;
+        int settingsSize = settingIds != null ? settingIds.size() : 0;
+
         List<Book> result = bookRepository.searchBooks(
                 title,
                 authorIds,
@@ -123,9 +123,7 @@ public class BookService {
                 pageable
         );
 
-        return result.stream()
-                .map(BookDTO::fromEntity)
-                .toList();
+        return result.stream().map(BookDTO::fromEntity).toList();
     }
 
 

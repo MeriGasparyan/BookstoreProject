@@ -8,6 +8,8 @@ import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
 import org.example.bookstoreproject.service.services.AuthorService;
 import org.example.bookstoreproject.service.services.BookService;
 import org.example.bookstoreproject.service.services.RatingService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,8 +58,11 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookDTO>> searchBooks(@ModelAttribute BookSearchCriteria criteria) {
-        List<BookDTO> result = bookService.searchBooks(criteria, criteria.getSize());
+    public ResponseEntity<List<BookDTO>> searchBooks(
+            @ModelAttribute BookSearchCriteria criteria,
+            @PageableDefault(size = 20, page = 0) Pageable pageable
+    ) {
+        List<BookDTO> result = bookService.searchBooks(criteria, pageable);
         return ResponseEntity.ok(result);
     }
 
