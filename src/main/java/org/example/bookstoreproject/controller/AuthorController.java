@@ -2,10 +2,13 @@ package org.example.bookstoreproject.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.persistance.entry.Author;
+import org.example.bookstoreproject.persistance.repository.BookAuthorRepository;
 import org.example.bookstoreproject.service.criteria.AuthorSearchCriteria;
 import org.example.bookstoreproject.service.dto.AuthorDTO;
+import org.example.bookstoreproject.service.dto.AuthorInformationDTO;
 import org.example.bookstoreproject.service.dto.CreateAuthorDTO;
 import org.example.bookstoreproject.service.services.AuthorService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,7 @@ import java.util.List;
 @RequestMapping("/authors")
 public class AuthorController {
     private final AuthorService authorService;
+    private final BookAuthorRepository bookAuthorRepository;
 
     @PostMapping
     public ResponseEntity<AuthorDTO> createAuthor(@RequestBody CreateAuthorDTO authorDTO) {
@@ -32,10 +36,10 @@ public class AuthorController {
 
 
     @GetMapping
-    public ResponseEntity<List<AuthorDTO>> searchAuthors(@ModelAttribute AuthorSearchCriteria criteria) {
-        List<Author> authors = authorService.getAuthors(criteria);
-        List<AuthorDTO> dtos = authors.stream()
-                .map(AuthorDTO::fromEntity)
+    public ResponseEntity<List<AuthorInformationDTO>> searchAuthors(@ModelAttribute AuthorSearchCriteria criteria) {
+        List<Author> authors = authorService.getAuthors(criteria, criteria.toPageable());
+        List<AuthorInformationDTO> dtos = authors.stream()
+                .map(a -> AuthorInformationDTO.fromEntity(a, bookAuthorRepository))
                 .toList();
         return ResponseEntity.ok(dtos);
     }

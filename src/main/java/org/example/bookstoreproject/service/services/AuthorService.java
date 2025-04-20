@@ -10,6 +10,7 @@ import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.example.bookstoreproject.service.criteria.AuthorSearchCriteria;
 import org.example.bookstoreproject.service.dto.AuthorDTO;
 import org.example.bookstoreproject.service.dto.CreateAuthorDTO;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +43,8 @@ public class AuthorService {
     }
 
     @Transactional(readOnly = true)
-    public List<Author> getAuthors(AuthorSearchCriteria authorSearchCriteria) {
-        return authorRepository.searchAuthor(authorSearchCriteria.getId(), authorSearchCriteria.getName());
+    public List<Author> getAuthors(AuthorSearchCriteria authorSearchCriteria, Pageable pageable) {
+        return authorRepository.searchAuthor(authorSearchCriteria.getId(), authorSearchCriteria.getName(),pageable);
     }
 
     @Transactional

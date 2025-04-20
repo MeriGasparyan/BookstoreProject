@@ -1,6 +1,6 @@
 package org.example.bookstoreproject.service.criteria;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.bookstoreproject.enums.Language;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Data
+@AllArgsConstructor
 public class BookSearchCriteria extends SearchCriteria {
     private String title;
     private List<Long> authors;

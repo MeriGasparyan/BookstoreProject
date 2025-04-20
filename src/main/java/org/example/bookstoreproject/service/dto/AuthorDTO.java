@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.bookstoreproject.persistance.entry.Author;
+import org.example.bookstoreproject.persistance.repository.BookAuthorRepository;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,4 +23,5 @@ public class AuthorDTO {
         authorDTO.setName(author.getName());
         return authorDTO;
     }
+
 }

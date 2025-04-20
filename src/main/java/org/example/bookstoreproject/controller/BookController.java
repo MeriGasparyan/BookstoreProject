@@ -127,9 +127,9 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<List<BookDTO>> searchBooks(
-            @ModelAttribute BookSearchCriteria criteria,
-            @PageableDefault(size = 20, page = 0) Pageable pageable
+            @ModelAttribute BookSearchCriteria criteria
     ) {
+        Pageable pageable = criteria.toPageable();
         List<BookDTO> result = bookService.searchBooks(criteria, pageable);
         return ResponseEntity.ok(result);
     }
