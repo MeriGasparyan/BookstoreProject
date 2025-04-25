@@ -1,5 +1,6 @@
 package org.example.bookstoreproject.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.repository.BookAuthorRepository;
@@ -23,7 +24,7 @@ public class AuthorController {
     private final BookAuthorRepository bookAuthorRepository;
 
     @PostMapping
-    public ResponseEntity<AuthorDTO> createAuthor(@RequestBody CreateAuthorDTO authorDTO) {
+    public ResponseEntity<AuthorDTO> createAuthor(@RequestBody @Valid CreateAuthorDTO authorDTO) {
         try {
             Author author = authorService.createAuthor(authorDTO);
             return new ResponseEntity<>(AuthorDTO.fromEntity(author), HttpStatus.CREATED);

@@ -1,5 +1,6 @@
 package org.example.bookstoreproject.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.persistance.entry.Award;
 import org.example.bookstoreproject.service.dto.AwardDTO;
@@ -17,7 +18,7 @@ public class AwardController {
     private final AwardService awardService;
 
     @PostMapping
-    public ResponseEntity<AwardDTO> createAward(@RequestBody CreateAwardDTO awardDTO) {
+    public ResponseEntity<AwardDTO> createAward(@RequestBody @Valid CreateAwardDTO awardDTO) {
         try {
             Award award = awardService.createAward(awardDTO);
             return new ResponseEntity<>(AwardDTO.fromEntity(award), HttpStatus.CREATED);

@@ -1,5 +1,6 @@
 package org.example.bookstoreproject.service.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.bookstoreproject.enums.Format;
@@ -14,7 +15,9 @@ import java.util.Date;
 @Getter
 @Setter
 public class BookCreateRequestDTO {
+    @NotBlank
     private String title;
+    @NotBlank
     private String bookID;
     private String series;
     private String description;

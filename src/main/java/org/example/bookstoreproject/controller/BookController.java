@@ -1,5 +1,6 @@
 package org.example.bookstoreproject.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.ImageSize;
 import org.example.bookstoreproject.persistance.entry.Book;
@@ -7,9 +8,7 @@ import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.*;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,7 +49,7 @@ public class BookController {
     }
 
     @PostMapping("/{id}/authors")
-    public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody BookAuthorUpdateDTO request) {
+    public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody @Valid BookAuthorCreateDTO request) {
         try{
         Book book = authorService.addAuthorsToBook(id, request.getAuthors());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);}
@@ -62,13 +60,13 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/authors")
-    public ResponseEntity<BookDTO> deleteBookAuthor(@PathVariable Long id, @RequestBody BookAuthorUpdateDTO request) {
+    public ResponseEntity<BookDTO> deleteBookAuthor(@PathVariable Long id, @RequestBody BookAuthorCreateDTO request) {
         Book book = authorService.removeAuthorsFromBook(id, request.getAuthors());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/awards")
-    public ResponseEntity<BookDTO> addBookAward(@PathVariable Long id, @RequestBody BookAwardUpdateDTO request) {
+    public ResponseEntity<BookDTO> addBookAward(@PathVariable Long id, @RequestBody @Valid BookAwardCreateDTO request) {
         try {
             Book book = awardService.addAwardsToBook(id, request.getAwards());
             return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
@@ -79,13 +77,13 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/awards")
-    public ResponseEntity<BookDTO> deleteBookAward(@PathVariable Long id, @RequestBody BookAwardUpdateDTO request) {
+    public ResponseEntity<BookDTO> deleteBookAward(@PathVariable Long id, @RequestBody BookAwardCreateDTO request) {
         Book book = awardService.removeAwardsFromBook(id, request.getAwards());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/characters")
-    public ResponseEntity<BookDTO> addBookCharacter(@PathVariable Long id, @RequestBody BookCharacterUpdateDTO request) {
+    public ResponseEntity<BookDTO> addBookCharacter(@PathVariable Long id, @RequestBody @Valid BookCharacterCreateDTO request) {
         try {
             Book book = characterService.addCharactersToBook(id, request.getCharacters());
             return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
@@ -96,13 +94,13 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/characters")
-    public ResponseEntity<BookDTO> deleteBookCharacter(@PathVariable Long id, @RequestBody BookCharacterUpdateDTO request) {
+    public ResponseEntity<BookDTO> deleteBookCharacter(@PathVariable Long id, @RequestBody BookCharacterCreateDTO request) {
         Book book = characterService.removeCharactersFromBook(id, request.getCharacters());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/genres")
-    public ResponseEntity<BookDTO> addBookGenre(@PathVariable Long id, @RequestBody BookGenreUpdateDTO request) {
+    public ResponseEntity<BookDTO> addBookGenre(@PathVariable Long id, @RequestBody @Valid BookGenreCreateDTO request) {
         try {
             Book book = genreService.addGenresToBook(id, request.getGenres());
             return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
@@ -113,13 +111,13 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/genres")
-    public ResponseEntity<BookDTO> deleteBookGenre(@PathVariable Long id, @RequestBody BookGenreUpdateDTO request) {
+    public ResponseEntity<BookDTO> deleteBookGenre(@PathVariable Long id, @RequestBody BookGenreCreateDTO request) {
         Book book = genreService.removeGenresFromBook(id, request.getGenres());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping ("/{id}/settings")
-    public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id, @RequestBody BookSettingUpdateDTO request) {
+    public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id, @RequestBody @Valid BookSettingCreateDTO request) {
         try {
             Book book = settingService.addSettingsToBook(id, request.getSettings());
             return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
@@ -130,7 +128,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/settings")
-    public ResponseEntity<BookDTO> deleteBookSetting(@PathVariable Long id, @RequestBody BookSettingUpdateDTO request) {
+    public ResponseEntity<BookDTO> deleteBookSetting(@PathVariable Long id, @RequestBody BookSettingCreateDTO request) {
         Book book = settingService.removeSettingsFromBook(id, request.getSettings());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
