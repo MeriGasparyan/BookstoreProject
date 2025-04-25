@@ -64,7 +64,7 @@ public class BookController {
     @DeleteMapping("/{id}/authors")
     public ResponseEntity<BookDTO> deleteBookAuthor(@PathVariable Long id, @RequestBody BookAuthorUpdateDTO request) {
         Book book = authorService.removeAuthorsFromBook(id, request.getAuthors());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/awards")
@@ -81,7 +81,7 @@ public class BookController {
     @DeleteMapping("/{id}/awards")
     public ResponseEntity<BookDTO> deleteBookAward(@PathVariable Long id, @RequestBody BookAwardUpdateDTO request) {
         Book book = awardService.removeAwardsFromBook(id, request.getAwards());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/characters")
@@ -98,7 +98,7 @@ public class BookController {
     @DeleteMapping("/{id}/characters")
     public ResponseEntity<BookDTO> deleteBookCharacter(@PathVariable Long id, @RequestBody BookCharacterUpdateDTO request) {
         Book book = characterService.removeCharactersFromBook(id, request.getCharacters());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/genres")
@@ -115,7 +115,7 @@ public class BookController {
     @DeleteMapping("/{id}/genres")
     public ResponseEntity<BookDTO> deleteBookGenre(@PathVariable Long id, @RequestBody BookGenreUpdateDTO request) {
         Book book = genreService.removeGenresFromBook(id, request.getGenres());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping ("/{id}/settings")
@@ -132,7 +132,7 @@ public class BookController {
     @DeleteMapping("/{id}/settings")
     public ResponseEntity<BookDTO> deleteBookSetting(@PathVariable Long id, @RequestBody BookSettingUpdateDTO request) {
         Book book = settingService.removeSettingsFromBook(id, request.getSettings());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @GetMapping
