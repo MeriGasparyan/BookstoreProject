@@ -15,8 +15,8 @@ public class BookSearchCriteria extends SearchCriteria {
     private List<Long> authors;
     private List<Long> genres;
     private Language language;
-    private List<Long> publishers;
-    private List<Long> series;
+    private Long publisher;
+    private Long series;
     private List<Long> awards;
     private List<Long> characters;
     private List<Long> settings;

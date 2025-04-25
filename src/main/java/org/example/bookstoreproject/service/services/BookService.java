@@ -87,42 +87,8 @@ public class BookService {
     }
 
     public PageResponseDto<BookDTO> searchBooks(BookSearchCriteria criteria, Pageable pageable) {
-        String title = criteria.getTitle() != null ? '%' + criteria.getTitle().toLowerCase() + '%' : null;
-
-        List<Long> authorIds = criteria.getAuthors();
-        List<Long> genreIds = criteria.getGenres();
-        Language language = criteria.getLanguage();
-        List<Long> publisherIds = criteria.getPublishers();
-        List<Long> seriesIds = criteria.getSeries();
-        List<Long> awardIds = criteria.getAwards();
-        List<Long> characterIds = criteria.getCharacters();
-        List<Long> settingIds = criteria.getSettings();
-
-        int authorIdsSize = authorIds != null ? authorIds.size() : 0;
-        int genreIdsSize = genreIds != null ? genreIds.size() : 0;
-        int publisherIdsSize = publisherIds != null ? publisherIds.size() : 0;
-        int seriesIdsSize = seriesIds != null ? seriesIds.size() : 0;
-        int awardIdsSize = awardIds != null ? awardIds.size() : 0;
-        int characterIdsSize = characterIds != null ? characterIds.size() : 0;
-        int settingsSize = settingIds != null ? settingIds.size() : 0;
-
         Page<Book> result = bookRepository.searchBooks(
-                title,
-                authorIds,
-                genreIds,
-                publisherIds,
-                seriesIds,
-                awardIds,
-                characterIds,
-                settingIds,
-                authorIdsSize,
-                genreIdsSize,
-                publisherIdsSize,
-                seriesIdsSize,
-                awardIdsSize,
-                characterIdsSize,
-                settingsSize,
-                language,
+                criteria,
                 pageable
         );
 
