@@ -7,6 +7,7 @@ import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.*;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
@@ -135,11 +136,11 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookDTO>> searchBooks(
+    public ResponseEntity<PageResponseDto<BookDTO>> searchBooks(
             @ModelAttribute BookSearchCriteria criteria
     ) {
         Pageable pageable = criteria.toPageable();
-        List<BookDTO> result = bookService.searchBooks(criteria, pageable);
+        PageResponseDto<BookDTO> result = bookService.searchBooks(criteria, pageable);
         return ResponseEntity.ok(result);
     }
 

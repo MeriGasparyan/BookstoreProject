@@ -9,6 +9,8 @@ import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
 import org.example.bookstoreproject.service.dto.BookDTO;
 import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
+import org.example.bookstoreproject.service.dto.PageResponseDto;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -83,7 +85,7 @@ public class BookService {
                 });
     }
 
-    public List<BookDTO> searchBooks(BookSearchCriteria criteria, Pageable pageable) {
+    public PageResponseDto<BookDTO> searchBooks(BookSearchCriteria criteria, Pageable pageable) {
         String title = criteria.getTitle() != null ? '%' + criteria.getTitle().toLowerCase() + '%' : null;
 
         List<Long> authorIds = criteria.getAuthors();
@@ -103,7 +105,7 @@ public class BookService {
         int characterIdsSize = characterIds != null ? characterIds.size() : 0;
         int settingsSize = settingIds != null ? settingIds.size() : 0;
 
-        List<Book> result = bookRepository.searchBooks(
+        Page<Book> result = bookRepository.searchBooks(
                 title,
                 authorIds,
                 genreIds,
@@ -123,7 +125,7 @@ public class BookService {
                 pageable
         );
 
-        return result.stream().map(BookDTO::fromEntity).toList();
+        return PageResponseDto.from(result.map(BookDTO::fromEntity));
     }
 
 

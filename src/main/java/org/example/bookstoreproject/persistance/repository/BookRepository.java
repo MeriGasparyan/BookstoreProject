@@ -2,6 +2,7 @@ package org.example.bookstoreproject.persistance.repository;
 import org.example.bookstoreproject.enums.Language;
 import org.example.bookstoreproject.persistance.entry.Author;
 import org.example.bookstoreproject.persistance.entry.Book;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -64,7 +65,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         (:characterIds IS NULL OR COUNT(DISTINCT c.id) = :characterIdsSize) AND
         (:settingIds IS NULL OR COUNT(DISTINCT s.id) = :settingIdsSize)
     """)
-    List<Book> searchBooks(
+    Page<Book> searchBooks(
             @Param("title") String title,
             @Param("authorIds") List<Long> authorIds,
             @Param("genreIds") List<Long> genreIds,
