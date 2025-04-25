@@ -143,14 +143,14 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addBook(@RequestBody BookCreateRequestDTO createRequest) {
+    public ResponseEntity<BookDTO> addBook(@RequestBody BookCreateRequestDTO createRequest) {
         try {
-            bookService.addBook(createRequest);
-            return new ResponseEntity<>("Book added successfully.", HttpStatus.CREATED);
+            BookDTO book = bookService.addBook(createRequest);
+            return new ResponseEntity<>(book, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error adding book: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -179,14 +179,12 @@ public class BookController {
     ) {
         String imagePath = metadataService.getImagePath(bookId, ImageSize.fromString(size));
         if (imagePath == null) {
-            System.out.println(11111111);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         try {
             File imageFile = new File(imagePath);
             if (!imageFile.exists()) {
-                System.out.println(22222);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 

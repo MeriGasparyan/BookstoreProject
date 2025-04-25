@@ -31,13 +31,14 @@ public class BookService {
     private final SettingRepository settingRepository;
 
     @Transactional
-    public void addBook(BookCreateRequestDTO createRequest) {
+    public BookDTO addBook(BookCreateRequestDTO createRequest) {
         if (bookRepository.findByBookID(createRequest.getBookID()).isPresent()) {
             throw new IllegalArgumentException("Book with ID " + createRequest.getBookID() + " already exists.");
         }
 
         Book book = createRequest.createBookEntity(createRequest, publisherRepository, seriesRepository);
         bookRepository.save(book);
+        return BookDTO.fromEntity(book);
     }
 
 
