@@ -49,7 +49,7 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/authors")
+    @PostMapping("/{id}/authors")
     public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody BookAuthorUpdateDTO request) {
         try{
         Book book = authorService.addAuthorsToBook(id, request.getAuthors());
@@ -66,7 +66,7 @@ public class BookController {
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/awards")
+    @PostMapping("/{id}/awards")
     public ResponseEntity<BookDTO> addBookAward(@PathVariable Long id, @RequestBody BookAwardUpdateDTO request) {
         try {
             Book book = awardService.addAwardsToBook(id, request.getAwards());
@@ -83,7 +83,7 @@ public class BookController {
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/characters")
+    @PostMapping("/{id}/characters")
     public ResponseEntity<BookDTO> addBookCharacter(@PathVariable Long id, @RequestBody BookCharacterUpdateDTO request) {
         try {
             Book book = characterService.addCharactersToBook(id, request.getCharacters());
@@ -100,7 +100,7 @@ public class BookController {
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/genres")
+    @PostMapping("/{id}/genres")
     public ResponseEntity<BookDTO> addBookGenre(@PathVariable Long id, @RequestBody BookGenreUpdateDTO request) {
         try {
             Book book = genreService.addGenresToBook(id, request.getGenres());
@@ -117,7 +117,7 @@ public class BookController {
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/settings")
+    @PostMapping ("/{id}/settings")
     public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id, @RequestBody BookSettingUpdateDTO request) {
         try {
             Book book = settingService.addSettingsToBook(id, request.getSettings());
