@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/settings")
+@RequestMapping("/api/settings")
 public class SettingController {
     private final SettingService settingService;
     @PostMapping

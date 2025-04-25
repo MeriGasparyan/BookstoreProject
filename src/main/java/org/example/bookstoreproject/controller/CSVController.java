@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/csv")
+@RequestMapping("/api/csv")
 public class CSVController {
 
     private final CSVDataHandler csvDataHandler;

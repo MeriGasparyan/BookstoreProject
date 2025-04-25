@@ -1,24 +1,32 @@
 package org.example.bookstoreproject.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreproject.enums.ImageSize;
 import org.example.bookstoreproject.persistance.entry.Book;
 import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.*;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/books")
+@RequestMapping("/api/books")
 public class BookController {
     private final BookService bookService;
     private final RatingService ratingService;
@@ -27,6 +35,7 @@ public class BookController {
     private final GenreService genreService;
     private final CharacterService characterService;
     private final SettingService settingService;
+    private final ImageDataService metadataService;
 
     @PutMapping("/{id}")
     public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookUpdateRequestDTO request) {
@@ -161,6 +170,33 @@ public class BookController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @GetMapping("/{id}/image")
+    public ResponseEntity<InputStreamResource> getImage(
+            @PathVariable("id") Long bookId,
+            @RequestParam(value = "size", defaultValue = "original") String size
+    ) {
+        String imagePath = metadataService.getImagePath(bookId, ImageSize.fromString(size));
+        if (imagePath == null) {
+            System.out.println(11111111);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        try {
+            File imageFile = new File(imagePath);
+            if (!imageFile.exists()) {
+                System.out.println(22222);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            InputStream inputStream = new FileInputStream(imageFile);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG);
+
+            return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
+        } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

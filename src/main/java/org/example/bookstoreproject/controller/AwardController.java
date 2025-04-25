@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/awards")
+@RequestMapping("/api/awards")
 public class AwardController {
     private final AwardService awardService;
 
