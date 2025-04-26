@@ -62,12 +62,11 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Publisher publisher;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "series_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
     private Series series;
 
     @Column(name = "bbe_score")

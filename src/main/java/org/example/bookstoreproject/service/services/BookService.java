@@ -87,12 +87,14 @@ public class BookService {
     }
 
     public PageResponseDto<BookDTO> searchBooks(BookSearchCriteria criteria, Pageable pageable) {
-        Page<Book> result = bookRepository.searchBooks(
+        Page<BookDTO> result = bookRepository.searchBooks(
                 criteria,
                 pageable
         );
-
-        return PageResponseDto.from(result.map(BookDTO::fromEntity));
+        for (BookDTO bookDTO : result) {
+            System.out.println(bookDTO);
+        }
+        return PageResponseDto.from(result);
     }
 
 

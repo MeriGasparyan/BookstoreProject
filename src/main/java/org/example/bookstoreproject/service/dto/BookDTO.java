@@ -11,10 +11,7 @@ import org.example.bookstoreproject.persistance.entry.Book;
 import org.example.bookstoreproject.persistance.entry.BookRatingStar;
 import org.example.bookstoreproject.service.utility.RatingCalculator;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -43,11 +40,35 @@ public class BookDTO {
     private Integer likedPercentage;
     private Long totalNumRatings;
 
+    public BookDTO(Book book) {
+        BookDTO dto = fromEntity(book);
+
+        this.id = dto.id;
+        this.title = dto.title;
+        this.language = dto.language;
+        this.isbn = dto.isbn;
+        this.format = dto.format;
+        this.pages = dto.pages;
+        this.price = dto.price;
+        this.publishDate = dto.publishDate;
+        this.firstPublishDate = dto.firstPublishDate;
+        this.publisher = dto.publisher;
+        this.series = dto.series;
+        this.authors = dto.authors;
+        this.awards = dto.awards;
+        this.characters = dto.characters;
+        this.genres = dto.genres;
+        this.settings = dto.settings;
+        this.ratingStars = dto.ratingStars;
+        this.averageRating = dto.averageRating;
+        this.likedPercentage = dto.likedPercentage;
+        this.totalNumRatings = dto.totalNumRatings;
+    }
     public static BookDTO fromEntity(Book book) {
         if (book == null) {
             return null;
         }
-
+        System.out.println(1111);
         BookDTO dto = new BookDTO();
         dto.setId(book.getId());
         dto.setTitle(book.getTitle());
@@ -131,5 +152,8 @@ public class BookDTO {
         }
 
         return dto;
+    }
+    public String toString(){
+        return this.title;
     }
 }
