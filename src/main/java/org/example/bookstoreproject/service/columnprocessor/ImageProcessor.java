@@ -1,6 +1,7 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreproject.enums.FileDownloadStatus;
 import org.example.bookstoreproject.enums.ImageSize;
 import org.example.bookstoreproject.persistance.entry.Book;
 import org.example.bookstoreproject.persistance.entry.BookImage;
@@ -61,56 +62,74 @@ public class ImageProcessor {
 
         List<FileMetaData> newMetaData = new ArrayList<>();
         List<BookImage> newImages = new ArrayList<>();
-        for (CSVRow row : data) { String imageUrl = row.getImage();
+        for (CSVRow row : data) {
+            String imageUrl = row.getImage();
             String title = row.getTitle();
             String bookID = row.getBookID();
             Book book = bookMap.get(bookID);
 
             if (book == null || imageUrl == null || imageUrl.isEmpty() || !imageUtility.isImageUrlValid(imageUrl)) {
-                return;
+                continue;
             }
-
-            try {
-
                 String imagePath = imageUtility.getImagePathForBook(title, BASE_FOLDER);
-                File imageFile = new File(imagePath);
-                imageFile.getParentFile().mkdirs();
-                imageUtility.downloadImage(imageUrl, imagePath);
-
                 List<String> info = getInfo(imagePath);
                 String fileName = info.get(1);
                 String formatName = info.get(2);
                 String subfolderName = info.get(0);
 
-                String uniqueKeyFile = createUniqueKeyFiles(fileName, BASE_FOLDER, subfolderName);
+                String fileNameSmall = fileName + "_small";
+                String fileNameMedium = fileName + "_medium";
 
+                String uniqueKeyFile = createUniqueKeyFiles(fileName, BASE_FOLDER, subfolderName);
+                String uniqueKeySmallImageFile = createUniqueKeyFiles(fileNameSmall, BASE_FOLDER, subfolderName);
+                String uniqueKeyMediumImageFile = createUniqueKeyFiles(fileNameMedium, BASE_FOLDER, subfolderName);
                 String uniqueKeySmall = createUniqueKeyImages(fileName, bookID, ImageSize.SMALL);
                 String uniqueKeyMedium = createUniqueKeyImages(fileName, bookID, ImageSize.MEDIUM);
                 String uniqueKeyOriginal = createUniqueKeyImages(fileName, bookID, ImageSize.ORIGINAL);
 
-                String smallPath = imagePath.replace(".jpg", "_small.jpg");
-                String mediumPath = imagePath.replace(".jpg", "_medium.jpg");
-                imageUtility.createThumbnail(imagePath, smallPath, SMALL_WIDTH, SMALL_HEIGHT);
-                imageUtility.createThumbnail(imagePath, mediumPath, MEDIUM_WIDTH, MEDIUM_HEIGHT);
 
                 FileMetaData fileMetaData = new FileMetaData();
+                FileMetaData fileMetaDataSmall = new FileMetaData();
+                FileMetaData fileMetaDataMedium = new FileMetaData();
+
                 if(existingMetadataKeys.get(uniqueKeyFile) == null) {
+
                     fileMetaData.setMainFolderName(BASE_FOLDER);
-                    fileMetaData.setSubFolderName(info.get(0));
-                    fileMetaData.setFileName(fileName);
+                    fileMetaData.setSubFolderName(subfolderName);
+                    fileMetaData.setFileName(fileName + "_original");
                     fileMetaData.setFormatName(formatName);
+                    fileMetaData.setFileDownloadStatus(FileDownloadStatus.PENDING);
+                    fileMetaData.setUrl(imageUrl);
                     newMetaData.add(fileMetaData);
                     existingMetadataKeys.put(uniqueKeyFile, fileMetaData);
                 }
-                else{
-                    fileMetaData = existingMetadataKeys.get(uniqueKeyFile);
-                }
+                if(existingBookImageKeys.get(uniqueKeySmallImageFile) == null) {
 
+                    fileMetaDataSmall.setMainFolderName(BASE_FOLDER);
+                    fileMetaDataSmall.setSubFolderName(subfolderName);
+                    fileMetaDataSmall.setFileName(fileNameSmall);
+                    fileMetaDataSmall.setFormatName(formatName);
+                    fileMetaDataSmall.setFileDownloadStatus(FileDownloadStatus.PENDING);
+                    fileMetaDataSmall.setUrl(imageUrl);
+                    newMetaData.add(fileMetaDataSmall);
+                    existingMetadataKeys.put(uniqueKeySmallImageFile, fileMetaDataSmall);
+                }
+                if(existingMetadataKeys.get(uniqueKeyMediumImageFile) == null) {
+
+                    fileMetaDataMedium.setMainFolderName(BASE_FOLDER);
+                    fileMetaDataMedium.setSubFolderName(subfolderName);
+                    fileMetaDataMedium.setFileName(fileNameMedium);
+                    fileMetaDataMedium.setFormatName(formatName);
+                    fileMetaDataMedium.setFileDownloadStatus(FileDownloadStatus.PENDING);
+                    fileMetaDataMedium.setUrl(imageUrl);
+                    newMetaData.add(fileMetaDataMedium);
+                    existingMetadataKeys.put(uniqueKeyMediumImageFile, fileMetaDataMedium);
+                }
                 if (existingBookImageKeys.get(uniqueKeySmall) == null) {
                     BookImage bookImageSmall = new BookImage();
                     bookImageSmall.setImageSize(ImageSize.SMALL);
                     bookImageSmall.setBook(book);
-                    bookImageSmall.setImage(fileMetaData);
+                    bookImageSmall.setImage(fileMetaDataSmall);
                     existingBookImageKeys.put(uniqueKeySmall, bookImageSmall);
                     newImages.add(bookImageSmall);
                 }
@@ -118,7 +137,7 @@ public class ImageProcessor {
                     BookImage bookImageMedium = new BookImage();
                     bookImageMedium.setImageSize(ImageSize.MEDIUM);
                     bookImageMedium.setBook(book);
-                    bookImageMedium.setImage(fileMetaData);
+                    bookImageMedium.setImage(fileMetaDataMedium);
                     existingBookImageKeys.put(uniqueKeyMedium, bookImageMedium);
                     newImages.add(bookImageMedium);
                 }
@@ -131,11 +150,53 @@ public class ImageProcessor {
                     existingBookImageKeys.put(uniqueKeyOriginal, bookImageOriginal);
                     newImages.add(bookImageOriginal);
                 }
-            } catch (Exception e) {
-                System.err.println("Failed to process image for book '" + title + "': " + e.getMessage());
-            }
-
         }
+
+        for (FileMetaData fileMetaDataEntry : existingMetadataKeys.values()) {
+            if (fileMetaDataEntry.getFileDownloadStatus().equals(FileDownloadStatus.PENDING)) {
+                String path =fileMetaDataEntry.getMainFolderName() + File.separator
+                        + fileMetaDataEntry.getSubFolderName() + File.separator +
+                        fileMetaDataEntry.getFileName() + "." + fileMetaDataEntry.getFormatName();
+
+                if (path.endsWith("_original.jpg")) {
+                    try {
+                        File imageFile = new File(path);
+                        imageFile.getParentFile().mkdirs();
+                        imageUtility.downloadImage(fileMetaDataEntry.getUrl(), path);
+                        fileMetaDataEntry.setFileDownloadStatus(FileDownloadStatus.COMPLETED);
+                    } catch (Exception e) {
+                        fileMetaDataEntry.setFileDownloadStatus(FileDownloadStatus.FAILED);
+                        System.out.println("Original image download failed: " + e.getMessage());
+                    }
+                }
+            }
+        }
+        for (FileMetaData fileMetaDataEntry : existingMetadataKeys.values()) {
+            if (fileMetaDataEntry.getFileDownloadStatus().equals(FileDownloadStatus.PENDING)) {
+                String path = fileMetaDataEntry.getMainFolderName() + File.separator
+                        + fileMetaDataEntry.getSubFolderName() + File.separator +
+                        fileMetaDataEntry.getFileName() + "." + fileMetaDataEntry.getFormatName();
+
+                try {
+                    String imagePath;
+                    if (path.endsWith("_small.jpg")) {
+                        imagePath = path.replace("_small.jpg", "_original.jpg");
+                        imageUtility.createThumbnail(imagePath, path, SMALL_WIDTH, SMALL_HEIGHT);
+                    } else if (path.endsWith("_medium.jpg")) {
+                        imagePath = path.replace("_medium.jpg", "_original.jpg");
+                        imageUtility.createThumbnail(imagePath, path, MEDIUM_WIDTH, MEDIUM_HEIGHT);
+                    } else {
+                        continue;
+                    }
+
+                    fileMetaDataEntry.setFileDownloadStatus(FileDownloadStatus.COMPLETED);
+                } catch (Exception e) {
+                    fileMetaDataEntry.setFileDownloadStatus(FileDownloadStatus.FAILED);
+                    System.out.println("Thumbnail creation failed: " + e.getMessage());
+                }
+            }
+        }
+
         if (!newMetaData.isEmpty()) {
             System.out.println(111);
             imageMetaDataRepository.saveAll(newMetaData);

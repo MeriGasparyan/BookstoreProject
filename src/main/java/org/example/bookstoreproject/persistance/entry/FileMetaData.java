@@ -2,6 +2,7 @@ package org.example.bookstoreproject.persistance.entry;
 import jakarta.persistence.*;
 
 import lombok.*;
+import org.example.bookstoreproject.enums.FileDownloadStatus;
 
 
 @Entity
@@ -15,6 +16,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 public class FileMetaData {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "file_metadata_id_seq")
     @SequenceGenerator(
@@ -35,4 +37,11 @@ public class FileMetaData {
 
     @Column(nullable = false, name = "file_name")
     private String fileName;
+
+    @Column(nullable = false, name = "download_status")
+    @Enumerated(EnumType.STRING)
+    private FileDownloadStatus fileDownloadStatus;
+
+    @Column(nullable = false, name = "original_file_url")
+    private String url;
 }
