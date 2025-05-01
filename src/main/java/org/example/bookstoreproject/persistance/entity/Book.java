@@ -1,5 +1,4 @@
-package org.example.bookstoreproject.persistance.entry;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+package org.example.bookstoreproject.persistance.entity;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;

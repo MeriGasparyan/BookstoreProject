@@ -2,7 +2,7 @@ package org.example.bookstoreproject.service.columnprocessor;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
-import org.example.bookstoreproject.persistance.entry.*;
+import org.example.bookstoreproject.persistance.entity.*;
 import org.example.bookstoreproject.persistance.repository.BookSettingRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

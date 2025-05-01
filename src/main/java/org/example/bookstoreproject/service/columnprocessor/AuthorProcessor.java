@@ -3,7 +3,7 @@ package org.example.bookstoreproject.service.columnprocessor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.enums.Role;
-import org.example.bookstoreproject.persistance.entry.Author;
+import org.example.bookstoreproject.persistance.entity.Author;
 import org.example.bookstoreproject.persistance.repository.AuthorRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.format.AuthorFormatter;

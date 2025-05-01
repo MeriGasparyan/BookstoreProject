@@ -1,7 +1,7 @@
 package org.example.bookstoreproject.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Character;
+import org.example.bookstoreproject.persistance.entity.Character;
 import org.example.bookstoreproject.service.dto.CharacterDTO;
 import org.example.bookstoreproject.service.dto.CreateCharacterDTO;
 import org.example.bookstoreproject.service.services.CharacterService;

@@ -1,8 +1,8 @@
 package org.example.bookstoreproject.persistance.repository;
 
-import org.example.bookstoreproject.persistance.entry.Book;
-import org.example.bookstoreproject.persistance.entry.BookRatingStar;
-import org.example.bookstoreproject.persistance.entry.Star;
+import org.example.bookstoreproject.persistance.entity.Book;
+import org.example.bookstoreproject.persistance.entity.BookRatingStar;
+import org.example.bookstoreproject.persistance.entity.Star;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

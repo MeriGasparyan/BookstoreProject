@@ -1,7 +1,7 @@
 package org.example.bookstoreproject.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Genre;
+import org.example.bookstoreproject.persistance.entity.Genre;
 import org.example.bookstoreproject.service.dto.CreateGenreDTO;
 import org.example.bookstoreproject.service.dto.GenreDTO;
 import org.example.bookstoreproject.service.services.GenreService;

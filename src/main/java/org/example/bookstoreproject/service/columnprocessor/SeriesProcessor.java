@@ -1,6 +1,6 @@
 package org.example.bookstoreproject.service.columnprocessor;
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Series;
+import org.example.bookstoreproject.persistance.entity.Series;
 import org.example.bookstoreproject.persistance.repository.SeriesRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.springframework.stereotype.Component;

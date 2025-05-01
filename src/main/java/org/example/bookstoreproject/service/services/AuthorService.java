@@ -1,14 +1,13 @@
 package org.example.bookstoreproject.service.services;
 
 import lombok.AllArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Author;
-import org.example.bookstoreproject.persistance.entry.Book;
-import org.example.bookstoreproject.persistance.entry.BookAuthor;
+import org.example.bookstoreproject.persistance.entity.Author;
+import org.example.bookstoreproject.persistance.entity.Book;
+import org.example.bookstoreproject.persistance.entity.BookAuthor;
 import org.example.bookstoreproject.persistance.repository.AuthorRepository;
 import org.example.bookstoreproject.persistance.repository.BookAuthorRepository;
 import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.example.bookstoreproject.service.criteria.AuthorSearchCriteria;
-import org.example.bookstoreproject.service.dto.AuthorDTO;
 import org.example.bookstoreproject.service.dto.CreateAuthorDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

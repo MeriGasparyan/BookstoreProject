@@ -3,7 +3,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.bookstoreproject.persistance.entry.Setting;
+import org.example.bookstoreproject.persistance.entity.Setting;
 
 @Getter
 @Setter

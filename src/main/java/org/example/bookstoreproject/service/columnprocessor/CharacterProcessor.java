@@ -1,8 +1,7 @@
 package org.example.bookstoreproject.service.columnprocessor;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
-import org.example.bookstoreproject.persistance.entry.Character;
+import org.example.bookstoreproject.persistance.entity.Character;
 import org.example.bookstoreproject.persistance.repository.CharacterRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;

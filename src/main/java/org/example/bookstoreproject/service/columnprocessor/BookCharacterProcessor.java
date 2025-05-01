@@ -2,11 +2,10 @@ package org.example.bookstoreproject.service.columnprocessor;
 
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
-import org.example.bookstoreproject.persistance.entry.*;
-import org.example.bookstoreproject.persistance.entry.Character;
+import org.example.bookstoreproject.persistance.entity.*;
+import org.example.bookstoreproject.persistance.entity.Character;
 import org.example.bookstoreproject.persistance.repository.BookCharacterRepository;
 import org.springframework.stereotype.Component;
-import org.example.bookstoreproject.service.CSVRow;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;

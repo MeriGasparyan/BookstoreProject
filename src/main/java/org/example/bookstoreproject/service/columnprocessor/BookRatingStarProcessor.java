@@ -3,7 +3,7 @@ package org.example.bookstoreproject.service.columnprocessor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.example.bookstoreproject.enums.RatingStarNumber;
-import org.example.bookstoreproject.persistance.entry.*;
+import org.example.bookstoreproject.persistance.entity.*;
 import org.example.bookstoreproject.persistance.repository.RatingStarRepository;
 import org.example.bookstoreproject.persistance.repository.StarRepository;
 import org.example.bookstoreproject.service.CSVRow;

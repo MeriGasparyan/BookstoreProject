@@ -3,8 +3,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.bookstoreproject.persistance.entry.Author;
-import org.example.bookstoreproject.persistance.entry.Award;
+import org.example.bookstoreproject.persistance.entity.Award;
 
 @Getter
 @Setter

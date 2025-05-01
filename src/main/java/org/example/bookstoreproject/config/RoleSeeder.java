@@ -3,7 +3,7 @@ package org.example.bookstoreproject.config;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.Role;
-import org.example.bookstoreproject.persistance.entry.RoleEntity;
+import org.example.bookstoreproject.persistance.entity.RoleEntity;
 import org.example.bookstoreproject.persistance.repository.RoleRepository;
 import org.springframework.stereotype.Component;
 

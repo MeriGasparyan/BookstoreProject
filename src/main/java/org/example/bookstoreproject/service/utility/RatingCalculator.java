@@ -1,7 +1,7 @@
 package org.example.bookstoreproject.service.utility;
 
 import org.example.bookstoreproject.enums.RatingStarNumber;
-import org.example.bookstoreproject.persistance.entry.BookRatingStar;
+import org.example.bookstoreproject.persistance.entity.BookRatingStar;
 
 import java.util.List;
 

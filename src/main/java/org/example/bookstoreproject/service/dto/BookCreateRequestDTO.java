@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.bookstoreproject.enums.Format;
 import org.example.bookstoreproject.enums.Language;
-import org.example.bookstoreproject.persistance.entry.Book;
-import org.example.bookstoreproject.persistance.entry.Publisher;
-import org.example.bookstoreproject.persistance.entry.Series;
+import org.example.bookstoreproject.persistance.entity.Book;
+import org.example.bookstoreproject.persistance.entity.Publisher;
+import org.example.bookstoreproject.persistance.entity.Series;
 import org.example.bookstoreproject.persistance.repository.*;
 
 import java.util.Date;

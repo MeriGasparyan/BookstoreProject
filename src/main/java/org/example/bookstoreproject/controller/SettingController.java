@@ -1,7 +1,7 @@
 package org.example.bookstoreproject.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Setting;
+import org.example.bookstoreproject.persistance.entity.Setting;
 import org.example.bookstoreproject.service.dto.CreateSettingDTO;
 import org.example.bookstoreproject.service.dto.SettingDTO;
 import org.example.bookstoreproject.service.services.SettingService;

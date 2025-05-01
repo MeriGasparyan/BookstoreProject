@@ -1,10 +1,9 @@
 package org.example.bookstoreproject.persistance.repository;
 
-import org.example.bookstoreproject.persistance.entry.Book;
-import org.example.bookstoreproject.persistance.entry.BookGenre;
-import org.example.bookstoreproject.persistance.entry.Genre;
+import org.example.bookstoreproject.persistance.entity.Book;
+import org.example.bookstoreproject.persistance.entity.BookGenre;
+import org.example.bookstoreproject.persistance.entity.Genre;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

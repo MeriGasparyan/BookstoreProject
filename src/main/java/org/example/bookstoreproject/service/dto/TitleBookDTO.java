@@ -2,7 +2,7 @@ package org.example.bookstoreproject.service.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.bookstoreproject.persistance.entry.Book;
+import org.example.bookstoreproject.persistance.entity.Book;
 
 @Getter
 @Setter

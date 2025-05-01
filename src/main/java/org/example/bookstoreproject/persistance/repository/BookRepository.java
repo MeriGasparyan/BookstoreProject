@@ -1,7 +1,5 @@
 package org.example.bookstoreproject.persistance.repository;
-import org.example.bookstoreproject.enums.Language;
-import org.example.bookstoreproject.persistance.entry.Author;
-import org.example.bookstoreproject.persistance.entry.Book;
+import org.example.bookstoreproject.persistance.entity.Book;
 import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.BookDTO;
 import org.springframework.data.domain.Page;

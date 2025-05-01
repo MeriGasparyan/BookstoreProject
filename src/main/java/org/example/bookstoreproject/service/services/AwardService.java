@@ -1,9 +1,9 @@
 package org.example.bookstoreproject.service.services;
 
 import lombok.AllArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Award;
-import org.example.bookstoreproject.persistance.entry.Book;
-import org.example.bookstoreproject.persistance.entry.BookAward;
+import org.example.bookstoreproject.persistance.entity.Award;
+import org.example.bookstoreproject.persistance.entity.Book;
+import org.example.bookstoreproject.persistance.entity.BookAward;
 import org.example.bookstoreproject.persistance.repository.AwardRepository;
 import org.example.bookstoreproject.persistance.repository.BookAwardRepository;
 import org.example.bookstoreproject.persistance.repository.BookRepository;
@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 

@@ -1,9 +1,8 @@
 package org.example.bookstoreproject.service.services;
 
 import lombok.AllArgsConstructor;
-import org.example.bookstoreproject.enums.Language;
-import org.example.bookstoreproject.persistance.entry.*;
-import org.example.bookstoreproject.persistance.entry.Character;
+import org.example.bookstoreproject.persistance.entity.*;
+import org.example.bookstoreproject.persistance.entity.Character;
 import org.example.bookstoreproject.persistance.repository.*;
 import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.BookCreateRequestDTO;
@@ -11,7 +10,6 @@ import org.example.bookstoreproject.service.dto.BookDTO;
 import org.example.bookstoreproject.service.dto.BookUpdateRequestDTO;
 import org.example.bookstoreproject.service.dto.PageResponseDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -3,8 +3,8 @@ package org.example.bookstoreproject.service.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Author;
-import org.example.bookstoreproject.persistance.entry.Book;
+import org.example.bookstoreproject.persistance.entity.Author;
+import org.example.bookstoreproject.persistance.entity.Book;
 import org.example.bookstoreproject.persistance.repository.BookAuthorRepository;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package org.example.bookstoreproject.service.columnprocessor;
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Award;
+import org.example.bookstoreproject.persistance.entity.Award;
 import org.example.bookstoreproject.persistance.repository.AwardRepository;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.utility.ArrayStringParser;

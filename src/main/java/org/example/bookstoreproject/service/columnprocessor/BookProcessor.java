@@ -3,7 +3,7 @@ package org.example.bookstoreproject.service.columnprocessor;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.Format;
 import org.example.bookstoreproject.enums.Language;
-import org.example.bookstoreproject.persistance.entry.*;
+import org.example.bookstoreproject.persistance.entity.*;
 import org.example.bookstoreproject.persistance.repository.*;
 import org.example.bookstoreproject.service.CSVRow;
 import org.example.bookstoreproject.service.format.DateFormatter;
@@ -14,7 +14,6 @@ import org.example.bookstoreproject.service.format.FloatFormatter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.beans.Transient;
 import java.util.*;
 
 @Component

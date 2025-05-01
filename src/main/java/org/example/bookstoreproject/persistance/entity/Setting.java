@@ -1,4 +1,4 @@
-package org.example.bookstoreproject.persistance.entry;
+package org.example.bookstoreproject.persistance.entity;
 import jakarta.persistence.*;
 
 import lombok.Getter;
@@ -6,23 +6,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "publisher")
+@Table(name = "setting")
 @Setter
 @Getter
 @NoArgsConstructor
-public class Publisher {
+public class Setting {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "publisher_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "setting_id_seq")
     @SequenceGenerator(
-            name = "publisher_id_seq",
-            sequenceName = "publisher_id_seq",
+            name = "setting_id_seq",
+            sequenceName = "setting_id_seq",
             allocationSize = 100)
     private Long id;
 
     @Column(nullable = false, unique = true)
     private String name;
 
-    public Publisher(String name) {
+    public Setting(String name) {
         this.name = name;
     }
 }

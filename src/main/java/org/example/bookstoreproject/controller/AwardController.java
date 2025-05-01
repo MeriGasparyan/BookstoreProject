@@ -2,7 +2,7 @@ package org.example.bookstoreproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Award;
+import org.example.bookstoreproject.persistance.entity.Award;
 import org.example.bookstoreproject.service.dto.AwardDTO;
 import org.example.bookstoreproject.service.dto.CreateAwardDTO;
 import org.example.bookstoreproject.service.services.AwardService;

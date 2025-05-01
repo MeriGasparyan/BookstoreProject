@@ -1,11 +1,7 @@
 package org.example.bookstoreproject.service.services;
 
-import org.example.bookstoreproject.enums.ImageSize;
-import org.example.bookstoreproject.persistance.entry.FileMetaData;
 import org.example.bookstoreproject.persistance.repository.ImageMetaDataRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ImageDataService {

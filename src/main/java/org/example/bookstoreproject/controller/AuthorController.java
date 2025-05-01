@@ -2,14 +2,13 @@ package org.example.bookstoreproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Author;
+import org.example.bookstoreproject.persistance.entity.Author;
 import org.example.bookstoreproject.persistance.repository.BookAuthorRepository;
 import org.example.bookstoreproject.service.criteria.AuthorSearchCriteria;
 import org.example.bookstoreproject.service.dto.AuthorDTO;
 import org.example.bookstoreproject.service.dto.AuthorInformationDTO;
 import org.example.bookstoreproject.service.dto.CreateAuthorDTO;
 import org.example.bookstoreproject.service.services.AuthorService;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

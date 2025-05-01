@@ -1,4 +1,4 @@
-package org.example.bookstoreproject.persistance.entry;
+package org.example.bookstoreproject.persistance.entity;
 
 
 import jakarta.persistence.*;

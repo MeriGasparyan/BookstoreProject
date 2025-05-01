@@ -1,9 +1,9 @@
 package org.example.bookstoreproject.service.services;
 
 import lombok.AllArgsConstructor;
-import org.example.bookstoreproject.persistance.entry.Book;
-import org.example.bookstoreproject.persistance.entry.BookGenre;
-import org.example.bookstoreproject.persistance.entry.Genre;
+import org.example.bookstoreproject.persistance.entity.Book;
+import org.example.bookstoreproject.persistance.entity.BookGenre;
+import org.example.bookstoreproject.persistance.entity.Genre;
 import org.example.bookstoreproject.persistance.repository.BookGenreRepository;
 import org.example.bookstoreproject.persistance.repository.BookRepository;
 import org.example.bookstoreproject.persistance.repository.GenreRepository;

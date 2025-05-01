@@ -1,6 +1,6 @@
 package org.example.bookstoreproject.service.mapper;
 
-import org.example.bookstoreproject.persistance.entry.Setting;
+import org.example.bookstoreproject.persistance.entity.Setting;
 import org.example.bookstoreproject.service.dto.SettingDTO;
 import org.springframework.stereotype.Component;
 
