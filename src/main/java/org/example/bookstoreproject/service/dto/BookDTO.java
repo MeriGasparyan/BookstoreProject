@@ -7,8 +7,8 @@ import lombok.Setter;
 import org.example.bookstoreproject.enums.Format;
 import org.example.bookstoreproject.enums.Language;
 import org.example.bookstoreproject.enums.RatingStarNumber;
-import org.example.bookstoreproject.persistance.entry.Book;
-import org.example.bookstoreproject.persistance.entry.BookRatingStar;
+import org.example.bookstoreproject.persistance.entity.Book;
+import org.example.bookstoreproject.persistance.entity.BookRatingStar;
 import org.example.bookstoreproject.service.utility.RatingCalculator;
 
 import java.util.*;
