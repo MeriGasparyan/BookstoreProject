@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.bookstoreproject.enums.Role;
 
 @Entity
 @Table(name = "role")
@@ -20,9 +21,9 @@ public class RoleEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String roleName;
+    private Role roleName;
 
-    public RoleEntity(String roleName) {
+    public RoleEntity(Role roleName) {
         this.roleName = roleName;
     }
 }

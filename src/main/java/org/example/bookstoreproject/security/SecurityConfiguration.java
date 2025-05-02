@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.security.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -56,22 +57,25 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain configure(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint, AccessDeniedHandler accessDeniedHandler) throws Exception {
+    public SecurityFilterChain configure(HttpSecurity http,
+                                         CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+                                         AccessDeniedHandler accessDeniedHandler) throws Exception {
         return http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
-                .authorizeHttpRequests(
-                        a ->
-                                a.requestMatchers("/auth/login").permitAll()
-                                        .requestMatchers("/auth/refresh").permitAll()
-                                        .anyRequest()
-                                        .fullyAuthenticated()
+                .authorizeHttpRequests(a -> a
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .anyRequest().fullyAuthenticated()
                 )
                 .exceptionHandling(e ->
                         e.authenticationEntryPoint(customAuthenticationEntryPoint)
                                 .accessDeniedHandler(accessDeniedHandler)
-                ).authenticationProvider(this.authenticationProvider())
+                )
+                .authenticationProvider(this.authenticationProvider())
                 .addFilterBefore(this.authorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+
 }

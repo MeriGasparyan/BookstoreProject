@@ -1,6 +1,5 @@
 package org.example.bookstoreproject.persistance.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "`user`")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -34,12 +33,12 @@ public class User {
     @Column(name = "enabled", nullable = false, columnDefinition = "boolean default true")
     private boolean enabled;
 
-    @Temporal(TemporalType.TIMESTAMP)
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private Instant createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
+
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Instant updatedAt;

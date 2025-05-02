@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder(setterPrefix = "with")
-public class LoginResponse {
+public class LoginResponseDTO {
 
     private String username;
     private String accessToken;

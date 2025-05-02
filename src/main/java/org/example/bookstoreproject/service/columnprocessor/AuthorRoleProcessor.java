@@ -27,7 +27,7 @@ public class AuthorRoleProcessor {
     @Transactional
     public void process(List<CSVRow> data, Map<String, Author> existingAuthorMap) {
 
-        Map<String, RoleEntity> existingRoleMap = new ConcurrentHashMap<>();
+        Map<Role, RoleEntity> existingRoleMap = new ConcurrentHashMap<>();
         Set<Pair<Long, Long>> existingAuthorRoleSet = new ConcurrentSkipListSet<>(); // Thread-safe Set
         List<AuthorRole> newAuthorRolesToSave = new CopyOnWriteArrayList<>();
 

@@ -1,6 +1,6 @@
 package org.example.bookstoreproject.enums;
 
-public enum RoleName {
+public enum UserRoleName {
     ROLE_USER,
     ROLE_ADMIN,
 }

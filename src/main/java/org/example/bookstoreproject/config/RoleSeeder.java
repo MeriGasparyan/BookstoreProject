@@ -16,10 +16,10 @@ public class RoleSeeder {
     @PostConstruct
     public void seedRoles() {
         for (Role roleEnum : Role.values()) {
-            String roleName = roleEnum.name();
 
-            roleRepository.findByRoleName(roleName).orElseGet(() -> {
-                RoleEntity newRole = new RoleEntity(roleName);
+
+            roleRepository.findByRoleName(roleEnum).orElseGet(() -> {
+                RoleEntity newRole = new RoleEntity(roleEnum);
                 return roleRepository.save(newRole);
             });
         }

@@ -6,12 +6,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginRequestDto {
+public class LoginRequestDTO {
 
     @NotBlank
     private String username;
 
     @NotBlank
-    @Size(min = 8)
+    @Size(min = 6)
     private String password;
 }

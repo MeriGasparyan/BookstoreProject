@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication(scanBasePackages = "org.example.bookstoreproject")
 @EnableJpaRepositories("org.example.bookstoreproject.persistance.repository")
-@EntityScan("org.example.bookstoreproject.persistance.entry")
+@EntityScan("org.example.bookstoreproject.persistance.entity")
 @EnableAsync
 public class BookstoreProjectApplication {
 

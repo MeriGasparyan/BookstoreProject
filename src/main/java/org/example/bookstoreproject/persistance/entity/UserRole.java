@@ -4,26 +4,22 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.bookstoreproject.enums.RoleName;
+import org.example.bookstoreproject.enums.UserRoleName;
 
-import static jakarta.persistence.GenerationType.*;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "role")
+@Table(name = "user_role")
 public class UserRole {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
-
     @Column(name = "name", unique = true, nullable = false)
     @Enumerated(EnumType.STRING)
-    private RoleName name;
+    private UserRoleName name;
 
-    public UserRole(RoleName name) {
+    public UserRole(UserRoleName name) {
         this.name = name;
     }
 }
