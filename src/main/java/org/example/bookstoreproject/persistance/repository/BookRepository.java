@@ -18,7 +18,7 @@ import java.util.Set;
 public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findByIsbn(String isbn);
     Optional<Book> findByIsbnAndTitle(String isbn, String title);
-
+    Optional<Book> findBookById(Long id);
     Optional<Book> findByBookIDAndTitle(String bookID, String title);
     Optional<Book> findByTitle(String title);
     Optional<Book> findByBookID(String bookID);

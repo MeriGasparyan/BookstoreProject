@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -31,12 +30,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new LockedException("User is locked");
         }
 
-        final UserRole role = user.getRole();
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                List.of(new SimpleGrantedAuthority(role.getName().name()))
-        );
+        return new CustomUserDetails(user);
     }
 }

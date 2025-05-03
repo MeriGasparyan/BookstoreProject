@@ -39,7 +39,7 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthorizationFilter authorizationFilter() {
-        return new AuthorizationFilter(jwtUtil);
+        return new AuthorizationFilter(jwtUtil,userDetailsService);
     }
 
     @Bean
