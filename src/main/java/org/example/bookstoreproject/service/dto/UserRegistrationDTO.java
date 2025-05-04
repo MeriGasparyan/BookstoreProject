@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.bookstoreproject.enums.UserRoleName;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class UserRegistrationDTO {
@@ -28,5 +30,5 @@ public class UserRegistrationDTO {
     private String password;
 
     @NotNull(message = "User role is required")
-    private UserRoleName role;
+    private List<UserRoleName> roles;
 }

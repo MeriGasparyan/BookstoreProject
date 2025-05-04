@@ -6,7 +6,9 @@ import org.example.bookstoreproject.exception.ResourceAlreadyUsedException;
 import org.example.bookstoreproject.exception.ResourceNotFoundException;
 import org.example.bookstoreproject.persistance.entity.User;
 import org.example.bookstoreproject.persistance.entity.UserRole;
+import org.example.bookstoreproject.persistance.entity.UserRoleEntity;
 import org.example.bookstoreproject.persistance.repository.UserRepository;
+import org.example.bookstoreproject.persistance.repository.UserRoleEntityRepository;
 import org.example.bookstoreproject.persistance.repository.UserRoleRepository;
 import org.example.bookstoreproject.service.dto.AdminUserUpdateDTO;
 import org.example.bookstoreproject.service.dto.UserDTO;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,16 +27,22 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserRoleRepository roleRepository;
+    private final UserRoleEntityRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
 
     @Transactional
     public UserDTO createUser(UserRegistrationDTO registrationDto) {
         if (userRepository.existsByEmail(registrationDto.getEmail())) {
             throw new ResourceAlreadyUsedException("User with this email already exists");
         }
+        List<UserRoleName> userRoles = registrationDto.getRoles();
+        List<UserRoleEntity> userRoleEntities = new ArrayList<>();
 
-        UserRole role = roleRepository.findByName(registrationDto.getRole())
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+        for (UserRoleName userRole : userRoles) {
+            UserRoleEntity roleEntity = roleRepository.findByName(userRole)
+                    .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + userRole));
+            userRoleEntities.add(roleEntity);
+        }
 
         User user = new User();
         user.setFirstname(registrationDto.getFirstName());
@@ -41,7 +50,11 @@ public class UserService {
         user.setEmail(registrationDto.getEmail());
         user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
         user.setEnabled(true);
-        user.setRole(role);
+        for(UserRoleEntity userRoleEntity : userRoleEntities) {
+            UserRole userRole = new UserRole(user, userRoleEntity);
+            userRoleRepository.save(userRole);
+            user.addUserRoles(userRole);
+        }
 
         return UserDTO.toDto(userRepository.save(user));
     }
@@ -93,15 +106,30 @@ public class UserService {
 
         user.setEnabled(adminUpdateDto.getEnabled());
 
+        List<UserRoleName> userRoles = adminUpdateDto.getRoles();
+        List<UserRoleEntity> userRoleEntities = new ArrayList<>();
 
-        if (adminUpdateDto.getRole() != null) {
-            UserRole newRole = roleRepository.findByName(adminUpdateDto.getRole())
-                    .orElseThrow(() -> new IllegalArgumentException("Role not found: " + adminUpdateDto.getRole()));
-            user.setRole(newRole);
+        for (UserRoleName userRole : userRoles) {
+            UserRoleEntity roleEntity = roleRepository.findByName(userRole)
+                    .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + userRole));
+            userRoleEntities.add(roleEntity);
+        }
+
+        user.clearUserRoles();
+
+        for (UserRoleEntity userRoleEntity : userRoleEntities) {
+            boolean roleExists = user.getUserRoles().stream()
+                    .anyMatch(existingUserRole -> existingUserRole.getUserRoleEntity().equals(userRoleEntity));
+            if (!roleExists) {
+                UserRole userRole = new UserRole(user, userRoleEntity);
+                userRoleRepository.save(userRole);
+                user.addUserRoles(userRole);
+            }
         }
 
         return UserDTO.toDto(userRepository.save(user));
     }
+
 
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
