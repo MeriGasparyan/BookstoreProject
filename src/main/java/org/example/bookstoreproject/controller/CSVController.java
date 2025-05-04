@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.service.CSVDataHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ public class CSVController {
     private final CSVDataHandler csvDataHandler;
 
     @PostMapping("/upload")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<String> uploadCsv(@RequestParam("books") MultipartFile file, HttpServletRequest request) {
         System.out.println("Content-Type: " + request.getContentType());
         try {

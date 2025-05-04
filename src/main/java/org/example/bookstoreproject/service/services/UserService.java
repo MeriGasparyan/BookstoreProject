@@ -1,4 +1,5 @@
 package org.example.bookstoreproject.service.services;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.UserRoleName;
 import org.example.bookstoreproject.exception.ResourceAlreadyUsedException;
@@ -7,6 +8,7 @@ import org.example.bookstoreproject.persistance.entity.User;
 import org.example.bookstoreproject.persistance.entity.UserRole;
 import org.example.bookstoreproject.persistance.repository.UserRepository;
 import org.example.bookstoreproject.persistance.repository.UserRoleRepository;
+import org.example.bookstoreproject.service.dto.AdminUserUpdateDTO;
 import org.example.bookstoreproject.service.dto.UserDTO;
 import org.example.bookstoreproject.service.dto.UserRegistrationDTO;
 import org.example.bookstoreproject.service.dto.UserUpdateDTO;
@@ -20,22 +22,20 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRoleRepository roleRepository;
 
     @Transactional
     public UserDTO createUser(UserRegistrationDTO registrationDto) {
-
         if (userRepository.existsByEmail(registrationDto.getEmail())) {
             throw new ResourceAlreadyUsedException("User with this email already exists");
         }
 
-        final UserRole role = roleRepository.findByName(UserRoleName.ROLE_USER)
+        UserRole role = roleRepository.findByName(registrationDto.getRole())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
 
-        final User user = new User();
+        User user = new User();
         user.setFirstname(registrationDto.getFirstName());
         user.setLastname(registrationDto.getLastName());
         user.setEmail(registrationDto.getEmail());
@@ -53,28 +53,60 @@ public class UserService {
     }
 
     public UserDTO getById(Long id) {
-
-        final User user = userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
         return UserDTO.toDto(user);
     }
 
     @Transactional
     public UserDTO updateUser(Long id, UserUpdateDTO updateDto) {
-        final User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        if(updateDto.getFirstName() != null && !updateDto.getLastName().isEmpty()) {
+            user.setFirstname(updateDto.getFirstName());
+        }
+        if(updateDto.getLastName() != null && !updateDto.getLastName().isEmpty()){
+            user.setLastname(updateDto.getLastName());
+        }
+        if(updateDto.getEmail() != null && !updateDto.getEmail().isEmpty()) {
+            user.setEmail(updateDto.getEmail());
+        }
+        if (updateDto.getNewPassword() != null && !updateDto.getNewPassword().isEmpty()) {
+            if (updateDto.getCurrentPassword() == null || updateDto.getCurrentPassword().isEmpty()) {
+                throw new IllegalArgumentException("Current password is required to change password");
+            }
 
-        user.setFirstname(updateDto.getFirstname());
-        user.setLastname(updateDto.getLastname());
+            if (!passwordEncoder.matches(updateDto.getCurrentPassword(), user.getPassword())) {
+                throw new IllegalArgumentException("Current password is incorrect");
+            }
+
+            user.setPassword(passwordEncoder.encode(updateDto.getNewPassword()));
+        }
+
+        return UserDTO.toDto(userRepository.save(user));
+    }
+
+    @Transactional
+    public UserDTO adminUpdateUser(Long id, AdminUserUpdateDTO adminUpdateDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        user.setEnabled(adminUpdateDto.getEnabled());
+
+
+        if (adminUpdateDto.getRole() != null) {
+            UserRole newRole = roleRepository.findByName(adminUpdateDto.getRole())
+                    .orElseThrow(() -> new IllegalArgumentException("Role not found: " + adminUpdateDto.getRole()));
+            user.setRole(newRole);
+        }
 
         return UserDTO.toDto(userRepository.save(user));
     }
 
     public void deleteUser(Long id) {
-        userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
+        if (!userRepository.existsById(id)) {
+            throw new ResourceNotFoundException("User not found");
+        }
         userRepository.deleteById(id);
     }
 
@@ -82,3 +114,4 @@ public class UserService {
         return userRepository.findById(userId);
     }
 }
+

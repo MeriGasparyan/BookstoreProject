@@ -24,13 +24,13 @@ public class UserBookRatingService {
     private final StarRepository starRepository;
 
     @Transactional
-    public UserBookRating rateBook(User user, RatingDTO ratingDTO) {
+    public UserBookRating rateBook(User user, Long bookID, RatingDTO ratingDTO) {
         UserBookRating userBookRating = ratingRepository
-                .findByUserIdAndBookId(user.getId(), ratingDTO.getBookId())
+                .findByUserIdAndBookId(user.getId(), bookID)
                 .orElseGet(UserBookRating::new);
 
-        Book book = bookRepository.findById(ratingDTO.getBookId())
-                .orElseThrow(() -> new IllegalArgumentException("Book with ID " + ratingDTO.getBookId() + " not found."));
+        Book book = bookRepository.findById(bookID)
+                .orElseThrow(() -> new IllegalArgumentException("Book with ID " + bookID + " not found."));
 
         RatingStarNumber ratingEnum = RatingStarNumber.fromInt(ratingDTO.getStar());
         Star star = starRepository.findByLevel(ratingEnum)

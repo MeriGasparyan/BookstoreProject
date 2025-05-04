@@ -7,6 +7,7 @@ import org.example.bookstoreproject.service.dto.SettingDTO;
 import org.example.bookstoreproject.service.services.SettingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SettingController {
     private final SettingService settingService;
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<SettingDTO> createSetting(@RequestBody CreateSettingDTO settingDTO) {
         try {
             Setting setting = settingService.createSetting(settingDTO);

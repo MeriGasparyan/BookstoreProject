@@ -7,12 +7,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.security.util.JwtUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.example.bookstoreproject.security.util.JwtUtil.AUTH_TYPE;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -30,7 +33,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader(AUTHORIZATION);
 
-        // Skip filter if no auth header or invalid format
         if (authHeader == null || !authHeader.startsWith(AUTH_TYPE)) {
             filterChain.doFilter(request, response);
             return;
@@ -39,19 +41,17 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         try {
             final String token = authHeader.substring(AUTH_TYPE.length()).trim();
 
-            // Validate token
             if (!jwtUtil.isVerified(token)) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            // Get username from token
             final String username = jwtUtil.getUsername(token);
 
-            // Load user details from database
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            // Create authentication token with CustomUserDetails
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            System.out.println("Loaded userDetails class: " + userDetails.getClass());
+
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             userDetails,
@@ -61,7 +61,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            // Set authentication in security context
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (Exception e) {

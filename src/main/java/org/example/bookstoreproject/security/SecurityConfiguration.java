@@ -64,9 +64,14 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().fullyAuthenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/authors/**").permitAll()
+                        .requestMatchers("/api/users/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/analytics/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_ANALYST")
+                        .requestMatchers("/api/reviews/professional/**").hasAuthority("ROLE_REVIEWER")
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(e ->
                         e.authenticationEntryPoint(customAuthenticationEntryPoint)

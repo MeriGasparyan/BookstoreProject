@@ -22,6 +22,9 @@ public class JwtUtil {
     public static final long JWT_REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 30; // 30 days
     public static final String AUTH_TYPE = "Bearer ";
     private static final String ROLES = "roles";
+    private static final String TOKEN_TYPE = "token_type";
+    private static final String ACCESS_TOKEN = "access";
+    private static final String REFRESH_TOKEN = "refresh";
 
     @Value("${jwt.secret}")
     private String secret;
@@ -35,6 +38,7 @@ public class JwtUtil {
                         .stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()))
+                .withClaim(TOKEN_TYPE, ACCESS_TOKEN)
                 .sign(this.getAlgorithm());
     }
 
@@ -43,7 +47,16 @@ public class JwtUtil {
                 .withSubject(userDetails.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + JWT_REFRESH_TOKEN_VALIDITY))
                 .withIssuedAt(Instant.now())
+                .withClaim(TOKEN_TYPE, REFRESH_TOKEN)
                 .sign(this.getAlgorithm());
+    }
+
+    public boolean isRefreshToken(String token) {
+        try {
+            return REFRESH_TOKEN.equals(this.verifyAndDecode(token).getClaim(TOKEN_TYPE).asString());
+        } catch (JWTVerificationException e) {
+            return false;
+        }
     }
 
 

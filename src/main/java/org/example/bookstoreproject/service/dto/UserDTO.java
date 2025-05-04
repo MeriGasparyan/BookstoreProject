@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.bookstoreproject.persistance.entity.User;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 public class UserDTO {
@@ -12,8 +14,8 @@ public class UserDTO {
     private String firstname;
     private String lastname;
     private String email;
-    private Long createdAt;
-    private Long updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     public static UserDTO toDto(User user) {
         final UserDTO userDto = new UserDTO();
@@ -22,8 +24,8 @@ public class UserDTO {
         userDto.setFirstname(user.getFirstname());
         userDto.setLastname(user.getLastname());
         userDto.setEmail(user.getEmail());
-        userDto.setCreatedAt(user.getCreatedAt().toEpochMilli());
-        userDto.setUpdatedAt(user.getUpdatedAt().toEpochMilli());
+        userDto.setUpdatedAt(user.getUpdatedAt());
+        userDto.setCreatedAt(user.getCreatedAt());
 
         return userDto;
     }

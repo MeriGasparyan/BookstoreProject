@@ -3,43 +3,54 @@ package org.example.bookstoreproject.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.persistance.entity.Book;
+import org.example.bookstoreproject.persistance.entity.User;
+import org.example.bookstoreproject.persistance.entity.UserBookRating;
+import org.example.bookstoreproject.security.CustomUserDetails;
 import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/books")
 public class BookController {
     private final BookService bookService;
-    private final RatingService ratingService;
     private final AuthorService authorService;
     private final AwardService awardService;
     private final GenreService genreService;
     private final CharacterService characterService;
     private final SettingService settingService;
     private final ImageDataService metadataService;
+    private final UserService userService;
+    private final UserBookRatingService ratingService;
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_LIBRARIAN')")
     public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookUpdateRequestDTO request) {
         Book updated = bookService.updateBook(id, request);
         return new ResponseEntity<>(BookDTO.fromEntity(updated), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/authors")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_LIBRARIAN')")
     public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody @Valid BookAuthorCreateDTO request) {
         try{
         Book book = authorService.addAuthorsToBook(id, request.getAuthors());
@@ -51,12 +62,14 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/authors")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<BookDTO> deleteBookAuthor(@PathVariable Long id, @RequestBody BookAuthorCreateDTO request) {
         Book book = authorService.removeAuthorsFromBook(id, request.getAuthors());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/awards")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_LIBRARIAN')")
     public ResponseEntity<BookDTO> addBookAward(@PathVariable Long id, @RequestBody @Valid BookAwardCreateDTO request) {
         try {
             Book book = awardService.addAwardsToBook(id, request.getAwards());
@@ -68,12 +81,14 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/awards")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<BookDTO> deleteBookAward(@PathVariable Long id, @RequestBody BookAwardCreateDTO request) {
         Book book = awardService.removeAwardsFromBook(id, request.getAwards());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/characters")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_LIBRARIAN')")
     public ResponseEntity<BookDTO> addBookCharacter(@PathVariable Long id, @RequestBody @Valid BookCharacterCreateDTO request) {
         try {
             Book book = characterService.addCharactersToBook(id, request.getCharacters());
@@ -85,12 +100,14 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/characters")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<BookDTO> deleteBookCharacter(@PathVariable Long id, @RequestBody BookCharacterCreateDTO request) {
         Book book = characterService.removeCharactersFromBook(id, request.getCharacters());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/genres")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_LIBRARIAN')")
     public ResponseEntity<BookDTO> addBookGenre(@PathVariable Long id, @RequestBody @Valid BookGenreCreateDTO request) {
         try {
             Book book = genreService.addGenresToBook(id, request.getGenres());
@@ -102,12 +119,14 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/genres")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<BookDTO> deleteBookGenre(@PathVariable Long id, @RequestBody BookGenreCreateDTO request) {
         Book book = genreService.removeGenresFromBook(id, request.getGenres());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping ("/{id}/settings")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_LIBRARIAN')")
     public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id, @RequestBody @Valid BookSettingCreateDTO request) {
         try {
             Book book = settingService.addSettingsToBook(id, request.getSettings());
@@ -119,6 +138,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/settings")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<BookDTO> deleteBookSetting(@PathVariable Long id, @RequestBody BookSettingCreateDTO request) {
         Book book = settingService.removeSettingsFromBook(id, request.getSettings());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
@@ -134,6 +154,7 @@ public class BookController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_LIBRARIAN')")
     public ResponseEntity<BookDTO> addBook(@RequestBody BookCreateRequestDTO createRequest) {
         try {
             BookDTO book = bookService.addBook(createRequest);
@@ -144,24 +165,26 @@ public class BookController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     @PostMapping("/{id}/rate")
-    public ResponseEntity<BookDTO> rateBook(
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_REVIEWER')")
+    public ResponseEntity<?> rateBook(
             @PathVariable Long id,
-            @RequestBody RatingDTO ratingDTO) {
-        Integer starValue = ratingDTO.getStar();
-        if (starValue < 1 || starValue > 5) {
-            return ResponseEntity.badRequest().build();
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody RatingDTO request) {
+
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
         }
 
-        try {
-            Book book = ratingService.rateBook(id, starValue);
-            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        Optional<User> userOpt = userService.getUserById(userDetails.getId());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("User not found");
         }
+
+        UserBookRating savedRating = ratingService.rateBook(userOpt.get(), id,request);
+        RatingResponseDTO response = RatingResponseDTO.fromEntity(savedRating);
+
+        return ResponseEntity.ok(response);
     }
 //    @GetMapping("/{id}/image")
 //    public ResponseEntity<InputStreamResource> getImage(

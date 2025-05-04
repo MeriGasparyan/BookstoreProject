@@ -8,6 +8,7 @@ import org.example.bookstoreproject.service.dto.CreateAwardDTO;
 import org.example.bookstoreproject.service.services.AwardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -18,6 +19,7 @@ public class AwardController {
     private final AwardService awardService;
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<AwardDTO> createAward(@RequestBody @Valid CreateAwardDTO awardDTO) {
         try {
             Award award = awardService.createAward(awardDTO);

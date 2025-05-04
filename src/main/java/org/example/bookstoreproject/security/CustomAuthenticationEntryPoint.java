@@ -32,6 +32,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         } else if (throwable instanceof LockedException) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {
+            System.out.println(throwable.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
 

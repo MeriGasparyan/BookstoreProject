@@ -11,6 +11,7 @@ import org.example.bookstoreproject.service.dto.CreateAuthorDTO;
 import org.example.bookstoreproject.service.services.AuthorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class AuthorController {
     private final BookAuthorRepository bookAuthorRepository;
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<AuthorDTO> createAuthor(@RequestBody @Valid CreateAuthorDTO authorDTO) {
         try {
             Author author = authorService.createAuthor(authorDTO);
