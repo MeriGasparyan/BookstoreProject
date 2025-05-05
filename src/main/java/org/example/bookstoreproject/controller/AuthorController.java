@@ -24,7 +24,7 @@ public class AuthorController {
     private final BookAuthorRepository bookAuthorRepository;
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
     public ResponseEntity<AuthorDTO> createAuthor(@RequestBody @Valid CreateAuthorDTO authorDTO) {
         try {
             Author author = authorService.createAuthor(authorDTO);

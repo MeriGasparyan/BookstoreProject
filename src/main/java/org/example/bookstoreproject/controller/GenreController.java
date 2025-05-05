@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GenreController {
     private final GenreService genreService;
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
     public ResponseEntity<GenreDTO> createGenre(@RequestBody CreateGenreDTO genreDTO) {
         try {
             Genre genre = genreService.createGenre(genreDTO);

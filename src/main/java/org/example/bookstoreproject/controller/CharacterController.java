@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CharacterController {
     private final CharacterService characterService;
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
     public ResponseEntity<CharacterDTO> createCharacter(@RequestBody CreateCharacterDTO characterDTO) {
         try {
             Character character = characterService.createCharacter(characterDTO);

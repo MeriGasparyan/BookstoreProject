@@ -1,10 +1,41 @@
 package org.example.bookstoreproject.enums;
 
 public enum UserRoleName {
-    ROLE_USER,       // Regular user - can view books, rate books, etc.
-    ROLE_ADMIN,      // Full admin access
-    ROLE_MODERATOR,  // Can manage content but not users
-    ROLE_LIBRARIAN,  // Can manage books and inventory
-    ROLE_REVIEWER,   // Can post professional reviews
-    ROLE_ANALYST     // Can view analytics and reports
+    /**
+     * View books, authors, ratings, reviews
+     * Rate books
+     * Post personal reviews
+     * Edit/delete own reviews
+     **/
+    ROLE_USER,
+    /**
+     * Full access
+     */
+    ROLE_ADMIN,
+
+    /**
+     * Moderate user reviews (approve/delete/report)
+     * Manage flagged content
+     * Cannot manage users or books
+     */
+    ROLE_MODERATOR,
+    /**
+     * Add/edit/delete books
+     * Manage book inventory (stock, availability)
+     * Manage book metadata (genres, authors, etc.)
+     * Cannot manage users or reviews
+     */
+    ROLE_LIBRARIAN,
+    /**
+     * Everything ROLE_USER can do
+     * Post professional reviews
+     * Access reviewer dashboard / tools
+     */
+    ROLE_REVIEWER,
+    /**
+     * Access analytics dashboards
+     * View reports (most viewed books, top reviewers, rating trends)
+     * Cannot edit content
+     */
+    ROLE_ANALYST
 }

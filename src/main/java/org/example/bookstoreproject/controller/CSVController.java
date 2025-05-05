@@ -20,7 +20,7 @@ public class CSVController {
     private final CSVDataHandler csvDataHandler;
 
     @PostMapping("/upload")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> uploadCsv(@RequestParam("books") MultipartFile file, HttpServletRequest request) {
         System.out.println("Content-Type: " + request.getContentType());
         try {
