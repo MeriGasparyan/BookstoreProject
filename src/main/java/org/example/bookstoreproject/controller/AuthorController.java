@@ -3,10 +3,7 @@ package org.example.bookstoreproject.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.persistance.entity.Author;
-import org.example.bookstoreproject.persistance.repository.BookAuthorRepository;
-import org.example.bookstoreproject.service.criteria.AuthorSearchCriteria;
 import org.example.bookstoreproject.service.dto.AuthorDTO;
-import org.example.bookstoreproject.service.dto.AuthorInformationDTO;
 import org.example.bookstoreproject.service.dto.CreateAuthorDTO;
 import org.example.bookstoreproject.service.services.AuthorService;
 import org.springframework.http.HttpStatus;
@@ -14,14 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/authors")
 public class AuthorController {
     private final AuthorService authorService;
-    private final BookAuthorRepository bookAuthorRepository;
 
     @PostMapping
     @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
@@ -37,13 +32,6 @@ public class AuthorController {
     }
 
 
-    @GetMapping
-    public ResponseEntity<List<AuthorInformationDTO>> searchAuthors(@ModelAttribute AuthorSearchCriteria criteria) {
-        List<Author> authors = authorService.getAuthors(criteria, criteria.toPageable());
-        List<AuthorInformationDTO> dtos = authors.stream()
-                .map(a -> AuthorInformationDTO.fromEntity(a, bookAuthorRepository))
-                .toList();
-        return ResponseEntity.ok(dtos);
-    }
+
 
 }
