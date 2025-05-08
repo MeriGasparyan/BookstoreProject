@@ -19,7 +19,7 @@ public class AwardController {
     private final AwardService awardService;
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<AwardDTO> createAward(@RequestBody @Valid CreateAwardDTO awardDTO) {
         try {
             Award award = awardService.createAward(awardDTO);

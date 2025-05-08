@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SettingController {
     private final SettingService settingService;
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<SettingDTO> createSetting(@RequestBody CreateSettingDTO settingDTO) {
         try {
             Setting setting = settingService.createSetting(settingDTO);

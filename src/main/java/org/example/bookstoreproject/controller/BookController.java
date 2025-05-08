@@ -36,21 +36,21 @@ public class BookController {
     private final UserBookRatingService ratingService;
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN',  'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookUpdateRequestDTO request) {
         Book updated = bookService.updateBook(id, request);
         return new ResponseEntity<>(BookDTO.fromEntity(updated), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/authors")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody @Valid BookAuthorCreateDTO request) {
         try{
         Book book = authorService.addAuthorsToBook(id, request.getAuthors());
@@ -62,14 +62,14 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/authors")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> deleteBookAuthor(@PathVariable Long id, @RequestBody BookAuthorCreateDTO request) {
         Book book = authorService.removeAuthorsFromBook(id, request.getAuthors());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/awards")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> addBookAward(@PathVariable Long id, @RequestBody @Valid BookAwardCreateDTO request) {
         try {
             Book book = awardService.addAwardsToBook(id, request.getAwards());
@@ -81,14 +81,14 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/awards")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> deleteBookAward(@PathVariable Long id, @RequestBody BookAwardCreateDTO request) {
         Book book = awardService.removeAwardsFromBook(id, request.getAwards());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/characters")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> addBookCharacter(@PathVariable Long id, @RequestBody @Valid BookCharacterCreateDTO request) {
         try {
             Book book = characterService.addCharactersToBook(id, request.getCharacters());
@@ -100,14 +100,14 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/characters")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> deleteBookCharacter(@PathVariable Long id, @RequestBody BookCharacterCreateDTO request) {
         Book book = characterService.removeCharactersFromBook(id, request.getCharacters());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{id}/genres")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> addBookGenre(@PathVariable Long id, @RequestBody @Valid BookGenreCreateDTO request) {
         try {
             Book book = genreService.addGenresToBook(id, request.getGenres());
@@ -119,14 +119,14 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/genres")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> deleteBookGenre(@PathVariable Long id, @RequestBody BookGenreCreateDTO request) {
         Book book = genreService.removeGenresFromBook(id, request.getGenres());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping ("/{id}/settings")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id, @RequestBody @Valid BookSettingCreateDTO request) {
         try {
             Book book = settingService.addSettingsToBook(id, request.getSettings());
@@ -138,7 +138,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}/settings")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> deleteBookSetting(@PathVariable Long id, @RequestBody BookSettingCreateDTO request) {
         Book book = settingService.removeSettingsFromBook(id, request.getSettings());
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
@@ -154,7 +154,7 @@ public class BookController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_LIBRARIAN')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> addBook(@RequestBody BookCreateRequestDTO createRequest) {
         try {
             BookDTO book = bookService.addBook(createRequest);
@@ -166,7 +166,7 @@ public class BookController {
         }
     }
     @PostMapping("/{id}/rate")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_REVIEWER')")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<?> rateBook(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails,
