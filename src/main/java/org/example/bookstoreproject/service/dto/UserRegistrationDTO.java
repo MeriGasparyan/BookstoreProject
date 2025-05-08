@@ -30,5 +30,5 @@ public class UserRegistrationDTO {
     private String password;
 
     @NotNull(message = "User role is required")
-    private List<UserRoleName> roles;
+    private UserRoleName role;
 }

@@ -17,5 +17,5 @@ public class AdminUserUpdateDTO extends UserUpdateDTO {
     @NotNull
     private Boolean enabled;
 
-    private List<UserRoleName> roles;
+    private UserRoleName role;
 }

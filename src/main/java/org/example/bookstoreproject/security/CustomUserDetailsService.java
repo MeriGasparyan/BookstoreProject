@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        final User user = userRepository.findByUsernameWithRoles(username)
+        final User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new BadCredentialsException("Bad Credentials"));
 
         if (!user.isEnabled()) {

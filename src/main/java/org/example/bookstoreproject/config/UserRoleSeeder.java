@@ -3,23 +3,23 @@ package org.example.bookstoreproject.config;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.UserRoleName;
-import org.example.bookstoreproject.persistance.entity.UserRoleEntity;
-import org.example.bookstoreproject.persistance.repository.UserRoleEntityRepository;
+import org.example.bookstoreproject.persistance.entity.UserRole;
+import org.example.bookstoreproject.persistance.repository.UserRoleRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class UserRoleSeeder {
-    private final UserRoleEntityRepository userRoleEntityRepository;
+    private final UserRoleRepository userRoleRepository;
 
     @PostConstruct
     public void seedRoles() {
         for (UserRoleName roleEnum : UserRoleName.values()) {
 
 
-            userRoleEntityRepository.findByName(roleEnum).orElseGet(() -> {
-                UserRoleEntity newRole = new UserRoleEntity(roleEnum);
-                return userRoleEntityRepository.save(newRole);
+            userRoleRepository.findByName(roleEnum).orElseGet(() -> {
+                UserRole newRole = new UserRole(roleEnum);
+                return userRoleRepository.save(newRole);
             });
         }
 

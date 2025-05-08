@@ -7,8 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -49,19 +47,8 @@ public class User {
     @UpdateTimestamp
     private Instant updatedAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<UserRole> userRoles = new ArrayList<>();
-
-    public void addUserRoles(UserRole userRole) {
-        userRoles.add(userRole);
-        userRole.setUser(this);
-    }
-
-    public void clearUserRoles() {
-        if (userRoles != null) {
-            userRoles.forEach(userRole -> userRole.setUser(null));
-            userRoles.clear();
-        }
-    }
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "role_id", nullable = false)
+    private UserRole role;
 
 }
