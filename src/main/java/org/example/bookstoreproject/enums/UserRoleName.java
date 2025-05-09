@@ -37,5 +37,12 @@ public enum UserRoleName {
      * View reports (most viewed books, top reviewers, rating trends)
      * Cannot edit content
      */
-    ROLE_ANALYST
+    ROLE_ANALYST,
+    /**
+     * Sell books
+     * Manage inventory
+     * Process orders
+     * View sales reports
+     */
+    ROLE_SELLER,
 }

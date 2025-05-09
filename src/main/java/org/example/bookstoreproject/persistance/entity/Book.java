@@ -65,7 +65,6 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "series_id")
-
     private Series series;
 
     @Column(name = "bbe_score")

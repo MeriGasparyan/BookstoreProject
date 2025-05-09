@@ -21,6 +21,7 @@ public class RoleEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @Enumerated(EnumType.STRING)
     private Role roleName;
 
     public RoleEntity(Role roleName) {

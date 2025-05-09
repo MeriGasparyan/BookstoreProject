@@ -56,5 +56,20 @@ public enum PermissionName {
     VIEW_PERSONAL_REVIEW_STATS,
     DELETE_OWN_ACCOUNT,
     DOWNLOAD_ACCOUNT_DATA,
-    ACCESS_BETA_FEATURES
+    ACCESS_BETA_FEATURES,
+
+    // ===== Seller permissions =====
+    PROCESS_ORDERS,
+    VIEW_SALES_REPORTS,
+    UPDATE_INVENTORY,
+    MANAGE_DISCOUNTS,
+    CANCEL_ORDERS,
+
+    // ===== Customer purchase permissions =====
+    ADD_TO_CART,
+    MODIFY_CART,
+    PLACE_ORDER,
+    VIEW_ORDER_HISTORY,
+    CANCEL_OWN_ORDER,
+    REQUEST_REFUND
 }
