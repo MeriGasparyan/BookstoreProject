@@ -36,7 +36,7 @@ public class OrderService{
         order.setStatus(OrderStatus.PENDING);
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
-
+        order.setShippingAddress(checkoutRequest.getShippingAddress());
         BigDecimal total = BigDecimal.ZERO;
         for (CartItem cartItem : cart.getItems()) {
             OrderItem orderItem = new OrderItem();
@@ -44,15 +44,17 @@ public class OrderService{
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setPrice(cartItem.getBook().getPrice());
             order.addItem(orderItem);
-            total = total.add(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+            BigDecimal unitPrice = orderItem.getPrice() == null ? BigDecimal.ZERO : orderItem.getPrice();
+            total = total.add(unitPrice.multiply(BigDecimal.valueOf(orderItem.getQuantity())));
         }
         order.setTotal(total);
 
         PaymentMethod paymentMethod = checkoutRequest.getPaymentMethod();
-        Payment payment = new Payment();
-        payment.setAmount(total);
-        paymentService.processPayment(order.getId(), paymentMethod);
 
+        order = orderRepository.save(order);
+        PaymentDTO paymentDTO = paymentService.processPayment(order.getId(), paymentMethod);
+
+        order.setPayment(paymentRepository.findById(paymentDTO.getId()).get());
         order = orderRepository.save(order);
         cart.getItems().clear();
         return OrderDTO.fromEntity(order);

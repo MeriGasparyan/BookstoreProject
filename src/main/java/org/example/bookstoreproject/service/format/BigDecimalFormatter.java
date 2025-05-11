@@ -8,12 +8,12 @@ import java.math.BigDecimal;
 public class BigDecimalFormatter {
     public BigDecimal getBigDecimal(String priceString) {
         if (priceString == null || priceString.isEmpty()) {
-            return null;
+            return BigDecimal.ZERO;
         }
         try {
             return new BigDecimal(priceString);  // Correct method
         } catch (NumberFormatException e) {
-            return null;
+            return BigDecimal.ZERO;
         }
     }
 }

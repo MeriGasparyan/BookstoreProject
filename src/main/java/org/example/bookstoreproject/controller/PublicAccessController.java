@@ -28,7 +28,7 @@ public class PublicAccessController {
     private final BookAuthorRepository bookAuthorRepository;
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@Valid @RequestBody UserRegistrationDTO userRegistrationDto) {
+    public ResponseEntity<CreateUserReturnDTO> registerUser(@Valid @RequestBody UserRegistrationDTO userRegistrationDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(userService.createUser(userRegistrationDto));

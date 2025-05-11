@@ -10,10 +10,7 @@ import org.example.bookstoreproject.persistance.entity.UserRole;
 import org.example.bookstoreproject.persistance.repository.CartRepository;
 import org.example.bookstoreproject.persistance.repository.UserRepository;
 import org.example.bookstoreproject.persistance.repository.UserRoleRepository;
-import org.example.bookstoreproject.service.dto.AdminUserUpdateDTO;
-import org.example.bookstoreproject.service.dto.UserDTO;
-import org.example.bookstoreproject.service.dto.UserRegistrationDTO;
-import org.example.bookstoreproject.service.dto.UserUpdateDTO;
+import org.example.bookstoreproject.service.dto.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +28,7 @@ public class UserService {
     private final CartRepository cartRepository;
 
     @Transactional
-    public UserDTO createUser(UserRegistrationDTO registrationDto) {
+    public CreateUserReturnDTO createUser(UserRegistrationDTO registrationDto) {
         if (userRepository.existsByEmail(registrationDto.getEmail())) {
             throw new ResourceAlreadyUsedException("User with this email already exists");
         }
@@ -52,7 +49,7 @@ public class UserService {
         cart.setUser(savedUser);
         cartRepository.save(cart);
 
-        return UserDTO.toDto(savedUser);
+        return CreateUserReturnDTO.fromEntity(savedUser);
     }
 
     public List<UserDTO> getAllUsers() {
