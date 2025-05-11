@@ -11,6 +11,7 @@ import org.example.bookstoreproject.persistance.entity.Book;
 import org.example.bookstoreproject.persistance.entity.BookRatingStar;
 import org.example.bookstoreproject.service.utility.RatingCalculator;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class BookDTO {
     private String isbn;
     private Format format;
     private Integer pages;
-    private Float price;
+    private BigDecimal price;
     private Date publishDate;
     private Date firstPublishDate;
     private Map<String, Object> publisher;

@@ -10,10 +10,11 @@ import org.example.bookstoreproject.service.format.DateFormatter;
 import org.example.bookstoreproject.service.format.FormatFormatter;
 import org.example.bookstoreproject.service.format.LanguageFormatter;
 import org.example.bookstoreproject.service.format.IntegerFormatter;
-import org.example.bookstoreproject.service.format.FloatFormatter;
+import org.example.bookstoreproject.service.format.BigDecimalFormatter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Component
@@ -23,7 +24,7 @@ public class BookProcessor {
     private final BookRepository bookRepository;
     private final DateFormatter dateFormatter;
     private final IntegerFormatter integerFormatter;
-    private final FloatFormatter priceFormatter;
+    private final BigDecimalFormatter priceFormatter;
     private final LanguageFormatter languageFormatter;
     private final FormatFormatter formatFormatter;
 
@@ -50,7 +51,7 @@ public class BookProcessor {
                 Format format = formatFormatter.formatFormat(row.getFormat());
 
                 Integer pages = integerFormatter.getInt(row.getPages());
-                Float price = priceFormatter.getFloat(row.getPrice());
+                BigDecimal price = priceFormatter.getBigDecimal(row.getPrice());
                 Date publishDate = row.getPublishDate().isEmpty() ? null : dateFormatter.getDate(row.getPublishDate());
                 Date firstPublishDate = row.getFirstPublishDate().isEmpty() ? null : dateFormatter.getDate(row.getFirstPublishDate());
                 Integer bbeScore = integerFormatter.getInt(row.getBbeScore());

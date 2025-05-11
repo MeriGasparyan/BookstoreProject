@@ -10,6 +10,7 @@ import org.example.bookstoreproject.persistance.entity.Publisher;
 import org.example.bookstoreproject.persistance.entity.Series;
 import org.example.bookstoreproject.persistance.repository.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Getter
@@ -31,7 +32,7 @@ public class BookCreateRequestDTO {
     private Date firstPublishDate;
     private Integer bbeScore;
     private Integer bbeVotes;
-    private Float price;
+    private BigDecimal price;
 
 
     public Book createBookEntity(BookCreateRequestDTO createRequest, PublisherRepository publisherRepository, SeriesRepository seriesRepository) {

@@ -10,11 +10,6 @@ import org.example.bookstoreproject.enums.PaymentMethod;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CheckoutRequestDTO {
-    @NotBlank
-    private String shippingAddress;
-
     @NotNull
     private PaymentMethod paymentMethod;
-
-    private String promoCode;
 }

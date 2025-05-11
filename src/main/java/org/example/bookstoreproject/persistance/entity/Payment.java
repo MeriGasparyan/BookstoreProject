@@ -24,10 +24,6 @@ public class Payment {
             allocationSize = 50)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
-
     @Column(nullable = false)
     private BigDecimal amount;
 

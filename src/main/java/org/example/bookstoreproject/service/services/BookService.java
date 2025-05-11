@@ -20,7 +20,6 @@ import java.util.*;
 @AllArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
     private final SeriesRepository seriesRepository;
     private final PublisherRepository publisherRepository;
     private final CharacterRepository characterRepository;

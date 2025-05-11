@@ -1,10 +1,13 @@
 package org.example.bookstoreproject.service.services;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.exception.ResourceAlreadyUsedException;
 import org.example.bookstoreproject.exception.ResourceNotFoundException;
+import org.example.bookstoreproject.persistance.entity.Cart;
 import org.example.bookstoreproject.persistance.entity.User;
 import org.example.bookstoreproject.persistance.entity.UserRole;
+import org.example.bookstoreproject.persistance.repository.CartRepository;
 import org.example.bookstoreproject.persistance.repository.UserRepository;
 import org.example.bookstoreproject.persistance.repository.UserRoleRepository;
 import org.example.bookstoreproject.service.dto.AdminUserUpdateDTO;
@@ -25,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRoleRepository roleRepository;
+    private final CartRepository cartRepository;
 
     @Transactional
     public UserDTO createUser(UserRegistrationDTO registrationDto) {
@@ -42,7 +46,13 @@ public class UserService {
         user.setEnabled(true);
         user.setRole(role);
 
-        return UserDTO.toDto(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+
+        Cart cart = new Cart();
+        cart.setUser(savedUser);
+        cartRepository.save(cart);
+
+        return UserDTO.toDto(savedUser);
     }
 
     public List<UserDTO> getAllUsers() {
@@ -61,13 +71,13 @@ public class UserService {
     public UserDTO updateUser(Long id, UserUpdateDTO updateDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        if(updateDto.getFirstName() != null && !updateDto.getLastName().isEmpty()) {
+        if (updateDto.getFirstName() != null && !updateDto.getLastName().isEmpty()) {
             user.setFirstname(updateDto.getFirstName());
         }
-        if(updateDto.getLastName() != null && !updateDto.getLastName().isEmpty()){
+        if (updateDto.getLastName() != null && !updateDto.getLastName().isEmpty()) {
             user.setLastname(updateDto.getLastName());
         }
-        if(updateDto.getEmail() != null && !updateDto.getEmail().isEmpty()) {
+        if (updateDto.getEmail() != null && !updateDto.getEmail().isEmpty()) {
             user.setEmail(updateDto.getEmail());
         }
         if (updateDto.getNewPassword() != null && !updateDto.getNewPassword().isEmpty()) {

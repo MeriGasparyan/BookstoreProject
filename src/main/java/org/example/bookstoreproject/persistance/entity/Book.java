@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.example.bookstoreproject.enums.Format;
 import org.example.bookstoreproject.enums.Language;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Entity
@@ -51,7 +52,7 @@ public class Book {
     private Integer pages;
 
     @Column
-    private Float price;
+    private BigDecimal price;
 
     @Column(name = "publish_date")
     private Date publishDate;

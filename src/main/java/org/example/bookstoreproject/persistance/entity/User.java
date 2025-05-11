@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -50,5 +52,19 @@ public class User {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "role_id", nullable = false)
     private UserRole role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<UserPermission> userPermissions = new ArrayList<>();
+
+    public void addRolePermission(UserPermission userPermission) {
+        userPermissions.add(userPermission);
+        userPermission.setUser(this);
+    }
+
+    public void removeRolePermission(UserPermission userPermission) {
+        userPermissions.remove(userPermission);
+        userPermission.setUser(null);
+    }
+
 
 }
