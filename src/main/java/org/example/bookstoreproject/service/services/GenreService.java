@@ -38,19 +38,7 @@ public class GenreService {
     public Book addGenresToBook(Long bookId, List<Long> genreIds) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NoSuchElementException("Book not found"));
-        List<Genre> genres = genreRepository.findAllById(genreIds);
-
-        if (genres.size() != genreIds.size()) {
-            Set<Long> foundGenreIds = genres.stream()
-                    .map(Genre::getId)
-                    .collect(Collectors.toSet());
-
-            List<Long> missingIds = genreIds.stream()
-                    .filter(id -> !foundGenreIds.contains(id))
-                    .toList();
-
-            throw new NoSuchElementException("Genre(s) with ID(s) " + missingIds + " not found");
-        }
+        List<Genre> genres = findGenreById(genreIds);
 
         genres.forEach(genre -> {
             if (bookGenreRepository.findByBookAndGenre(book, genre).isEmpty()) {
@@ -65,6 +53,27 @@ public class GenreService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NoSuchElementException("Book with ID " + bookId + " not found"));
 
+        List<Genre> genres = findGenreById(genreIds);
+
+        genres.forEach(genre -> bookGenreRepository.findByBookAndGenre(book, genre)
+                .ifPresentOrElse(
+                        bookGenre -> {
+                            book.getBookGenres().remove(bookGenre);
+                            bookGenreRepository.delete(bookGenre);
+                            bookGenre.setBook(null);
+                            bookGenre.setGenre(null);
+                        },
+                        () -> {
+                            throw new IllegalStateException(
+                                    "Genre with ID " + genre.getId() +
+                                            " is not associated with book " + bookId);
+                        }
+                ));
+
+        return bookRepository.save(book);
+    }
+
+    private List<Genre> findGenreById(List<Long> genreIds) {
         List<Genre> genres = genreRepository.findAllById(genreIds);
         if (genres.size() != genreIds.size()) {
             Set<Long> foundGenreIds = genres.stream()
@@ -77,24 +86,6 @@ public class GenreService {
 
             throw new NoSuchElementException("Genre(s) with ID(s) " + missingIds + " not found");
         }
-
-        genres.forEach(genre -> {
-            bookGenreRepository.findByBookAndGenre(book, genre)
-                    .ifPresentOrElse(
-                            bookGenre -> {
-                                book.getBookGenres().remove(bookGenre);
-                                bookGenreRepository.delete(bookGenre);
-                                bookGenre.setBook(null);
-                                bookGenre.setGenre(null);
-                            },
-                            () -> {
-                                throw new IllegalStateException(
-                                        "Genre with ID " + genre.getId() +
-                                                " is not associated with book " + bookId);
-                            }
-                    );
-        });
-
-        return bookRepository.save(book);
+        return genres;
     }
 }

@@ -31,6 +31,16 @@ public class Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items = new ArrayList<>();
 
+    public void addItem(CartItem item) {
+        item.setCart(this);
+        items.add(item);
+    }
+
+    public void removeItem(CartItem item) {
+        item.setCart(null);
+        items.remove(item);
+    }
+
     @Column(name = "created_at", nullable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;

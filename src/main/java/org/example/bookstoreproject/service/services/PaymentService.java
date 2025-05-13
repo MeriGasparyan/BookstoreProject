@@ -9,7 +9,6 @@ import org.example.bookstoreproject.persistance.entity.Order;
 import org.example.bookstoreproject.persistance.entity.Payment;
 import org.example.bookstoreproject.persistance.repository.OrderRepository;
 import org.example.bookstoreproject.persistance.repository.PaymentRepository;
-import org.example.bookstoreproject.persistance.repository.UserRepository;
 import org.example.bookstoreproject.service.dto.PaymentDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,6 @@ import java.util.UUID;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
 
     @Transactional
     public PaymentDTO processPayment(Long orderId, PaymentMethod method) {
@@ -114,45 +112,41 @@ public class PaymentService {
             throw new IllegalStateException("Only completed payments can be refunded");
         }
 
-        try {
-            switch (payment.getMethod()) {
-                case CREDIT_CARD:
-                case APPLE_PAY:
-                case GOOGLE_PAY:
-                    processCardRefund(payment);
-                    break;
-                case PAYPAL:
-                    processPayPalRefund(payment);
-                    break;
-                case CRYPTO:
-                case BANK_TRANSFER:
-                    simulateGenericRefund(payment);
-                    break;
-                case CASH_ON_DELIVERY:
-                    throw new IllegalStateException("Cash on Delivery payments are not refundable");
-            }
-
-            payment.setStatus(PaymentStatus.REFUNDED);
-            paymentRepository.save(payment);
-            Order order = orderRepository.findByPaymentId(paymentId).get();
-            order.setStatus(OrderStatus.REFUNDED);
-            orderRepository.save(order);
-
-            return PaymentDTO.fromEntity(payment);
-        } catch (Exception e) {
-            throw e;
+        switch (payment.getMethod()) {
+            case CREDIT_CARD:
+            case APPLE_PAY:
+            case GOOGLE_PAY:
+                processCardRefund(payment);
+                break;
+            case PAYPAL:
+                processPayPalRefund(payment);
+                break;
+            case CRYPTO:
+            case BANK_TRANSFER:
+                simulateGenericRefund(payment);
+                break;
+            case CASH_ON_DELIVERY:
+                throw new IllegalStateException("Cash on Delivery payments are not refundable");
         }
+
+        payment.setStatus(PaymentStatus.REFUNDED);
+        paymentRepository.save(payment);
+        Order order = orderRepository.findByPaymentId(paymentId).orElseThrow();
+        order.setStatus(OrderStatus.REFUNDED);
+        orderRepository.save(order);
+
+        return PaymentDTO.fromEntity(payment);
     }
 
     private void processPayPalRefund(Payment payment) {
-        System.out.println("Simulating PayPal refund");
+        System.out.println("Simulating PayPal refund for: " + payment.getTransactionId());
     }
 
     private void processCardRefund(Payment payment) {
-        System.out.println("Simulating card refund");
+        System.out.println("Simulating card refund for: " + payment.getTransactionId());
     }
 
     private void simulateGenericRefund(Payment payment) {
-        System.out.println("Simulating generic refund for: " + payment.getMethod());
+        System.out.println("Simulating generic refund for: " + payment.getTransactionId());
     }
 }

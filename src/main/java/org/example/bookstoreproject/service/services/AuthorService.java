@@ -113,25 +113,23 @@ public class AuthorService {
             throw new NoSuchElementException("Author(s) with ID(s) " + missingIds + " not found");
         }
 
-        authors.forEach(author -> {
-            bookAuthorRepository.findByBookAndAuthor(book, author)
-                    .ifPresentOrElse(
-                            bookAuthor -> {
+        authors.forEach(author -> bookAuthorRepository.findByBookAndAuthor(book, author)
+                .ifPresentOrElse(
+                        bookAuthor -> {
 
-                                book.getBookAuthors().remove(bookAuthor);
+                            book.getBookAuthors().remove(bookAuthor);
 
 
-                                bookAuthorRepository.delete(bookAuthor);
-                                bookAuthor.setBook(null);
-                                bookAuthor.setAuthor(null);
-                            },
-                            () -> {
-                                throw new IllegalStateException(
-                                        "Author with ID " + author.getId() +
-                                                " is not associated with book " + bookId);
-                            }
-                    );
-        });
+                            bookAuthorRepository.delete(bookAuthor);
+                            bookAuthor.setBook(null);
+                            bookAuthor.setAuthor(null);
+                        },
+                        () -> {
+                            throw new IllegalStateException(
+                                    "Author with ID " + author.getId() +
+                                            " is not associated with book " + bookId);
+                        }
+                ));
 
         return bookRepository.save(book);
     }

@@ -3,29 +3,21 @@ package org.example.bookstoreproject.service.services;
 
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.service.dto.*;
-import org.example.bookstoreproject.enums.OrderStatus;
-import org.example.bookstoreproject.enums.PaymentMethod;
 import org.example.bookstoreproject.persistance.entity.*;
 import org.example.bookstoreproject.persistance.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-public class CartService{
+public class CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
-    private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
-    private final PaymentRepository paymentRepository;
 
 
     @Transactional(readOnly = true)
@@ -51,7 +43,7 @@ public class CartService{
         item.setCart(cart);
         item.setBook(book);
         item.setQuantity(quantity);
-        cart.getItems().add(item);
+        cart.addItem(item);
 
         return CartDTO.fromEntity(cart);
     }
@@ -59,8 +51,12 @@ public class CartService{
 
     @Transactional
     public CartDTO updateCartItem(Long userId, Long cartItemId, Integer quantity) {
+        Cart cart = cartRepository.findByUserId(userId).orElseThrow();
         CartItem item = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new NoSuchElementException("Cart item not found"));
+        if (!cart.getItems().contains(item)) {
+            throw new NoSuchElementException("Cart item not found in your cart");
+        }
         item.setQuantity(quantity);
         return CartDTO.fromEntity(item.getCart());
     }
@@ -69,7 +65,10 @@ public class CartService{
     public void removeItemFromCart(Long userId, Long cartItemId) {
         CartItem item = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new NoSuchElementException("Cart item not found"));
+        Cart cart = cartRepository.findByUserId(userId).orElseThrow();
+        cart.removeItem(item);
         cartItemRepository.delete(item);
+
     }
 
     @Transactional

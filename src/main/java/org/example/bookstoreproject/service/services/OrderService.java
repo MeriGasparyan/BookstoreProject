@@ -32,7 +32,7 @@ public class OrderService{
                 .orElseThrow(() -> new NoSuchElementException("Cart not found"));
 
         Order order = new Order();
-        order.setUser(userRepository.findById(userId).get());
+        order.setUser(userRepository.findById(userId).orElseThrow());
         order.setStatus(OrderStatus.PENDING);
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
@@ -54,8 +54,7 @@ public class OrderService{
         order = orderRepository.save(order);
         PaymentDTO paymentDTO = paymentService.processPayment(order.getId(), paymentMethod);
 
-        order.setPayment(paymentRepository.findById(paymentDTO.getId()).get());
-        order = orderRepository.save(order);
+        order.setPayment(paymentRepository.findById(paymentDTO.getId()).orElseThrow(() -> new NoSuchElementException("Payment not made")));
         cart.getItems().clear();
         return OrderDTO.fromEntity(order);
     }

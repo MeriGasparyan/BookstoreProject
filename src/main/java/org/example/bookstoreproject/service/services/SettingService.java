@@ -38,19 +38,7 @@ public class SettingService {
     public Book addSettingsToBook(Long bookId, List<Long> settingIds) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NoSuchElementException("Book not found"));
-        List<Setting> settings = settingRepository.findAllById(settingIds);
-
-        if (settings.size() != settingIds.size()) {
-            Set<Long> foundSettingIds = settings.stream()
-                    .map(Setting::getId)
-                    .collect(Collectors.toSet());
-
-            List<Long> missingIds = settingIds.stream()
-                    .filter(id -> !foundSettingIds.contains(id))
-                    .toList();
-
-            throw new NoSuchElementException("Setting(s) with ID(s) " + missingIds + " not found");
-        }
+        List<Setting> settings = this.findSettings(settingIds);
 
         settings.forEach(setting -> {
             if (bookSettingRepository.findByBookAndSetting(book, setting).isEmpty()) {
@@ -60,12 +48,9 @@ public class SettingService {
         return bookRepository.save(book);
     }
 
-    @Transactional
-    public Book removeSettingsFromBook(Long bookId, List<Long> settingIds) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book with ID " + bookId + " not found"));
-
+    private List<Setting> findSettings(List<Long> settingIds) {
         List<Setting> settings = settingRepository.findAllById(settingIds);
+
         if (settings.size() != settingIds.size()) {
             Set<Long> foundSettingIds = settings.stream()
                     .map(Setting::getId)
@@ -77,23 +62,30 @@ public class SettingService {
 
             throw new NoSuchElementException("Setting(s) with ID(s) " + missingIds + " not found");
         }
+        return settings;
+    }
 
-        settings.forEach(setting -> {
-            bookSettingRepository.findByBookAndSetting(book, setting)
-                    .ifPresentOrElse(
-                            bookSetting -> {
-                                book.getBookSettings().remove(bookSetting);
-                                bookSettingRepository.delete(bookSetting);
-                                bookSetting.setBook(null);
-                                bookSetting.setSetting(null);
-                            },
-                            () -> {
-                                throw new IllegalStateException(
-                                        "Setting with ID " + setting.getId() +
-                                                " is not associated with book " + bookId);
-                            }
-                    );
-        });
+    @Transactional
+    public Book removeSettingsFromBook(Long bookId, List<Long> settingIds) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NoSuchElementException("Book with ID " + bookId + " not found"));
+
+        List<Setting> settings = findSettings(settingIds);
+
+        settings.forEach(setting -> bookSettingRepository.findByBookAndSetting(book, setting)
+                .ifPresentOrElse(
+                        bookSetting -> {
+                            book.getBookSettings().remove(bookSetting);
+                            bookSettingRepository.delete(bookSetting);
+                            bookSetting.setBook(null);
+                            bookSetting.setSetting(null);
+                        },
+                        () -> {
+                            throw new IllegalStateException(
+                                    "Setting with ID " + setting.getId() +
+                                            " is not associated with book " + bookId);
+                        }
+                ));
 
         return bookRepository.save(book);
     }
