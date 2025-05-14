@@ -53,8 +53,8 @@ public class BookController {
     @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody @Valid BookAuthorCreateDTO request) {
         try{
-        Book book = authorService.addAuthorsToBook(id, request.getAuthors());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);}
+            Book book = authorService.addAuthorsToBook(id, request.getAuthors());
+            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);}
         catch (Exception e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -168,12 +168,8 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
         }
 
-        Optional<User> userOpt = userService.getUserById(userDetails.getId());
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        UserBookRating savedRating = ratingService.rateBook(userOpt.get(), id,request);
+        User user = userService.getUserById(userDetails.getId());
+        UserBookRating savedRating = ratingService.rateBook(user, id,request);
         RatingResponseDTO response = RatingResponseDTO.fromEntity(savedRating);
 
         return ResponseEntity.ok(response);

@@ -2,6 +2,7 @@ package org.example.bookstoreproject.service.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreproject.enums.UserRoleName;
 import org.example.bookstoreproject.exception.ResourceAlreadyUsedException;
 import org.example.bookstoreproject.exception.ResourceNotFoundException;
 import org.example.bookstoreproject.persistance.entity.Cart;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +32,8 @@ public class UserService {
             throw new ResourceAlreadyUsedException("User with this email already exists");
         }
 
-        UserRole role = roleRepository.findByName(registrationDto.getRole())
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+        UserRole role = roleRepository.findByName(UserRoleName.ROLE_USER)
+                .orElseThrow();
         User user = new User();
         user.setFirstname(registrationDto.getFirstName());
         user.setLastname(registrationDto.getLastName());
@@ -114,8 +114,8 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public Optional<User> getUserById(Long userId) {
-        return userRepository.findById(userId);
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow();
     }
 }
 
