@@ -6,15 +6,13 @@ import org.example.bookstoreproject.persistance.entity.User;
 import org.example.bookstoreproject.security.CustomUserDetails;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +23,10 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<Page<UserDTO>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(userService.getAllUsers(page, size));
     }
 
     @GetMapping("/{id}")
@@ -59,9 +59,20 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id,
+                                           @AuthenticationPrincipal CustomUserDetails currentUser) {
+        boolean hasPermission = currentUser.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(auth -> auth.equals("MANAGE_USERS"));
+
+        User user = userService.getUserById(currentUser.getId());
+
+        if (hasPermission || user.getId().equals(id)) {
+            userService.deleteUser(id);
+            return ResponseEntity.noContent().build();
+        }
+
+        throw new AccessDeniedException("You can only delete your own profile");
     }
 
 

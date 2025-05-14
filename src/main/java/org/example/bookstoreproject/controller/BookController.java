@@ -6,10 +6,8 @@ import org.example.bookstoreproject.persistance.entity.Book;
 import org.example.bookstoreproject.persistance.entity.User;
 import org.example.bookstoreproject.persistance.entity.UserBookRating;
 import org.example.bookstoreproject.security.CustomUserDetails;
-import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.*;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +28,7 @@ public class BookController {
     private final GenreService genreService;
     private final CharacterService characterService;
     private final SettingService settingService;
-    private final ImageDataService metadataService;
+    //private final ImageDataService metadataService;
     private final UserService userService;
     private final UserBookRatingService ratingService;
 

@@ -12,6 +12,9 @@ import org.example.bookstoreproject.persistance.repository.CartRepository;
 import org.example.bookstoreproject.persistance.repository.UserRepository;
 import org.example.bookstoreproject.persistance.repository.UserRoleRepository;
 import org.example.bookstoreproject.service.dto.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,10 +54,10 @@ public class UserService {
         return CreateUserReturnDTO.fromEntity(savedUser);
     }
 
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(UserDTO::toDto)
-                .toList();
+    public Page<UserDTO> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable)
+                .map(UserDTO::toDto);
     }
 
     public UserDTO getById(Long id) {
