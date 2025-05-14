@@ -12,9 +12,11 @@ import org.example.bookstoreproject.persistance.repository.CartRepository;
 import org.example.bookstoreproject.persistance.repository.UserRepository;
 import org.example.bookstoreproject.persistance.repository.UserRoleRepository;
 import org.example.bookstoreproject.service.dto.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,6 +111,26 @@ public class UserService {
         return UserDTO.toDto(userRepository.save(user));
     }
 
+    @Transactional
+    public CreateUserReturnDTO setUpAdmin(){
+        if (userRepository.findByEmail("admin@bookstore.com").isPresent()) {
+            throw new ResourceAlreadyUsedException("Default Admin already exists");
+        }
+
+        UserRole adminRole = roleRepository.findByName(UserRoleName.ROLE_ADMIN)
+                .orElseThrow(() -> new RuntimeException("Admin role not found"));
+
+        User admin = new User();
+        admin.setFirstname("default");
+        admin.setLastname("admin");
+        admin.setEmail("admin@bookstore.com");
+        admin.setPassword(passwordEncoder.encode("1234567"));
+        admin.setEnabled(true);
+        admin.setRole(adminRole);
+
+        userRepository.save(admin);
+        return CreateUserReturnDTO.fromEntity(admin);
+    }
 
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {

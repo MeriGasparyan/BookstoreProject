@@ -40,7 +40,7 @@ public class UserBookRatingService {
         userBookRating.setUser(user);
         userBookRating.setBook(book);
         userBookRating.setStar(star);
-
+        userBookRating.setReview(ratingDTO.getReview());
         return ratingRepository.save(userBookRating);
     }
 

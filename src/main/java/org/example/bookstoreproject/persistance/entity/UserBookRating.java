@@ -33,6 +33,9 @@ public class UserBookRating {
     @Enumerated(EnumType.STRING)
     private Star star;
 
+    @Column(name = "review")
+    private String review;
+
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Instant updatedAt;
