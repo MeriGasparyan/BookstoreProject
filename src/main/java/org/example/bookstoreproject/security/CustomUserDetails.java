@@ -1,28 +1,37 @@
 package org.example.bookstoreproject.security;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.example.bookstoreproject.persistance.entity.RolePermission;
 import org.example.bookstoreproject.persistance.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private final User user;
 
-    public CustomUserDetails(User user) {
-        this.user = user;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        System.out.println("User role: " + user.getRole().getName().name());
-        return List.of(new SimpleGrantedAuthority(user.getRole().getName().name()));
+        Set<GrantedAuthority> authorities = new HashSet<>();
+
+        if (user.getRole() != null && user.getRole().getRolePermissions() != null) {
+            for (RolePermission rp : user.getRole().getRolePermissions()) {
+                if (rp.getPermission() != null) {
+                    authorities.add(new SimpleGrantedAuthority(rp.getPermission().getName().name()));
+                }
+            }
+        }
+        System.out.printf("Authorities: %s\n", authorities);
+        return authorities;
     }
 
     @Override

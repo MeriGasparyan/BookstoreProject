@@ -41,6 +41,7 @@ public class PublicAccessController {
         return ResponseEntity.ok(result);
     }
 
+
     @GetMapping("/authors")
     public ResponseEntity<List<AuthorInformationDTO>> searchAuthors(@ModelAttribute AuthorSearchCriteria criteria) {
         List<Author> authors = authorService.getAuthors(criteria, criteria.toPageable());

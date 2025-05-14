@@ -67,9 +67,6 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/public/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/public/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/users/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/analytics/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_ANALYST")
-                        .requestMatchers("/api/reviews/professional/**").hasAuthority("ROLE_REVIEWER")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(e ->

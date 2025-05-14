@@ -15,4 +15,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String username);
 
     boolean existsByEmail(@NotBlank @Email String email);
+
+    @Query("""
+        SELECT DISTINCT u FROM User u
+        LEFT JOIN FETCH u.role r
+        LEFT JOIN FETCH r.rolePermissions rp
+        LEFT JOIN FETCH rp.permission
+        WHERE u.email = :email
+    """)
+    Optional<User> findUserWithRoleAndPermissionsByEmail(@Param("email") String email);
 }

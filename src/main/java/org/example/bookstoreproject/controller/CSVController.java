@@ -3,7 +3,6 @@ package org.example.bookstoreproject.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.service.CSVDataHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +19,7 @@ public class CSVController {
     private final CSVDataHandler csvDataHandler;
 
     @PostMapping("/upload")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<String> uploadCsv(@RequestParam("books") MultipartFile file, HttpServletRequest request) {
         System.out.println("Content-Type: " + request.getContentType());
         try {

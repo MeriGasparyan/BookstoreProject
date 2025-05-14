@@ -56,12 +56,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<UserPermission> userPermissions = new ArrayList<>();
 
-    public void addRolePermission(UserPermission userPermission) {
+    public void addUserPermission(UserPermission userPermission) {
         userPermissions.add(userPermission);
         userPermission.setUser(this);
     }
 
-    public void removeRolePermission(UserPermission userPermission) {
+    public void removeUserPermission(UserPermission userPermission) {
         userPermissions.remove(userPermission);
         userPermission.setUser(null);
     }

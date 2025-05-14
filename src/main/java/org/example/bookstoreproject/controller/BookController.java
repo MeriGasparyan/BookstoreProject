@@ -36,14 +36,14 @@ public class BookController {
     private final UserBookRatingService ratingService;
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
+    @PreAuthorize("hasAuthority('EDIT_BOOK')")
     public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookUpdateRequestDTO request) {
         Book updated = bookService.updateBook(id, request);
         return new ResponseEntity<>(BookDTO.fromEntity(updated), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
+    @PreAuthorize("hasAuthority('DELETE_BOOK')")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
@@ -144,17 +144,9 @@ public class BookController {
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping
-    public ResponseEntity<PageResponseDto<BookDTO>> searchBooks(
-            @ModelAttribute BookSearchCriteria criteria
-    ) {
-        Pageable pageable = criteria.toPageable();
-        PageResponseDto<BookDTO> result = bookService.searchBooks(criteria, pageable);
-        return ResponseEntity.ok(result);
-    }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
+    @PreAuthorize("hasAuthority('ADD_BOOK')")
     public ResponseEntity<BookDTO> addBook(@RequestBody BookCreateRequestDTO createRequest) {
         try {
             BookDTO book = bookService.addBook(createRequest);
@@ -166,7 +158,7 @@ public class BookController {
         }
     }
     @PostMapping("/{id}/rate")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
+    @PreAuthorize("hasAuthority('RATE_BOOKS')")
     public ResponseEntity<?> rateBook(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails,
