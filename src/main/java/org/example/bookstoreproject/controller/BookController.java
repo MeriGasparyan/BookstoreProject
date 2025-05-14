@@ -168,12 +168,8 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
         }
 
-        Optional<User> userOpt = userService.getUserById(userDetails.getId());
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        UserBookRating savedRating = ratingService.rateBook(userOpt.get(), id,request);
+        User user = userService.getUserById(userDetails.getId());
+        UserBookRating savedRating = ratingService.rateBook(user, id,request);
         RatingResponseDTO response = RatingResponseDTO.fromEntity(savedRating);
 
         return ResponseEntity.ok(response);
