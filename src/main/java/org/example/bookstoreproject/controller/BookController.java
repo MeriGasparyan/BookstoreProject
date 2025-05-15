@@ -203,7 +203,7 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}/recommend")
-    public ResponseEntity<Page<BookDTO>> recommendBooksByGenre(
+    public ResponseEntity<PageResponseDto<BookDTO>> recommendBooksByGenre(
             @PathVariable Long bookId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
@@ -211,6 +211,19 @@ public class BookController {
         Pageable pageable = PageRequest.of(page, size);
         Page<BookDTO> recommended = recommendationService.recommendBooksByGenres(bookId, pageable);
 
-        return ResponseEntity.ok(recommended);
+        return ResponseEntity.ok(PageResponseDto.from(recommended));
     }
+
+    @GetMapping("/{id}/reviews")
+    public ResponseEntity<PageResponseDto<RatingResponseDTO>> getBookReviews(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RatingResponseDTO> reviews = ratingService.getReviewsByBookId(id, pageable);
+        return ResponseEntity.ok(PageResponseDto.from(reviews));
+    }
+
+
 }

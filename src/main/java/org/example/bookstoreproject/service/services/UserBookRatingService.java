@@ -1,5 +1,6 @@
 package org.example.bookstoreproject.service.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.RatingStarNumber;
@@ -9,6 +10,10 @@ import org.example.bookstoreproject.persistance.repository.RatingStarRepository;
 import org.example.bookstoreproject.persistance.repository.StarRepository;
 import org.example.bookstoreproject.persistance.repository.UserBookRatingRepository;
 import org.example.bookstoreproject.service.dto.RatingDTO;
+import org.example.bookstoreproject.service.dto.RatingResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -68,4 +73,31 @@ public class UserBookRatingService {
     public void deleteRating(Long userId, Long bookId) {
         ratingRepository.deleteByUserIdAndBookId(userId, bookId);
     }
+
+
+    public Page<RatingResponseDTO> getReviewsByBookId(Long bookId, Pageable pageable) {
+        Page<UserBookRating> ratings = ratingRepository.findByBookIdAndReviewIsNotNull(bookId, pageable);
+        return ratings.map(RatingResponseDTO::fromEntity);
+    }
+
+    public void nullifyReviewText(Long reviewId, Long userId) {
+        UserBookRating rating = ratingRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("Review not found"));
+
+        if (!rating.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("You are not authorized to remove this review");
+        }
+
+        rating.setReview(null);
+        ratingRepository.save(rating);
+    }
+
+    public void nullifyReviewText(Long reviewId) {
+        UserBookRating rating = ratingRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("Review not found"));
+        rating.setReview(null);
+        ratingRepository.save(rating);
+    }
+
+
 }

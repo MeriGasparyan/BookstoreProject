@@ -9,6 +9,9 @@ import org.example.bookstoreproject.persistance.entity.UserBookRating;
 import org.example.bookstoreproject.persistance.repository.UserBookRatingRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -51,7 +54,7 @@ public class OffensiveReviewService {
         return offensiveWords;
     }
 
-    public List<OffensiveReviewDTO> getOffensiveReviews() {
+    public Page<OffensiveReviewDTO> getOffensiveReviews(int page, int size) {
         List<UserBookRating> ratings = ratingRepository.findAll();
         List<OffensiveReviewDTO> flagged = new ArrayList<>();
 
@@ -74,7 +77,14 @@ public class OffensiveReviewService {
             }
         }
 
-        return flagged;
+        int fromIndex = page * size;
+        int toIndex = Math.min(fromIndex + size, flagged.size());
+        List<OffensiveReviewDTO> paged = flagged.subList(
+                Math.min(fromIndex, flagged.size()),
+                toIndex
+        );
+
+        return new PageImpl<>(paged, PageRequest.of(page, size), flagged.size());
     }
 
     private boolean containsOffensiveWord(String text) {
