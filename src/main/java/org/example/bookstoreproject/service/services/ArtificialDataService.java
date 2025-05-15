@@ -118,25 +118,11 @@ public class ArtificialDataService {
     @Transactional
     public void seedRatings() {
         try {
-            Map<String, Integer> bookRatingCountsToUpdate = new LinkedHashMap<>();
-            Map<String, BookRatingStar> existingBookRatingCounts = new HashMap<>();
-
-            List<BookRatingStar> newBookRatingStars = new ArrayList<>();
-
             List<String> goodReviews = loadReviewsFromResources(GOOD_REVIEWS_FILE);
             List<String> badReviews = loadReviewsFromResources(BAD_REVIEWS_FILE);
 
             List<User> users = userRepository.findAll();
             List<Book> books = bookRepository.findAll();
-
-            List<BookRatingStar> bookRatingStarCounts = bookRatingStarRepository.findAll();
-
-            for(BookRatingStar bookRatingStar : bookRatingStarCounts) {
-                existingBookRatingCounts.put(bookRatingStar.getBook().getBookID() + ":" +
-                        bookRatingStar.getStar().getLevel(), bookRatingStar);
-            }
-
-
             List<UserBookRating> bookRatingStars = ratingRepository.findAll();
             Set<Star> starValues = starRepository.findAllStars();
 
@@ -182,18 +168,12 @@ public class ArtificialDataService {
                 User user = users.get(random.nextInt(users.size()));
                 Book book = books.get(random.nextInt(books.size()));
                 String key = user.getId() + ":" + book.getId();
-                String bookRatingKey = book.getId() + ":" + ratingEnum;
 
                 usedUserBookPairs.add(key);
                 UserBookRating userBookRating;
                 try {
                     userBookRating = createUserBookRating(user, book, star, review);
                     newUserBookRatings.add(userBookRating);
-                    if (bookRatingCountsToUpdate.containsKey(bookRatingKey)) {
-                        bookRatingCountsToUpdate.put(bookRatingKey, bookRatingCountsToUpdate.get(bookRatingKey) + 1);
-                    } else {
-                        bookRatingCountsToUpdate.put(bookRatingKey, 1);
-                    }
                     if (isGood) goodCount++;
                     else badCount++;
                 } catch (Exception e) {
@@ -202,16 +182,6 @@ public class ArtificialDataService {
             }
             if (!newUserBookRatings.isEmpty()) {
                 ratingRepository.saveAll(newUserBookRatings);
-            }
-            for(Map.Entry<String, Integer> entry : bookRatingCountsToUpdate.entrySet()) {
-                BookRatingStar bookRatingStar = existingBookRatingCounts.get(entry.getKey());
-                Long newCount = bookRatingStar.getNumRating() + (long)entry.getValue();
-                bookRatingStar.setNumRating(newCount);
-                newBookRatingStars.add(bookRatingStar);
-            }
-
-            if(!newBookRatingStars.isEmpty()) {
-                bookRatingStarRepository.saveAll(newBookRatingStars);
             }
             System.out.println("Seeding complete: " + goodCount + " good, " + badCount + " bad reviews.");
 
