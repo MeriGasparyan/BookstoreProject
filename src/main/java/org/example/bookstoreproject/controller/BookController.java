@@ -10,6 +10,9 @@ import org.example.bookstoreproject.security.CustomUserDetails;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.*;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,10 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 
 @RestController
@@ -40,6 +40,7 @@ public class BookController {
     private final ImageDataService metadataService;
     private final UserService userService;
     private final UserBookRatingService ratingService;
+    private final RecommendationService recommendationService;
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('EDIT_BOOK')")
@@ -58,10 +59,10 @@ public class BookController {
     @PostMapping("/{id}/authors")
     @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody @Valid BookAuthorCreateDTO request) {
-        try{
+        try {
             Book book = authorService.addAuthorsToBook(id, request.getAuthors());
-            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);}
-        catch (Exception e) {
+            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -131,7 +132,7 @@ public class BookController {
         return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping ("/{id}/settings")
+    @PostMapping("/{id}/settings")
     @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
     public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id, @RequestBody @Valid BookSettingCreateDTO request) {
         try {
@@ -163,6 +164,7 @@ public class BookController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @PostMapping("/{id}/rate")
     @PreAuthorize("hasAuthority('RATE_BOOKS')")
     public ResponseEntity<?> rateBook(
@@ -175,28 +177,40 @@ public class BookController {
         }
 
         User user = userService.getUserById(userDetails.getId());
-        UserBookRating savedRating = ratingService.rateBook(user, id,request);
+        UserBookRating savedRating = ratingService.rateBook(user, id, request);
         RatingResponseDTO response = RatingResponseDTO.fromEntity(savedRating);
 
         return ResponseEntity.ok(response);
     }
 
-        @GetMapping("/{id}/image")
+    @GetMapping("/{id}/image")
     public ResponseEntity<InputStreamResource> getImage(
             @PathVariable("id") Long bookId,
             @RequestParam(value = "size", defaultValue = "original") String size
     ) {
 
         try {
-            InputStreamResource inputStreamResource =  metadataService.getImage(bookId, ImageSize.fromString(size));
+            InputStreamResource inputStreamResource = metadataService.getImage(bookId, ImageSize.fromString(size));
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.IMAGE_JPEG);
 
             return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @GetMapping("/{bookId}/recommend")
+    public ResponseEntity<Page<BookDTO>> recommendBooksByGenre(
+            @PathVariable Long bookId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BookDTO> recommended = recommendationService.recommendBooksByGenres(bookId, pageable);
+
+        return ResponseEntity.ok(recommended);
     }
 }

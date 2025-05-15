@@ -67,6 +67,18 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             Pageable pageable
     );
 
+    @Query("""
+        SELECT new org.example.bookstoreproject.service.dto.BookDTO(b2), COUNT(bg2.genre.id) AS commonGenres
+        FROM BookGenre bg1
+        JOIN bg1.genre g
+        JOIN BookGenre bg2 ON bg2.genre = g
+        JOIN bg2.book b2
+        WHERE bg1.book.id = :bookId AND b2.id <> :bookId
+        GROUP BY b2
+        ORDER BY commonGenres DESC
+        """)
+    Page<BookDTO> findRecommendedBooksByGenre(@Param("bookId") Long bookId, Pageable pageable);
+
 
 
 
