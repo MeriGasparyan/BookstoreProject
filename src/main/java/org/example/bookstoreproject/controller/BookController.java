@@ -2,13 +2,17 @@ package org.example.bookstoreproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreproject.enums.ImageSize;
 import org.example.bookstoreproject.persistance.entity.Book;
 import org.example.bookstoreproject.persistance.entity.User;
 import org.example.bookstoreproject.persistance.entity.UserBookRating;
 import org.example.bookstoreproject.security.CustomUserDetails;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.*;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +20,11 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 @RestController
@@ -28,7 +37,7 @@ public class BookController {
     private final GenreService genreService;
     private final CharacterService characterService;
     private final SettingService settingService;
-    //private final ImageDataService metadataService;
+    private final ImageDataService metadataService;
     private final UserService userService;
     private final UserBookRatingService ratingService;
 
@@ -170,5 +179,24 @@ public class BookController {
         RatingResponseDTO response = RatingResponseDTO.fromEntity(savedRating);
 
         return ResponseEntity.ok(response);
+    }
+
+        @GetMapping("/{id}/image")
+    public ResponseEntity<InputStreamResource> getImage(
+            @PathVariable("id") Long bookId,
+            @RequestParam(value = "size", defaultValue = "original") String size
+    ) {
+
+        try {
+            InputStreamResource inputStreamResource =  metadataService.getImage(bookId, ImageSize.fromString(size));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG);
+
+            return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
