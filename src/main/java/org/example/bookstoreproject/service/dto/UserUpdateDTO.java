@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.bookstoreproject.enums.UserRoleName;
 
 @Getter
 @Setter
@@ -29,5 +30,9 @@ public class UserUpdateDTO {
 
         @Size(min = 8, max = 100)
         private String newPassword;
+
+        private Boolean enabled;
+
+        private UserRoleName role;
 
 }

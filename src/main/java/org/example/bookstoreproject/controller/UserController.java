@@ -44,7 +44,7 @@ public class UserController {
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(auth -> auth.equals("MANAGE_USERS"));
         if (hasPermission) {
-            return ResponseEntity.ok(userService.adminUpdateUser(id, (AdminUserUpdateDTO) updateDto));
+            return ResponseEntity.ok(userService.adminUpdateUser(id, updateDto));
         }
 
         User user = userService.getUserById(currentUser.getId());
@@ -53,9 +53,8 @@ public class UserController {
             if (!id.equals(currentUser.getId())) {
                 throw new AccessDeniedException("You can only update your own profile");
             }
-            return ResponseEntity.ok(userService.updateUser(id, updateDto));
         }
-        return ResponseEntity.ok(userService.updateUser(id, updateDto));
+        return ResponseEntity.ok(userService.updateUser(id,updateDto));
     }
 
     @DeleteMapping("/{id}")

@@ -97,11 +97,13 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO adminUpdateUser(Long id, AdminUserUpdateDTO adminUpdateDto) {
+    public UserDTO adminUpdateUser(Long id, UserUpdateDTO adminUpdateDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        if (adminUpdateDto.getEnabled() != null) {
+            user.setEnabled(adminUpdateDto.getEnabled());
+        }
 
-        user.setEnabled(adminUpdateDto.getEnabled());
 
         if (adminUpdateDto.getRole() != null) {
             UserRole newRole = roleRepository.findByName(adminUpdateDto.getRole())
@@ -112,7 +114,7 @@ public class UserService {
     }
 
     @Transactional
-    public CreateUserReturnDTO setUpAdmin(){
+    public CreateUserReturnDTO setUpAdmin() {
         if (userRepository.findByEmail("admin@bookstore.com").isPresent()) {
             throw new ResourceAlreadyUsedException("Default Admin already exists");
         }
