@@ -67,7 +67,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/public/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/public/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/admin/setup").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/dev/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(e ->

@@ -113,27 +113,6 @@ public class UserService {
         return UserDTO.toDto(userRepository.save(user));
     }
 
-    @Transactional
-    public CreateUserReturnDTO setUpAdmin() {
-        if (userRepository.findByEmail("admin@bookstore.com").isPresent()) {
-            throw new ResourceAlreadyUsedException("Default Admin already exists");
-        }
-
-        UserRole adminRole = roleRepository.findByName(UserRoleName.ROLE_ADMIN)
-                .orElseThrow(() -> new RuntimeException("Admin role not found"));
-
-        User admin = new User();
-        admin.setFirstname("default");
-        admin.setLastname("admin");
-        admin.setEmail("admin@bookstore.com");
-        admin.setPassword(passwordEncoder.encode("1234567"));
-        admin.setEnabled(true);
-        admin.setRole(adminRole);
-
-        userRepository.save(admin);
-        return CreateUserReturnDTO.fromEntity(admin);
-    }
-
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found");

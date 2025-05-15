@@ -12,12 +12,15 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String username);
 
     boolean existsByEmail(@NotBlank @Email String email);
+    @Query("select u.email from User u")
+    Set<String> findAllUsernames();
 
     @Query("""
         SELECT DISTINCT u FROM User u
