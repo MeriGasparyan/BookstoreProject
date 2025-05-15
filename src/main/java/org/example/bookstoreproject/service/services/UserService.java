@@ -12,16 +12,13 @@ import org.example.bookstoreproject.persistance.repository.CartRepository;
 import org.example.bookstoreproject.persistance.repository.UserRepository;
 import org.example.bookstoreproject.persistance.repository.UserRoleRepository;
 import org.example.bookstoreproject.service.dto.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
