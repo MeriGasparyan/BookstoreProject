@@ -184,6 +184,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}/image")
+    @PreAuthorize("hasAuthority('VIEW_BOOKS')")
     public ResponseEntity<InputStreamResource> getImage(
             @PathVariable("id") Long bookId,
             @RequestParam(value = "size", defaultValue = "original") String size
@@ -203,6 +204,7 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}/recommend")
+    @PreAuthorize("hasAuthority('VIEW_BOOKS')")
     public ResponseEntity<PageResponseDto<BookDTO>> recommendBooksByGenre(
             @PathVariable Long bookId,
             @RequestParam(defaultValue = "0") int page,
@@ -215,6 +217,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}/reviews")
+    @PreAuthorize("hasAuthority('VIEW_REVIEWS')")
     public ResponseEntity<PageResponseDto<RatingResponseDTO>> getBookReviews(
             @PathVariable Long id,
             @RequestParam(defaultValue = "0") int page,
