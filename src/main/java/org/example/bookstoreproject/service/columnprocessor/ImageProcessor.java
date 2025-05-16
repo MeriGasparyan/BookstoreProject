@@ -22,10 +22,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ImageProcessor {
     private static final String BASE_FOLDER = "book_images";
-    private static final int SMALL_WIDTH = 80;
-    private static final int SMALL_HEIGHT = 120;
-    private static final int MEDIUM_WIDTH = 200;
-    private static final int MEDIUM_HEIGHT = 300;
     private static final String UNIQUE_KEY_DELIMITER = "|||";
 
     private final ImageUtility imageUtility;
@@ -37,176 +33,143 @@ public class ImageProcessor {
 
     public void process(List<CSVRow> data, BookRepository bookRepository) {
         if (!imageProcessingEnabled) {
-            System.out.println("Image processing is disabled.");
             return;
         }
 
         Map<String, Book> bookMap = bookRepository.findAll().stream()
                 .collect(Collectors.toConcurrentMap(Book::getBookID, book -> book));
 
-        Map<String, FileMetaData> existingMetadataKeys = imageMetaDataRepository.findAll().stream()
-                .collect(Collectors.toMap(
-                        meta -> createUniqueKeyFiles(
-                                meta.getFileName(),
-                                meta.getMainFolderName(),
-                                meta.getSubFolderName()),
-                        meta -> meta
-                ));
-
-        Map<String, BookImage> existingBookImageKeys = bookImageRepository.findAll().stream()
-                .collect(Collectors.toMap(meta -> createUniqueKeyImages(
-                        meta.getImage().getFileName(),
-                        meta.getBook().getBookID(),
-                        meta.getImageSize()),
-                        meta -> meta));
+        Map<String, FileMetaData> existingMetadataKeys = loadExistingMetadata();
+        Map<String, BookImage> existingBookImageKeys = loadExistingBookImages();
 
         List<FileMetaData> newMetaData = new ArrayList<>();
         List<BookImage> newImages = new ArrayList<>();
+
         for (CSVRow row : data) {
+            if (!shouldProcessRow(row, bookMap)) {
+                continue;
+            }
+
             String imageUrl = row.getImage();
             String title = row.getTitle();
             String bookID = row.getBookID();
             Book book = bookMap.get(bookID);
 
-            if (book == null || imageUrl == null || imageUrl.isEmpty() || !imageUtility.isImageUrlValid(imageUrl)) {
-                continue;
-            }
-                String imagePath = imageUtility.getImagePathForBook(title, BASE_FOLDER);
-                List<String> info = getInfo(imagePath);
-                String fileName = info.get(1);
-                String formatName = info.get(2);
-                String subfolderName = info.get(0);
-
-                String fileNameSmall = fileName + "_small";
-                String fileNameMedium = fileName + "_medium";
-
-                String uniqueKeyFile = createUniqueKeyFiles(fileName, BASE_FOLDER, subfolderName);
-                String uniqueKeySmallImageFile = createUniqueKeyFiles(fileNameSmall, BASE_FOLDER, subfolderName);
-                String uniqueKeyMediumImageFile = createUniqueKeyFiles(fileNameMedium, BASE_FOLDER, subfolderName);
-                String uniqueKeySmall = createUniqueKeyImages(fileName, bookID, ImageSize.SMALL);
-                String uniqueKeyMedium = createUniqueKeyImages(fileName, bookID, ImageSize.MEDIUM);
-                String uniqueKeyOriginal = createUniqueKeyImages(fileName, bookID, ImageSize.ORIGINAL);
-
-
-                FileMetaData fileMetaData = new FileMetaData();
-                FileMetaData fileMetaDataSmall = new FileMetaData();
-                FileMetaData fileMetaDataMedium = new FileMetaData();
-
-                if(existingMetadataKeys.get(uniqueKeyFile) == null) {
-
-                    fileMetaData.setMainFolderName(BASE_FOLDER);
-                    fileMetaData.setSubFolderName(subfolderName);
-                    fileMetaData.setFileName(fileName + "_original");
-                    fileMetaData.setFormatName(formatName);
-                    fileMetaData.setFileDownloadStatus(FileDownloadStatus.PENDING);
-                    fileMetaData.setUrl(imageUrl);
-                    newMetaData.add(fileMetaData);
-                    existingMetadataKeys.put(uniqueKeyFile, fileMetaData);
-                }
-                if(existingBookImageKeys.get(uniqueKeySmallImageFile) == null) {
-
-                    fileMetaDataSmall.setMainFolderName(BASE_FOLDER);
-                    fileMetaDataSmall.setSubFolderName(subfolderName);
-                    fileMetaDataSmall.setFileName(fileNameSmall);
-                    fileMetaDataSmall.setFormatName(formatName);
-                    fileMetaDataSmall.setFileDownloadStatus(FileDownloadStatus.PENDING);
-                    fileMetaDataSmall.setUrl(imageUrl);
-                    newMetaData.add(fileMetaDataSmall);
-                    existingMetadataKeys.put(uniqueKeySmallImageFile, fileMetaDataSmall);
-                }
-                if(existingMetadataKeys.get(uniqueKeyMediumImageFile) == null) {
-
-                    fileMetaDataMedium.setMainFolderName(BASE_FOLDER);
-                    fileMetaDataMedium.setSubFolderName(subfolderName);
-                    fileMetaDataMedium.setFileName(fileNameMedium);
-                    fileMetaDataMedium.setFormatName(formatName);
-                    fileMetaDataMedium.setFileDownloadStatus(FileDownloadStatus.PENDING);
-                    fileMetaDataMedium.setUrl(imageUrl);
-                    newMetaData.add(fileMetaDataMedium);
-                    existingMetadataKeys.put(uniqueKeyMediumImageFile, fileMetaDataMedium);
-                }
-                if (existingBookImageKeys.get(uniqueKeySmall) == null) {
-                    BookImage bookImageSmall = new BookImage();
-                    bookImageSmall.setImageSize(ImageSize.SMALL);
-                    bookImageSmall.setBook(book);
-                    bookImageSmall.setImage(fileMetaDataSmall);
-                    existingBookImageKeys.put(uniqueKeySmall, bookImageSmall);
-                    newImages.add(bookImageSmall);
-                }
-                if(existingBookImageKeys.get(uniqueKeyMedium) == null) {
-                    BookImage bookImageMedium = new BookImage();
-                    bookImageMedium.setImageSize(ImageSize.MEDIUM);
-                    bookImageMedium.setBook(book);
-                    bookImageMedium.setImage(fileMetaDataMedium);
-                    existingBookImageKeys.put(uniqueKeyMedium, bookImageMedium);
-                    newImages.add(bookImageMedium);
-                }
-
-                if (existingBookImageKeys.get(uniqueKeyOriginal) == null) {
-                    BookImage bookImageOriginal = new BookImage();
-                    bookImageOriginal.setImageSize(ImageSize.ORIGINAL);
-                    bookImageOriginal.setBook(book);
-                    bookImageOriginal.setImage(fileMetaData);
-                    existingBookImageKeys.put(uniqueKeyOriginal, bookImageOriginal);
-                    newImages.add(bookImageOriginal);
-                }
+            processImageVariants(imageUrl, title, book, existingMetadataKeys, existingBookImageKeys, newMetaData, newImages);
         }
 
-        for (FileMetaData fileMetaDataEntry : existingMetadataKeys.values()) {
-            if (fileMetaDataEntry.getFileDownloadStatus().equals(FileDownloadStatus.PENDING)) {
-                String path =fileMetaDataEntry.getMainFolderName() + File.separator
-                        + fileMetaDataEntry.getSubFolderName() + File.separator +
-                        fileMetaDataEntry.getFileName() + "." + fileMetaDataEntry.getFormatName();
+        saveNewEntities(newMetaData, newImages);
+    }
 
-                if (path.endsWith("_original.jpg")) {
-                    try {
-                        File imageFile = new File(path);
-                        imageFile.getParentFile().mkdirs();
-                        imageUtility.downloadImage(fileMetaDataEntry.getUrl(), path);
-                        fileMetaDataEntry.setFileDownloadStatus(FileDownloadStatus.COMPLETED);
-                    } catch (Exception e) {
-                        fileMetaDataEntry.setFileDownloadStatus(FileDownloadStatus.FAILED);
-                        System.out.println("Original image download failed: " + e.getMessage());
-                    }
-                }
-            }
+    private boolean shouldProcessRow(CSVRow row, Map<String, Book> bookMap) {
+        return row.getImage() != null &&
+                !row.getImage().isEmpty() &&
+                bookMap.containsKey(row.getBookID()) &&
+                imageUtility.isImageUrlValid(row.getImage());
+    }
+
+    private void processImageVariants(String imageUrl, String title, Book book,
+                                      Map<String, FileMetaData> existingMetadataKeys,
+                                      Map<String, BookImage> existingBookImageKeys,
+                                      List<FileMetaData> newMetaData,
+                                      List<BookImage> newImages) {
+        String imagePath = imageUtility.getImagePathForBook(title, BASE_FOLDER);
+        List<String> info = getInfo(imagePath);
+        String subfolderName = info.get(0);
+        String fileName = info.get(1);
+        String formatName = info.get(2);
+
+        processImageVariant(imageUrl, book, existingMetadataKeys, existingBookImageKeys,
+                newMetaData, newImages, BASE_FOLDER, subfolderName,
+                fileName + "_original", formatName, ImageSize.ORIGINAL);
+
+        processImageVariant(imageUrl, book, existingMetadataKeys, existingBookImageKeys,
+                newMetaData, newImages, BASE_FOLDER, subfolderName,
+                fileName + "_small", formatName, ImageSize.SMALL);
+
+        processImageVariant(imageUrl, book, existingMetadataKeys, existingBookImageKeys,
+                newMetaData, newImages, BASE_FOLDER, subfolderName,
+                fileName + "_medium", formatName, ImageSize.MEDIUM);
+    }
+
+    private void processImageVariant(String imageUrl, Book book,
+                                     Map<String, FileMetaData> existingMetadataKeys,
+                                     Map<String, BookImage> existingBookImageKeys,
+                                     List<FileMetaData> newMetaData,
+                                     List<BookImage> newImages,
+                                     String mainFolder, String subFolder,
+                                     String fileName, String formatName,
+                                     ImageSize imageSize) {
+        String fileKey = createUniqueKeyFiles(fileName, mainFolder, subFolder);
+        String imageKey = createUniqueKeyImages(fileName.replace("_original", "")
+                        .replace("_small", "")
+                        .replace("_medium", ""),
+                book.getBookID(), imageSize);
+
+        if (!existingMetadataKeys.containsKey(fileKey)) {
+            FileMetaData meta = createFileMetaData(mainFolder, subFolder, fileName, formatName, imageUrl);
+            newMetaData.add(meta);
+            existingMetadataKeys.put(fileKey, meta);
         }
-        for (FileMetaData fileMetaDataEntry : existingMetadataKeys.values()) {
-            if (fileMetaDataEntry.getFileDownloadStatus().equals(FileDownloadStatus.PENDING)) {
-                String path = fileMetaDataEntry.getMainFolderName() + File.separator
-                        + fileMetaDataEntry.getSubFolderName() + File.separator +
-                        fileMetaDataEntry.getFileName() + "." + fileMetaDataEntry.getFormatName();
 
-                try {
-                    String imagePath;
-                    if (path.endsWith("_small.jpg")) {
-                        imagePath = path.replace("_small.jpg", "_original.jpg");
-                        imageUtility.createThumbnail(imagePath, path, SMALL_WIDTH, SMALL_HEIGHT);
-                    } else if (path.endsWith("_medium.jpg")) {
-                        imagePath = path.replace("_medium.jpg", "_original.jpg");
-                        imageUtility.createThumbnail(imagePath, path, MEDIUM_WIDTH, MEDIUM_HEIGHT);
-                    } else {
-                        continue;
-                    }
-
-                    fileMetaDataEntry.setFileDownloadStatus(FileDownloadStatus.COMPLETED);
-                } catch (Exception e) {
-                    fileMetaDataEntry.setFileDownloadStatus(FileDownloadStatus.FAILED);
-                    System.out.println("Thumbnail creation failed: " + e.getMessage());
-                }
-            }
+        if (!existingBookImageKeys.containsKey(imageKey)) {
+            FileMetaData meta = existingMetadataKeys.get(fileKey);
+            BookImage bookImage = createBookImage(book, meta, imageSize);
+            newImages.add(bookImage);
+            existingBookImageKeys.put(imageKey, bookImage);
         }
+    }
 
+    private FileMetaData createFileMetaData(String mainFolder, String subFolder,
+                                            String fileName, String formatName, String url) {
+        FileMetaData meta = new FileMetaData();
+        meta.setMainFolderName(mainFolder);
+        meta.setSubFolderName(subFolder);
+        meta.setFileName(fileName);
+        meta.setFormatName(formatName);
+        meta.setFileDownloadStatus(FileDownloadStatus.PENDING);
+        meta.setUrl(url);
+        return meta;
+    }
+
+    private BookImage createBookImage(Book book, FileMetaData meta, ImageSize size) {
+        BookImage image = new BookImage();
+        image.setImageSize(size);
+        image.setBook(book);
+        image.setImage(meta);
+        return image;
+    }
+
+    private Map<String, FileMetaData> loadExistingMetadata() {
+        return imageMetaDataRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        meta -> createUniqueKeyFiles(
+                                meta.getFileName(),
+                                meta.getMainFolderName(),
+                                meta.getSubFolderName()),
+                        meta -> meta));
+    }
+
+    private Map<String, BookImage> loadExistingBookImages() {
+        return bookImageRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        meta -> createUniqueKeyImages(
+                                meta.getImage().getFileName()
+                                        .replace("_original", "")
+                                        .replace("_small", "")
+                                        .replace("_medium", ""),
+                                meta.getBook().getBookID(),
+                                meta.getImageSize()),
+                        meta -> meta));
+    }
+
+    private void saveNewEntities(List<FileMetaData> newMetaData, List<BookImage> newImages) {
         if (!newMetaData.isEmpty()) {
-            System.out.println(111);
             imageMetaDataRepository.saveAll(newMetaData);
         }
         if (!newImages.isEmpty()) {
-            System.out.println(222);
             bookImageRepository.saveAll(newImages);
         }
-
-
     }
 
     private List<String> getInfo(String imageUrl) {
