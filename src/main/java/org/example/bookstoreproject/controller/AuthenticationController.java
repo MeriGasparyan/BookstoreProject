@@ -8,10 +8,7 @@ import org.example.bookstoreproject.security.dto.RefreshTokenRequestDTO;
 import org.example.bookstoreproject.security.dto.RefreshTokenResponseDTO;
 import org.example.bookstoreproject.service.services.AuthenticationService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,5 +24,25 @@ public class AuthenticationController {
     @PostMapping("/refresh")
     public ResponseEntity<RefreshTokenResponseDTO> refresh(@Valid @RequestBody RefreshTokenRequestDTO refreshTokenRequest) {
         return ResponseEntity.ok(authenticationService.refreshToken(refreshTokenRequest));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        String refreshToken = extractRefreshToken(authorizationHeader);
+        authenticationService.logout(refreshToken);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/logout-all")
+    public ResponseEntity<Void> logoutAll(@RequestParam Long userId) {
+        authenticationService.logoutAllForUser(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    private String extractRefreshToken(String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7);
+        }
+        throw new IllegalArgumentException("Invalid Authorization header");
     }
 }
