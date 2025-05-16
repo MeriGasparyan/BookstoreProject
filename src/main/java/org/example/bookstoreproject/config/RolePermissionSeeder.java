@@ -159,6 +159,7 @@ public class RolePermissionSeeder {
                         // Sales management
                         PermissionName.VIEW_SALES_REPORTS,
                         PermissionName.MANAGE_DISCOUNTS,
+                        PermissionName.MANAGE_BOOK_PRICING,
 
                         // Inventory
                         PermissionName.UPDATE_INVENTORY,

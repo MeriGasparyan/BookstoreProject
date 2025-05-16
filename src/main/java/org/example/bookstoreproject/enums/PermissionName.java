@@ -64,6 +64,7 @@ public enum PermissionName {
     UPDATE_INVENTORY,
     MANAGE_DISCOUNTS,
     CANCEL_ORDERS,
+    MANAGE_BOOK_PRICING,
 
     // ===== Customer purchase permissions =====
     ADD_TO_CART,

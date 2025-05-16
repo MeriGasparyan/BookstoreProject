@@ -41,6 +41,7 @@ public class BookController {
     private final UserService userService;
     private final UserBookRatingService ratingService;
     private final RecommendationService recommendationService;
+    private final PriceService priceService;
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('EDIT_BOOK')")
@@ -227,6 +228,17 @@ public class BookController {
         Page<RatingResponseDTO> reviews = ratingService.getReviewsByBookId(id, pageable);
         return ResponseEntity.ok(PageResponseDto.from(reviews));
     }
+
+    @PutMapping("/{id}/price")
+    @PreAuthorize("hasAuthority('MANAGE_BOOK_PRICING') and hasAuthority('MANAGE_DISCOUNTS')")
+    public ResponseEntity<BookDTO> updateBookPrice(
+            @PathVariable Long id,
+            @Valid @RequestBody BookPriceUpdateDTO priceUpdateDTO) {
+
+        BookDTO updatedBook = priceService.setPriceInformation(id, priceUpdateDTO);
+        return ResponseEntity.ok(updatedBook);
+    }
+
 
 
 }

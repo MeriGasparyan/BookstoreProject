@@ -1,6 +1,8 @@
 package org.example.bookstoreproject.persistance.entity;
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,6 +55,11 @@ public class Book {
 
     @Column
     private BigDecimal price;
+
+    @Column(name = "discount", precision = 5, scale = 2)
+    @Min(0)
+    @Max(100)
+    private BigDecimal discount = BigDecimal.ZERO;
 
     @Column(name = "publish_date")
     private Date publishDate;

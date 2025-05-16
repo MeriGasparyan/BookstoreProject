@@ -42,7 +42,8 @@ public class OrderService{
             OrderItem orderItem = new OrderItem();
             orderItem.setBook(cartItem.getBook());
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getBook().getPrice());
+            BigDecimal price = BookDTO.calculateDiscountedPrice(cartItem.getBook().getDiscount(), cartItem.getBook().getPrice());
+            orderItem.setPrice(price);
             order.addItem(orderItem);
             BigDecimal unitPrice = orderItem.getPrice() == null ? BigDecimal.ZERO : orderItem.getPrice();
             total = total.add(unitPrice.multiply(BigDecimal.valueOf(orderItem.getQuantity())));

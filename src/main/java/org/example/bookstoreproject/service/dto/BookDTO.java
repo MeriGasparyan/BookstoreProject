@@ -12,6 +12,7 @@ import org.example.bookstoreproject.persistance.entity.BookRatingStar;
 import org.example.bookstoreproject.service.utility.RatingCalculator;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ public class BookDTO {
     private Format format;
     private Integer pages;
     private BigDecimal price;
+    private BigDecimal discountedPrice;
     private Date publishDate;
     private Date firstPublishDate;
     private Map<String, Object> publisher;
@@ -64,6 +66,7 @@ public class BookDTO {
         this.averageRating = dto.averageRating;
         this.likedPercentage = dto.likedPercentage;
         this.totalNumRatings = dto.totalNumRatings;
+        this.discountedPrice = dto.getDiscountedPrice();
     }
     public static BookDTO fromEntity(Book book) {
         if (book == null) {
@@ -151,9 +154,26 @@ public class BookDTO {
             dto.setAverageRating(0f);
             dto.setLikedPercentage(0);
         }
+        dto.setDiscountedPrice(calculateDiscountedPrice(book.getDiscount(), book.getPrice()));
 
         return dto;
     }
+    public static BigDecimal calculateDiscountedPrice(BigDecimal factor, BigDecimal price) {
+
+        BigDecimal discount = factor != null ?
+                factor :
+                BigDecimal.ZERO;
+
+        if (discount.compareTo(BigDecimal.ZERO) <= 0) {
+            return price;
+        }
+
+        return price.subtract(
+                price.multiply(discount)
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)
+        );
+    }
+
     public String toString(){
         return this.title;
     }

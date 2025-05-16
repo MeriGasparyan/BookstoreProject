@@ -50,7 +50,7 @@ public class BookCreateRequestDTO {
         }
 
         book.setPages(createRequest.getPages());
-        book.setPrice(createRequest.getPrice());
+        book.setPrice(createRequest.getPrice() == null ? BigDecimal.ZERO : createRequest.getPrice());
         book.setBbeScore(createRequest.getBbeScore());
         book.setBbeVotes(createRequest.getBbeVotes());
         book.setPublishDate(createRequest.getPublishDate());
