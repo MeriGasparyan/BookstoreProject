@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class UserService {
         }
 
         UserRole role = roleRepository.findByName(UserRoleName.ROLE_USER)
-                .orElseThrow();
+                .orElseThrow(()-> new NoSuchElementException("Role not found"));
         User user = new User();
         user.setFirstname(registrationDto.getFirstName());
         user.setLastname(registrationDto.getLastName());

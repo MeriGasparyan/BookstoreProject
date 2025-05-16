@@ -19,6 +19,7 @@ import java.util.Set;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String username);
 
+
     boolean existsByEmail(@NotBlank @Email String email);
     @Query("select u.email from User u")
     Set<String> findAllUsernames();

@@ -2,9 +2,13 @@ package org.example.bookstoreproject.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreproject.security.CustomUserDetails;
 import org.example.bookstoreproject.service.CSVDataHandler;
+import org.example.bookstoreproject.service.services.BookService;
+import org.example.bookstoreproject.service.services.PermissionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,10 +21,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class CSVController {
 
     private final CSVDataHandler csvDataHandler;
+    private final PermissionService permissionService;
 
     @PostMapping("/upload")
-    @PreAuthorize("hasAnyAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<String> uploadCsv(@RequestParam("books") MultipartFile file, HttpServletRequest request) {
+    public ResponseEntity<String> uploadCsv(@RequestParam("books") MultipartFile file, HttpServletRequest request,
+                                            @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
         System.out.println("Content-Type: " + request.getContentType());
         try {
             if (file.isEmpty()) {

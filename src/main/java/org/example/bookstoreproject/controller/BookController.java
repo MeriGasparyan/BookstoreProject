@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -42,160 +43,144 @@ public class BookController {
     private final UserBookRatingService ratingService;
     private final RecommendationService recommendationService;
     private final PriceService priceService;
+    private final PermissionService permissionService;
+
+
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('EDIT_BOOK')")
-    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookUpdateRequestDTO request) {
+    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id,
+                                              @RequestBody BookUpdateRequestDTO request,
+                                              @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "EDIT_BOOK");
         Book updated = bookService.updateBook(id, request);
-        return new ResponseEntity<>(BookDTO.fromEntity(updated), HttpStatus.OK);
+        return ResponseEntity.ok(BookDTO.fromEntity(updated));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('DELETE_BOOK')")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id,
+                                           @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "DELETE_BOOK");
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/authors")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id, @RequestBody @Valid BookAuthorCreateDTO request) {
-        try {
-            Book book = authorService.addAuthorsToBook(id, request.getAuthors());
-            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<BookDTO> addBookAuthor(@PathVariable Long id,
+                                                 @RequestBody @Valid BookAuthorCreateDTO request,
+                                                 @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
+        Book book = authorService.addAuthorsToBook(id, request.getAuthors());
+        return ResponseEntity.ok(BookDTO.fromEntity(book));
     }
 
     @DeleteMapping("/{id}/authors")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<BookDTO> deleteBookAuthor(@PathVariable Long id, @RequestBody BookAuthorCreateDTO request) {
+    public ResponseEntity<BookDTO> deleteBookAuthor(@PathVariable Long id,
+                                                    @RequestBody BookAuthorCreateDTO request,
+                                                    @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
         Book book = authorService.removeAuthorsFromBook(id, request.getAuthors());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(BookDTO.fromEntity(book));
     }
 
     @PostMapping("/{id}/awards")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<BookDTO> addBookAward(@PathVariable Long id, @RequestBody @Valid BookAwardCreateDTO request) {
-        try {
-            Book book = awardService.addAwardsToBook(id, request.getAwards());
-            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<BookDTO> addBookAward(@PathVariable Long id,
+                                                @RequestBody @Valid BookAwardCreateDTO request,
+                                                @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
+        Book book = awardService.addAwardsToBook(id, request.getAwards());
+        return ResponseEntity.ok(BookDTO.fromEntity(book));
     }
 
     @DeleteMapping("/{id}/awards")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<BookDTO> deleteBookAward(@PathVariable Long id, @RequestBody BookAwardCreateDTO request) {
+    public ResponseEntity<BookDTO> deleteBookAward(@PathVariable Long id,
+                                                   @RequestBody BookAwardCreateDTO request,
+                                                   @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
         Book book = awardService.removeAwardsFromBook(id, request.getAwards());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(BookDTO.fromEntity(book));
     }
 
     @PostMapping("/{id}/characters")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<BookDTO> addBookCharacter(@PathVariable Long id, @RequestBody @Valid BookCharacterCreateDTO request) {
-        try {
-            Book book = characterService.addCharactersToBook(id, request.getCharacters());
-            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<BookDTO> addBookCharacter(@PathVariable Long id,
+                                                    @RequestBody @Valid BookCharacterCreateDTO request,
+                                                    @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
+        Book book = characterService.addCharactersToBook(id, request.getCharacters());
+        return ResponseEntity.ok(BookDTO.fromEntity(book));
     }
 
     @DeleteMapping("/{id}/characters")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<BookDTO> deleteBookCharacter(@PathVariable Long id, @RequestBody BookCharacterCreateDTO request) {
+    public ResponseEntity<BookDTO> deleteBookCharacter(@PathVariable Long id,
+                                                       @RequestBody BookCharacterCreateDTO request,
+                                                       @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
         Book book = characterService.removeCharactersFromBook(id, request.getCharacters());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(BookDTO.fromEntity(book));
     }
 
     @PostMapping("/{id}/genres")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<BookDTO> addBookGenre(@PathVariable Long id, @RequestBody @Valid BookGenreCreateDTO request) {
-        try {
-            Book book = genreService.addGenresToBook(id, request.getGenres());
-            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<BookDTO> addBookGenre(@PathVariable Long id,
+                                                @RequestBody @Valid BookGenreCreateDTO request,
+                                                @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
+        Book book = genreService.addGenresToBook(id, request.getGenres());
+        return ResponseEntity.ok(BookDTO.fromEntity(book));
     }
 
     @DeleteMapping("/{id}/genres")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<BookDTO> deleteBookGenre(@PathVariable Long id, @RequestBody BookGenreCreateDTO request) {
+    public ResponseEntity<BookDTO> deleteBookGenre(@PathVariable Long id,
+                                                   @RequestBody BookGenreCreateDTO request,
+                                                   @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
         Book book = genreService.removeGenresFromBook(id, request.getGenres());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(BookDTO.fromEntity(book));
     }
 
     @PostMapping("/{id}/settings")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id, @RequestBody @Valid BookSettingCreateDTO request) {
-        try {
-            Book book = settingService.addSettingsToBook(id, request.getSettings());
-            return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<BookDTO> addBookSetting(@PathVariable Long id,
+                                                  @RequestBody @Valid BookSettingCreateDTO request,
+                                                  @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
+        Book book = settingService.addSettingsToBook(id, request.getSettings());
+        return ResponseEntity.ok(BookDTO.fromEntity(book));
     }
 
     @DeleteMapping("/{id}/settings")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_METADATA')")
-    public ResponseEntity<BookDTO> deleteBookSetting(@PathVariable Long id, @RequestBody BookSettingCreateDTO request) {
+    public ResponseEntity<BookDTO> deleteBookSetting(@PathVariable Long id,
+                                                     @RequestBody BookSettingCreateDTO request,
+                                                     @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_METADATA");
         Book book = settingService.removeSettingsFromBook(id, request.getSettings());
-        return new ResponseEntity<>(BookDTO.fromEntity(book), HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(BookDTO.fromEntity(book));
     }
 
-
     @PostMapping
-    @PreAuthorize("hasAuthority('ADD_BOOK')")
-    public ResponseEntity<BookDTO> addBook(@RequestBody BookCreateRequestDTO createRequest) {
-        try {
-            BookDTO book = bookService.addBook(createRequest);
-            return new ResponseEntity<>(book, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<BookDTO> addBook(@RequestBody BookCreateRequestDTO createRequest,
+                                           @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "ADD_BOOK");
+        BookDTO book = bookService.addBook(createRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(book);
     }
 
     @PostMapping("/{id}/rate")
-    @PreAuthorize("hasAuthority('RATE_BOOKS')")
-    public ResponseEntity<?> rateBook(
-            @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @RequestBody RatingDTO request) {
-
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
-        }
-
-        User user = userService.getUserById(userDetails.getId());
-        UserBookRating savedRating = ratingService.rateBook(user, id, request);
-        RatingResponseDTO response = RatingResponseDTO.fromEntity(savedRating);
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> rateBook(@PathVariable Long id,
+                                      @AuthenticationPrincipal CustomUserDetails user,
+                                      @Valid @RequestBody RatingDTO request) {
+        permissionService.checkPermission(user, "RATE_BOOKS");
+        User u = userService.getUserById(user.getId());
+        UserBookRating savedRating = ratingService.rateBook(u, id, request);
+        return ResponseEntity.ok(RatingResponseDTO.fromEntity(savedRating));
     }
 
     @GetMapping("/{id}/image")
-    @PreAuthorize("hasAuthority('VIEW_BOOKS')")
-    public ResponseEntity<InputStreamResource> getImage(
-            @PathVariable("id") Long bookId,
-            @RequestParam(value = "size", defaultValue = "original") String size
-    ) {
-
+    public ResponseEntity<InputStreamResource> getImage(@PathVariable("id") Long bookId,
+                                                        @RequestParam(value = "size", defaultValue = "original") String size,
+                                                        @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "VIEW_BOOKS");
         try {
             InputStreamResource inputStreamResource = metadataService.getImage(bookId, ImageSize.fromString(size));
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.IMAGE_JPEG);
-
             return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -205,40 +190,32 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}/recommend")
-    @PreAuthorize("hasAuthority('VIEW_BOOKS')")
-    public ResponseEntity<PageResponseDto<BookDTO>> recommendBooksByGenre(
-            @PathVariable Long bookId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<BookDTO> recommended = recommendationService.recommendBooksByGenres(bookId, pageable);
-
+    public ResponseEntity<PageResponseDto<BookDTO>> recommendBooksByGenre(@PathVariable Long bookId,
+                                                                          @RequestParam(defaultValue = "0") int page,
+                                                                          @RequestParam(defaultValue = "5") int size,
+                                                                          @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "VIEW_BOOKS");
+        Page<BookDTO> recommended = recommendationService.recommendBooksByGenres(bookId, PageRequest.of(page, size));
         return ResponseEntity.ok(PageResponseDto.from(recommended));
     }
 
     @GetMapping("/{id}/reviews")
-    @PreAuthorize("hasAuthority('VIEW_REVIEWS')")
-    public ResponseEntity<PageResponseDto<RatingResponseDTO>> getBookReviews(
-            @PathVariable Long id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<RatingResponseDTO> reviews = ratingService.getReviewsByBookId(id, pageable);
+    public ResponseEntity<PageResponseDto<RatingResponseDTO>> getBookReviews(@PathVariable Long id,
+                                                                             @RequestParam(defaultValue = "0") int page,
+                                                                             @RequestParam(defaultValue = "10") int size,
+                                                                             @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "VIEW_REVIEWS");
+        Page<RatingResponseDTO> reviews = ratingService.getReviewsByBookId(id, PageRequest.of(page, size));
         return ResponseEntity.ok(PageResponseDto.from(reviews));
     }
 
     @PutMapping("/{id}/price")
-    @PreAuthorize("hasAuthority('MANAGE_BOOK_PRICING') and hasAuthority('MANAGE_DISCOUNTS')")
-    public ResponseEntity<BookDTO> updateBookPrice(
-            @PathVariable Long id,
-            @Valid @RequestBody BookPriceUpdateDTO priceUpdateDTO) {
-
+    public ResponseEntity<BookDTO> updateBookPrice(@PathVariable Long id,
+                                                   @Valid @RequestBody BookPriceUpdateDTO priceUpdateDTO,
+                                                   @AuthenticationPrincipal CustomUserDetails user) {
+        permissionService.checkPermission(user, "MANAGE_BOOK_PRICING");
+        permissionService.checkPermission(user, "MANAGE_DISCOUNTS");
         BookDTO updatedBook = priceService.setPriceInformation(id, priceUpdateDTO);
         return ResponseEntity.ok(updatedBook);
     }
-
-
-
 }

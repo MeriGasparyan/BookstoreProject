@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,24 +23,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = new HashSet<>();
-
-        if (user.getRole() != null && user.getRole().getRolePermissions() != null) {
-            for (RolePermission rp : user.getRole().getRolePermissions()) {
-                if (rp.getPermission() != null) {
-                    authorities.add(new SimpleGrantedAuthority(rp.getPermission().getName().name()));
-                }
-            }
-        }
-        if (user.getUserPermissions() != null) {
-            for (UserPermission up : user.getUserPermissions()) {
-                if (up.getPermission() != null) {
-                    authorities.add(new SimpleGrantedAuthority(up.getPermission().getName().name()));
-                }
-            }
-        }
-        System.out.printf("Authorities: %s\n", authorities);
-        return authorities;
+        return Collections.emptySet();
     }
 
     @Override

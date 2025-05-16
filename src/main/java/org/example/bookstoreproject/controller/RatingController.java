@@ -2,6 +2,7 @@ package org.example.bookstoreproject.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.security.CustomUserDetails;
+import org.example.bookstoreproject.service.services.PermissionService;
 import org.example.bookstoreproject.service.services.UserBookRatingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/ratings")
 public class RatingController {
     private final UserBookRatingService ratingService;
+    private final PermissionService permissionService;
 
     @DeleteMapping("/reviews/{reviewId}")
     public ResponseEntity<Void> removeReviewText(
             @PathVariable Long reviewId,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        boolean hasPermission = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
+        boolean hasPermission = permissionService.getPermissionsForUser(userDetails.getId()).stream()
                 .anyMatch(auth -> auth.equals("DELETE_ANY_REVIEW"));
         if (hasPermission) {
             ratingService.nullifyReviewText(reviewId);
