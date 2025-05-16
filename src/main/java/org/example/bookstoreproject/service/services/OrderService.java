@@ -53,7 +53,7 @@ public class OrderService{
 
         order = orderRepository.save(order);
         PaymentDTO paymentDTO = paymentService.processPayment(order.getId(), paymentMethod);
-
+        order.setStatus(OrderStatus.PAID);
         order.setPayment(paymentRepository.findById(paymentDTO.getId()).orElseThrow(() -> new NoSuchElementException("Payment not made")));
         cart.getItems().clear();
         return OrderDTO.fromEntity(order);

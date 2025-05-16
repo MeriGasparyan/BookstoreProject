@@ -2,6 +2,7 @@ package org.example.bookstoreproject.persistance.repository;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.example.bookstoreproject.enums.UserRoleName;
 import org.example.bookstoreproject.persistance.entity.Author;
 import org.example.bookstoreproject.persistance.entity.User;
 import org.springframework.data.domain.Pageable;
@@ -37,4 +38,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT DISTINCT u FROM User u
             """)
     List<User> findAllUsers(Pageable pageable);
+
+    List<User> findByRoleName(UserRoleName userRoleName);
 }

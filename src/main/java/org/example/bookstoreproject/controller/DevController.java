@@ -28,10 +28,15 @@ public class DevController {
         artificialDataService.generateFakeUsers(500);
         return ResponseEntity.ok("500 fake users generated");
     }
-
     @PostMapping("/generate-ratings")
     public ResponseEntity<String> generateFakeRatings() {
         artificialDataService.seedRatings();
         return ResponseEntity.ok("Fake ratings generated");
+    }
+
+    @PostMapping("/generate-purchases")
+    public ResponseEntity<String> generateFakePurchases() {
+        artificialDataService.generateFakePurchases(100);
+        return ResponseEntity.ok("100 fake purchases generated");
     }
 }

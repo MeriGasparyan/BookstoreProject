@@ -2,6 +2,9 @@ package org.example.bookstoreproject.service.services;
 
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreproject.enums.PaymentMethod;
+import org.example.bookstoreproject.enums.PaymentStatus;
+import org.example.bookstoreproject.enums.OrderStatus;
 import org.example.bookstoreproject.enums.RatingStarNumber;
 import org.example.bookstoreproject.enums.UserRoleName;
 import org.example.bookstoreproject.exception.ResourceAlreadyUsedException;
@@ -15,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -28,7 +33,10 @@ public class ArtificialDataService {
     private final BookRepository bookRepository;
     private final UserBookRatingRepository ratingRepository;
     private final StarRepository starRepository;
-    private final RatingStarRepository bookRatingStarRepository;
+    private final PaymentRepository paymentRepository;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+
 
     private static final String GOOD_REVIEWS_FILE = "good_reviews.txt";
     private static final String BAD_REVIEWS_FILE = "bad_reviews.txt";
@@ -212,5 +220,93 @@ public class ArtificialDataService {
                     .filter(line -> !line.isEmpty())
                     .toList();
         }
+    }
+
+    @Transactional
+    public void generateFakePurchases(int count) {
+        List<User> users = userRepository.findByRoleName(UserRoleName.ROLE_USER);
+        if (users.isEmpty()) {
+            System.out.println("No regular users available for purchase generation");
+            return;
+        }
+
+        List<Book> books = bookRepository.findAll();
+        if (books.isEmpty()) {
+            System.out.println("No books available for purchase generation");
+            return;
+        }
+
+        PaymentMethod[] paymentMethods = PaymentMethod.values();
+
+        Random random = new Random();
+        Faker faker = new Faker();
+
+        int batchSize = 50;
+        List<Order> orders = new ArrayList<>(batchSize);
+        List<Payment> payments = new ArrayList<>(batchSize);
+        List<OrderItem> orderItems = new ArrayList<>(batchSize * 3); // Avg 3 items per order
+
+        for (int i = 0; i < count; i++) {
+            if (i > 0 && i % batchSize == 0) {
+                orderRepository.saveAll(orders);
+                paymentRepository.saveAll(payments);
+                orderItemRepository.saveAll(orderItems);
+                orders.clear();
+                payments.clear();
+                orderItems.clear();
+            }
+
+            User user = users.get(random.nextInt(users.size()));
+            PaymentMethod method = paymentMethods[random.nextInt(paymentMethods.length)];
+
+            Order order = new Order();
+            order.setUser(user);
+            order.setStatus(OrderStatus.PAID);
+            order.setCreatedAt(LocalDateTime.now().minusDays(random.nextInt(30)));
+            order.setUpdatedAt(order.getCreatedAt());
+            order.setShippingAddress(faker.address().fullAddress());
+
+            Payment payment = new Payment();
+            payment.setMethod(method);
+            payment.setStatus(PaymentStatus.COMPLETED);
+            payment.setTransactionId("FAKE_" + UUID.randomUUID().toString());
+
+            order.setPayment(payment);
+            int itemCount = 1 + random.nextInt(5);
+            BigDecimal total = BigDecimal.ZERO;
+            Set<Long> usedBookIds = new HashSet<>();
+
+            for (int j = 0; j < itemCount; j++) {
+                Book book;
+                do {
+                    book = books.get(random.nextInt(books.size()));
+                } while (usedBookIds.contains(book.getId()));
+
+                usedBookIds.add(book.getId());
+
+                OrderItem item = new OrderItem();
+                item.setOrder(order);
+                item.setBook(book);
+                item.setQuantity(1 + random.nextInt(3));
+                item.setPrice(book.getPrice());
+
+                orderItems.add(item);
+                total = total.add(book.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            }
+
+            order.setTotal(total);
+            payment.setAmount(total);
+
+            orders.add(order);
+            payments.add(payment);
+        }
+
+        if (!orders.isEmpty()) {
+            orderRepository.saveAll(orders);
+            paymentRepository.saveAll(payments);
+            orderItemRepository.saveAll(orderItems);
+        }
+
+        System.out.println("Generated " + count + " fake purchases");
     }
 }
