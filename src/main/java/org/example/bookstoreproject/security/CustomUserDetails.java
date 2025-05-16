@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.example.bookstoreproject.persistance.entity.RolePermission;
 import org.example.bookstoreproject.persistance.entity.User;
+import org.example.bookstoreproject.persistance.entity.UserPermission;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,13 @@ public class CustomUserDetails implements UserDetails {
             for (RolePermission rp : user.getRole().getRolePermissions()) {
                 if (rp.getPermission() != null) {
                     authorities.add(new SimpleGrantedAuthority(rp.getPermission().getName().name()));
+                }
+            }
+        }
+        if (user.getUserPermissions() != null) {
+            for (UserPermission up : user.getUserPermissions()) {
+                if (up.getPermission() != null) {
+                    authorities.add(new SimpleGrantedAuthority(up.getPermission().getName().name()));
                 }
             }
         }

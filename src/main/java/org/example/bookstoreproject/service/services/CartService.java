@@ -43,8 +43,8 @@ public class CartService {
         item.setCart(cart);
         item.setBook(book);
         item.setQuantity(quantity);
+        cartItemRepository.save(item);
         cart.addItem(item);
-
         return CartDTO.fromEntity(cart);
     }
 
@@ -58,6 +58,7 @@ public class CartService {
             throw new NoSuchElementException("Cart item not found in your cart");
         }
         item.setQuantity(quantity);
+        cartItemRepository.save(item);
         return CartDTO.fromEntity(item.getCart());
     }
 
@@ -68,7 +69,6 @@ public class CartService {
         Cart cart = cartRepository.findByUserId(userId).orElseThrow();
         cart.removeItem(item);
         cartItemRepository.delete(item);
-
     }
 
     @Transactional

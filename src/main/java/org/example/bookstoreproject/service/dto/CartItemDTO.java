@@ -17,7 +17,6 @@ public class CartItemDTO {
     private Long id;
     private Long bookId;
     private Integer quantity;
-    private BigDecimal price;
     private LocalDateTime addedAt;
 
     public static CartItemDTO fromEntity(CartItem cart) {

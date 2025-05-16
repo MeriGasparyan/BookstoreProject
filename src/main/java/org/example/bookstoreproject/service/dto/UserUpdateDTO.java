@@ -1,13 +1,15 @@
 package org.example.bookstoreproject.service.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.bookstoreproject.enums.PermissionName;
 import org.example.bookstoreproject.enums.UserRoleName;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,11 +30,13 @@ public class UserUpdateDTO {
 
         private String currentPassword;
 
-        @Size(min = 8, max = 100)
+        @Size(min = 6, max = 100)
         private String newPassword;
 
         private Boolean enabled;
 
         private UserRoleName role;
+
+        private Set<PermissionName> permissions;
 
 }

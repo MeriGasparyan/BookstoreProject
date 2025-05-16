@@ -73,9 +73,10 @@ public class ArtificialDataService {
         Map<UserRoleName, Integer> roleDistribution = new LinkedHashMap<>();
         roleDistribution.put(UserRoleName.ROLE_USER, (int) (count * 0.80));
         roleDistribution.put(UserRoleName.ROLE_LIBRARIAN, (int) (count * 0.05));
-        roleDistribution.put(UserRoleName.ROLE_REVIEWER, (int) (count * 0.05));
+        roleDistribution.put(UserRoleName.ROLE_REVIEWER, (int) (count * 0.06));
         roleDistribution.put(UserRoleName.ROLE_SELLER, (int) (count * 0.02));
         roleDistribution.put(UserRoleName.ROLE_ANALYST, (int) (count * 0.02));
+        roleDistribution.put(UserRoleName.ROLE_MODERATOR, (int) (count * 0.02));
         roleDistribution.put(UserRoleName.ROLE_ADMIN, count - roleDistribution.values().stream().mapToInt(i -> i).sum());
 
         for (Map.Entry<UserRoleName, Integer> entry : roleDistribution.entrySet()) {

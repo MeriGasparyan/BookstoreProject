@@ -5,12 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.UserRoleName;
 import org.example.bookstoreproject.exception.ResourceAlreadyUsedException;
 import org.example.bookstoreproject.exception.ResourceNotFoundException;
-import org.example.bookstoreproject.persistance.entity.Cart;
-import org.example.bookstoreproject.persistance.entity.User;
-import org.example.bookstoreproject.persistance.entity.UserRole;
-import org.example.bookstoreproject.persistance.repository.CartRepository;
-import org.example.bookstoreproject.persistance.repository.UserRepository;
-import org.example.bookstoreproject.persistance.repository.UserRoleRepository;
+import org.example.bookstoreproject.persistance.entity.*;
+import org.example.bookstoreproject.persistance.repository.*;
 import org.example.bookstoreproject.service.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -27,6 +28,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRoleRepository roleRepository;
     private final CartRepository cartRepository;
+    private final PermissionRepository permissionRepository;
+    private final UserPermissionRepository userPermissionRepository;
 
     @Transactional
     public CreateUserReturnDTO createUser(UserRegistrationDTO registrationDto) {
@@ -106,6 +109,27 @@ public class UserService {
             UserRole newRole = roleRepository.findByName(adminUpdateDto.getRole())
                     .orElseThrow(() -> new IllegalArgumentException("Role not found: " + adminUpdateDto.getRole()));
             user.setRole(newRole);
+        }
+
+        if (adminUpdateDto.getPermissions() != null && !adminUpdateDto.getPermissions().isEmpty()) {
+            Set<Permission> findPermissions = permissionRepository.findPermissions(adminUpdateDto.getPermissions());
+            Set<Permission> existingPermissions = user.getUserPermissions().stream()
+                    .map(UserPermission::getPermission)
+                    .collect(Collectors.toSet());
+            List<UserPermission> newPermissions = new ArrayList<>();
+
+            for (Permission permission : findPermissions) {
+                if (!existingPermissions.contains(permission)) {
+                    UserPermission newPermission = new UserPermission();
+                    newPermission.setPermission(permission);
+                    newPermission.setUser(user);
+                    user.addUserPermission(newPermission);
+                    newPermissions.add(newPermission);
+                }
+            }
+            if (!newPermissions.isEmpty()) {
+                userPermissionRepository.saveAll(newPermissions);
+            }
         }
         return UserDTO.toDto(userRepository.save(user));
     }

@@ -8,7 +8,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -54,7 +56,7 @@ public class User {
     private UserRole role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<UserPermission> userPermissions = new ArrayList<>();
+    private Set<UserPermission> userPermissions = new HashSet<>();
 
     public void addUserPermission(UserPermission userPermission) {
         userPermissions.add(userPermission);
