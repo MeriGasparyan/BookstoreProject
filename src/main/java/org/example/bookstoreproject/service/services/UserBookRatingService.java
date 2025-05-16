@@ -26,8 +26,8 @@ public class UserBookRatingService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserBookRating rateBook(User user, Long bookID, RatingDTO ratingDTO) {
-
+    public UserBookRating rateBook(Long userId, Long bookID, RatingDTO ratingDTO) {
+        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         UserBookRating userBookRating = ratingRepository
                 .findByUserIdAndBookId(user.getId(), bookID).orElse(null);
         Book book = bookRepository.findById(bookID)

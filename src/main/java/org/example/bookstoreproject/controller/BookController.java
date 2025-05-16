@@ -46,7 +46,6 @@ public class BookController {
     private final PermissionService permissionService;
 
 
-
     @PutMapping("/{id}")
     public ResponseEntity<BookDTO> updateBook(@PathVariable Long id,
                                               @RequestBody BookUpdateRequestDTO request,
@@ -167,8 +166,7 @@ public class BookController {
                                       @AuthenticationPrincipal CustomUserDetails user,
                                       @Valid @RequestBody RatingDTO request) {
         permissionService.checkPermission(user, "RATE_BOOKS");
-        User u = userService.getUserById(user.getId());
-        UserBookRating savedRating = ratingService.rateBook(u, id, request);
+        UserBookRating savedRating = ratingService.rateBook(user.getId(), id, request);
         return ResponseEntity.ok(RatingResponseDTO.fromEntity(savedRating));
     }
 
