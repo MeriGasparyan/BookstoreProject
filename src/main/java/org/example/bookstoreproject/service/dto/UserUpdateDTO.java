@@ -37,6 +37,8 @@ public class UserUpdateDTO {
 
         private UserRoleName role;
 
-        private Set<PermissionName> permissions;
+        private Set<PermissionName> permissionsToAdd;
+
+        private Set<PermissionName> permissionsToRemove;
 
 }

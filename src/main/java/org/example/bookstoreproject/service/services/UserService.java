@@ -101,10 +101,10 @@ public class UserService {
     public UserDTO adminUpdateUser(Long id, UserUpdateDTO adminUpdateDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         if (adminUpdateDto.getEnabled() != null) {
             user.setEnabled(adminUpdateDto.getEnabled());
         }
-
 
         if (adminUpdateDto.getRole() != null) {
             UserRole newRole = roleRepository.findByName(adminUpdateDto.getRole())
@@ -112,8 +112,8 @@ public class UserService {
             user.setRole(newRole);
         }
 
-        if (adminUpdateDto.getPermissions() != null && !adminUpdateDto.getPermissions().isEmpty()) {
-            Set<Permission> findPermissions = permissionRepository.findPermissions(adminUpdateDto.getPermissions());
+        if (adminUpdateDto.getPermissionsToAdd() != null && !adminUpdateDto.getPermissionsToAdd().isEmpty()) {
+            Set<Permission> findPermissions = permissionRepository.findPermissions(adminUpdateDto.getPermissionsToAdd());
             Set<Permission> existingPermissions = user.getUserPermissions().stream()
                     .map(UserPermission::getPermission)
                     .collect(Collectors.toSet());
@@ -132,6 +132,19 @@ public class UserService {
                 userPermissionRepository.saveAll(newPermissions);
             }
         }
+
+        if (adminUpdateDto.getPermissionsToRemove() != null && !adminUpdateDto.getPermissionsToRemove().isEmpty()) {
+            Set<Permission> permissionsToRemove = permissionRepository.findPermissions(adminUpdateDto.getPermissionsToRemove());
+            List<UserPermission> userPermissionsToRemove = user.getUserPermissions().stream()
+                    .filter(userPermission -> permissionsToRemove.contains(userPermission.getPermission()))
+                    .collect(Collectors.toList());
+
+            if (!userPermissionsToRemove.isEmpty()) {
+                userPermissionsToRemove.forEach(user.getUserPermissions()::remove);
+                userPermissionRepository.deleteAll(userPermissionsToRemove);
+            }
+        }
+
         return UserDTO.toDto(userRepository.save(user));
     }
 
