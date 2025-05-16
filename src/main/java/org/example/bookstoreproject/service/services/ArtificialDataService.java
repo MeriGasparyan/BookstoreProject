@@ -10,6 +10,7 @@ import org.example.bookstoreproject.enums.UserRoleName;
 import org.example.bookstoreproject.exception.ResourceAlreadyUsedException;
 import org.example.bookstoreproject.persistance.entity.*;
 import org.example.bookstoreproject.persistance.repository.*;
+import org.example.bookstoreproject.service.dto.BookDTO;
 import org.example.bookstoreproject.service.dto.CreateUserReturnDTO;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -288,7 +289,8 @@ public class ArtificialDataService {
                 item.setOrder(order);
                 item.setBook(book);
                 item.setQuantity(1 + random.nextInt(3));
-                item.setPrice(book.getPrice());
+                BigDecimal price = BookDTO.calculateDiscountedPrice(book.getDiscount(), book.getPrice());
+                item.setPrice(price);
 
                 orderItems.add(item);
                 total = total.add(book.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
