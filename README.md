@@ -74,7 +74,7 @@ Please note that these set of endpoints exist for testing purposes only.
 - `POST /admin/setup`: Create initial admin user
 - `POST /generate-users`: Seed 500 fake users
 - `POST /generate-ratings`: Generate fake ratings
-
+- `POST /generate-purchases`: Generate fake purchases
 ### 📂 CSV Upload (`/api/csv`)
 
 - `POST /upload`: Upload CSV file of books (role: `MANAGE_BOOK_METADATA`)
