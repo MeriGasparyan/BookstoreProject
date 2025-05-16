@@ -16,7 +16,6 @@ public class OrderItemDTO {
     private Long bookId;
     private Integer quantity;
     private BigDecimal price;
-    private BigDecimal discountApplied;
 
     public static OrderItemDTO fromEntity(OrderItem order) {
         OrderItemDTO dto = new OrderItemDTO();
@@ -24,7 +23,6 @@ public class OrderItemDTO {
         dto.setBookId(order.getBook().getId());
         dto.setQuantity(order.getQuantity());
         dto.setPrice(order.getPrice());
-        dto.setDiscountApplied(order.getDiscountApplied());
         return dto;
     }
 

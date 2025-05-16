@@ -34,7 +34,4 @@ public class OrderItem {
 
     @Column(nullable = false)
     private BigDecimal price;
-
-    @Column(name = "discount_applied")
-    private BigDecimal discountApplied;
 }
