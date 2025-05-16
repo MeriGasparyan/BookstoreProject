@@ -30,9 +30,9 @@ public class OrderService{
     public OrderDTO placeOrder(Long userId, CheckoutRequestDTO checkoutRequest) {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new NoSuchElementException("Cart not found"));
-
+        User user = userRepository.findById(userId).orElseThrow();
         Order order = new Order();
-        order.setUser(userRepository.findById(userId).orElseThrow());
+        order.setUser(user);
         order.setStatus(OrderStatus.PENDING);
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
@@ -57,6 +57,8 @@ public class OrderService{
         order.setStatus(OrderStatus.PAID);
         order.setPayment(paymentRepository.findById(paymentDTO.getId()).orElseThrow(() -> new NoSuchElementException("Payment not made")));
         cart.getItems().clear();
+        user.addUserOrders(order);
+        userRepository.save(user);
         return OrderDTO.fromEntity(order);
     }
 

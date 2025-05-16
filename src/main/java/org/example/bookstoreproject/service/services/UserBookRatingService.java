@@ -5,10 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.RatingStarNumber;
 import org.example.bookstoreproject.persistance.entity.*;
-import org.example.bookstoreproject.persistance.repository.BookRepository;
-import org.example.bookstoreproject.persistance.repository.RatingStarRepository;
-import org.example.bookstoreproject.persistance.repository.StarRepository;
-import org.example.bookstoreproject.persistance.repository.UserBookRatingRepository;
+import org.example.bookstoreproject.persistance.repository.*;
 import org.example.bookstoreproject.service.dto.RatingDTO;
 import org.example.bookstoreproject.service.dto.RatingResponseDTO;
 import org.springframework.data.domain.Page;
@@ -26,6 +23,7 @@ public class UserBookRatingService {
     private final BookRepository bookRepository;
     private final StarRepository starRepository;
     private final RatingStarRepository bookRatingStarRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public UserBookRating rateBook(User user, Long bookID, RatingDTO ratingDTO) {
@@ -61,7 +59,8 @@ public class UserBookRatingService {
         UserBookRating savedUserBookRating = ratingRepository.save(userBookRating);
         BookRatingStar otherBookRatingStar = bookRatingStarRepository.findByBookAndStar(book, star).orElseThrow();
         otherBookRatingStar.setNumRating(otherBookRatingStar.getNumRating() + 1);
-
+        user.addUserBookRating(savedUserBookRating);
+        userRepository.save(user);
         return savedUserBookRating;
     }
 

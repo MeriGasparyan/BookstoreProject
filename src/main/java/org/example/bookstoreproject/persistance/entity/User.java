@@ -58,6 +58,33 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserPermission> userPermissions = new HashSet<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Cart cart;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserBookRating> userBookRatings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Order> orders = new ArrayList<>();
+
+    public void addUserBookRating(UserBookRating userBookRating) {
+        userBookRatings.add(userBookRating);
+        userBookRating.setUser(this);
+    }
+    public void removeUserBookRating(UserBookRating userBookRating) {
+        userBookRatings.remove(userBookRating);
+        userBookRating.setUser(null);
+    }
+
+    public void addUserOrders(Order order) {
+        orders.add(order);
+        order.setUser(this);
+    }
+    public void removeUserOrders(Order order) {
+        orders.remove(order);
+        order.setUser(null);
+    }
+
     public void addUserPermission(UserPermission userPermission) {
         userPermissions.add(userPermission);
         userPermission.setUser(this);

@@ -2,15 +2,12 @@ package org.example.bookstoreproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreproject.persistance.entity.User;
 import org.example.bookstoreproject.security.CustomUserDetails;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.PermissionService;
 import org.example.bookstoreproject.service.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
