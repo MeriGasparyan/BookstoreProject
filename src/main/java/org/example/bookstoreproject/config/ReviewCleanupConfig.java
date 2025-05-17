@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewCleanupConfig {
     private final ReviewCleanupService reviewCleanupService;
 
-    @Scheduled(cron = "${cleanup.cron:0 0 3 * * ?}")
+    @Scheduled(fixedRateString = "${cleanup.interval}")
     @Transactional
     public void cleanupRejectedReviews() {
         reviewCleanupService.cleanupRejectedReviews();
