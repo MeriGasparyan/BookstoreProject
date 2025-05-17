@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.enums.RatingStarNumber;
+import org.example.bookstoreproject.enums.ReviewStatus;
 import org.example.bookstoreproject.persistance.entity.*;
 import org.example.bookstoreproject.persistance.repository.*;
 import org.example.bookstoreproject.service.dto.RatingDTO;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -97,6 +99,14 @@ public class UserBookRatingService {
         rating.setReview(null);
         ratingRepository.save(rating);
     }
+    public Page<RatingResponseDTO> getApprovedReviewsByBookId(Long bookId, Pageable pageable) {
+        Page<UserBookRating> ratings = ratingRepository.findByBookIdAndReviewIsNotNullAndReviewStatusIn(
+                bookId,
+                List.of(ReviewStatus.APPROVED, ReviewStatus.AUTO_APPROVED),
+                pageable);
+        return ratings.map(RatingResponseDTO::fromEntity);
+    }
+
 
 
 }

@@ -2,15 +2,14 @@ package org.example.bookstoreproject.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.security.CustomUserDetails;
+import org.example.bookstoreproject.service.dto.OffensiveReviewDTO;
+import org.example.bookstoreproject.service.services.ModerationService;
 import org.example.bookstoreproject.service.services.PermissionService;
 import org.example.bookstoreproject.service.services.UserBookRatingService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,7 +17,36 @@ import org.springframework.web.bind.annotation.RestController;
 public class RatingController {
     private final UserBookRatingService ratingService;
     private final PermissionService permissionService;
+    private final ModerationService moderationService;
 
+    @GetMapping("/moderation/pending")
+    public ResponseEntity<Page<OffensiveReviewDTO>> getPendingReviews(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        permissionService.checkPermission(userDetails, "VIEW_FLAGGED_CONTENT");
+
+        return ResponseEntity.ok(moderationService.getPendingReviews(page, size));
+    }
+
+    @PostMapping("/moderation/approve/{reviewId}")
+    public ResponseEntity<Void> approveReview(
+            @PathVariable Long reviewId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        permissionService.checkPermission(userDetails, "APPROVE_REVIEW");
+        moderationService.approveReview(reviewId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/moderation/reject/{reviewId}")
+    public ResponseEntity<Void> rejectReview(
+            @PathVariable Long reviewId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        permissionService.checkPermission(userDetails, "FLAG_REVIEW_CONTENT");
+        moderationService.rejectReview(reviewId);
+        return ResponseEntity.noContent().build();
+    }
     @DeleteMapping("/reviews/{reviewId}")
     public ResponseEntity<Void> removeReviewText(
             @PathVariable Long reviewId,

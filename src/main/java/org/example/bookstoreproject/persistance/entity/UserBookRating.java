@@ -3,6 +3,7 @@ package org.example.bookstoreproject.persistance.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.bookstoreproject.enums.ReviewStatus;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
@@ -39,6 +40,16 @@ public class UserBookRating {
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Instant updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "review_status", nullable = false)
+    private ReviewStatus reviewStatus = ReviewStatus.UNCHECKED;
+
+    @Column(name = "sentiment_result")
+    private String sentimentResult;
+
+    @Column(name = "contains_offensive_words")
+    private Boolean containsOffensiveWords;
 
 
 }

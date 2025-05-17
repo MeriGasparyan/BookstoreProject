@@ -48,9 +48,6 @@ A Spring Boot backend for a online bookstore with user registration, authenticat
 - `POST /api/books/{id}/authors`: Add authors to a book. An author should be already created
 - `DELETE /api/books/{id}/authors`: Remove an author from book. Note the author itself is not deleted
 Similar endpoints for Awards, Characters, Genres, Settings
-### ⭐ Ratings (`/api/ratings`)
-
-- `DELETE /reviews/{reviewId}`: Delete a user’s review text (admins or owners)
 
 ### 🛒 Cart Management (`/api/cart`)
 
@@ -79,6 +76,14 @@ Please note that these set of endpoints exist for testing purposes only.
 
 - `POST /upload`: Upload CSV file of books (role: `MANAGE_BOOK_METADATA`)
 
+### ⭐ Rating Moderation (`/api/ratings/moderation`)
+- `GET /pending`: Get paginated pending reviews (role: `MODERATE_REVIEWS`)
+- `POST /approve/{reviewId}`: Approve a review
+- `POST /reject/{reviewId}`: Reject and remove a review
+
+### 🔍 Moderator endpoints
+- `GET /api/admin/moderation/stats`: Get moderation statistics
+- `PUT /api/admin/offensive-words`: Update offensive words list
 ---
 
 ## 🔐 Roles & Permissions
@@ -162,8 +167,22 @@ Only users with `VIEW_BOOKS` will be authorized.
    cd BookstoreProject 
 
 2. Update your `application.properties`
-- `spring.datasource.url=jdbc:postgresql://localhost:5432/bookstore`
-- `spring.datasource.username=your_user`
-- `spring.datasource.password=your_password`
-- If you want to download images to your machine as well update `image.processing.enabled=true`
-- `image.path=/put/absolute/path/to/your/project/here/BookstoreProject/`
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/bookstore
+spring.datasource.username=your_user
+spring.datasource.password=your_password
+
+image.processing.enabled=true
+image.path=/put/absolute/path/to/your/project/here/BookstoreProject/
+
+# Sentiment Analysis
+sentiment.analysis.interval=3600000 # 1 hour (in ms)
+sentiment.batch.size=100
+
+# Offensive Words Config 
+offensive.words=path/to/offensive-words.txt
+
+# Cleanup Settings
+cleanup.rejected.after.days=30
+cleanup.cron=0 0 3 * * ? # Daily at 3 AM
