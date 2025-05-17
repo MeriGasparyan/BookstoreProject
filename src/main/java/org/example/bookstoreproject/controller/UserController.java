@@ -3,6 +3,7 @@ package org.example.bookstoreproject.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.security.CustomUserDetails;
+import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.PermissionService;
 import org.example.bookstoreproject.service.services.UserService;
@@ -21,13 +22,12 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<PageResponseDto<UserDTO>> getAllUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @ModelAttribute BookSearchCriteria criteria,
             @AuthenticationPrincipal CustomUserDetails currentUser) {
         if (!permissionService.hasPermission(currentUser.getId(), "MANAGE_USERS")) {
             throw new AccessDeniedException("You do not have permission to manage users.");
         }
-        return ResponseEntity.ok(PageResponseDto.from(userService.getAllUsers(page, size)));
+        return ResponseEntity.ok(PageResponseDto.from(userService.getAllUsers(criteria.getPage(), criteria.getSize())));
     }
 
     @GetMapping("/{id}")

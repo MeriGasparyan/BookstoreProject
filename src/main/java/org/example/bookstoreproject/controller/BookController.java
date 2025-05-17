@@ -7,6 +7,7 @@ import org.example.bookstoreproject.persistance.entity.Book;
 import org.example.bookstoreproject.persistance.entity.User;
 import org.example.bookstoreproject.persistance.entity.UserBookRating;
 import org.example.bookstoreproject.security.CustomUserDetails;
+import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.*;
 import org.example.bookstoreproject.service.services.*;
 import org.springframework.core.io.InputStreamResource;
@@ -189,21 +190,19 @@ public class BookController {
 
     @GetMapping("/{bookId}/recommend")
     public ResponseEntity<PageResponseDto<BookDTO>> recommendBooksByGenre(@PathVariable Long bookId,
-                                                                          @RequestParam(defaultValue = "0") int page,
-                                                                          @RequestParam(defaultValue = "5") int size,
+                                                                          @ModelAttribute BookSearchCriteria criteria,
                                                                           @AuthenticationPrincipal CustomUserDetails user) {
         permissionService.checkPermission(user, "VIEW_BOOKS");
-        Page<BookDTO> recommended = recommendationService.recommendBooksByGenres(bookId, PageRequest.of(page, size));
+        Page<BookDTO> recommended = recommendationService.recommendBooksByGenres(bookId, criteria.toPageable());
         return ResponseEntity.ok(PageResponseDto.from(recommended));
     }
 
     @GetMapping("/{id}/reviews")
     public ResponseEntity<PageResponseDto<RatingResponseDTO>> getBookReviews(@PathVariable Long id,
-                                                                             @RequestParam(defaultValue = "0") int page,
-                                                                             @RequestParam(defaultValue = "10") int size,
+                                                                             @ModelAttribute BookSearchCriteria criteria,
                                                                              @AuthenticationPrincipal CustomUserDetails user) {
         permissionService.checkPermission(user, "VIEW_REVIEWS");
-        Page<RatingResponseDTO> reviews = ratingService.getReviewsByBookId(id, PageRequest.of(page, size));
+        Page<RatingResponseDTO> reviews = ratingService.getReviewsByBookId(id, criteria.toPageable());
         return ResponseEntity.ok(PageResponseDto.from(reviews));
     }
 

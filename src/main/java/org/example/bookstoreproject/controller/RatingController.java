@@ -2,6 +2,7 @@ package org.example.bookstoreproject.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreproject.security.CustomUserDetails;
+import org.example.bookstoreproject.service.criteria.BookSearchCriteria;
 import org.example.bookstoreproject.service.dto.OffensiveReviewDTO;
 import org.example.bookstoreproject.service.services.ModerationService;
 import org.example.bookstoreproject.service.services.PermissionService;
@@ -21,12 +22,11 @@ public class RatingController {
 
     @GetMapping("/moderation/pending")
     public ResponseEntity<Page<OffensiveReviewDTO>> getPendingReviews(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @ModelAttribute BookSearchCriteria criteria,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         permissionService.checkPermission(userDetails, "VIEW_FLAGGED_CONTENT");
 
-        return ResponseEntity.ok(moderationService.getPendingReviews(page, size));
+        return ResponseEntity.ok(moderationService.getPendingReviews(criteria.getPage(), criteria.getSize()));
     }
 
     @PostMapping("/moderation/approve/{reviewId}")
