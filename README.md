@@ -184,5 +184,4 @@ sentiment.batch.size=100
 offensive.words=path/to/offensive-words.txt
 
 # Cleanup Settings
-cleanup.rejected.after.days=30
-cleanup.cron=0 0 3 * * ? # Daily at 3 AM
+cleanup.interval=cleanup.interval=60000
